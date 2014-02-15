@@ -1,0 +1,7 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "bisoutexture/paradise/or"
+	"$selfillum" 1
+	"$surfaceprop" "or"
+	"%detailtype" "or"
+}

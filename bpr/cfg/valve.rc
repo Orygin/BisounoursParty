@@ -1,0 +1,17 @@
+// load the base configuration
+//exec default.cfg
+// Setup custom controller
+exec joystick.cfg
+
+// run a user script file if present
+exec autoexec.cfg
+
+//
+// stuff command line statements
+//
+sv_unlockedchapters 99
+stuffcmds
+startupmenu 
+hostname "Bisounours Party"
+
+mp_forcerespawn 0

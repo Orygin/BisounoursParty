@@ -1,0 +1,6 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "Models/props_bisou/chaiselongue"
+	"$bumpmap" "models/weapons/Normal"
+	"$model" 1
+}

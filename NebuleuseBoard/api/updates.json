@@ -1,0 +1,25 @@
+{
+	"updates":
+	[
+		{
+			"version": 5073,
+			"size": 2,
+			"date": "1/1/2013 13:37",
+			"fullyPropagated": true,
+			"log": "Hey"
+		},
+		{
+			"version": 5072,
+			"size": 2,
+			"date": "1/1/2013 13:37",
+			"fullyPropagated": true,
+			"log": "lgogogogog"
+		},
+		{
+			"version": 5071,
+			"size": 2,
+			"date":"1/1/2013 13:37",
+			"fullyPropagated": true
+		}
+	]
+}

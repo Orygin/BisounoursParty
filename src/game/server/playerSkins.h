@@ -1,0 +1,20 @@
+#ifndef PLAYERSKINS_H
+#define PLAYERSKINS_H
+
+#define MAX_PLAYER_SKINS	7
+
+#define PLAYER_SKIN_ROSE	1
+#define PLAYER_SKIN_VERT	2
+#define PLAYER_SKIN_ROUGE	3
+#define PLAYER_SKIN_ORANGE	4
+#define PLAYER_SKIN_BLEU	5
+#define PLAYER_SKIN_VIOLET	6
+#define PLAYER_SKIN_JAUNE	7
+#define PLAYER_SKIN_DEV		8
+
+#define PLAYER_BONUS_NROSE	16
+#define PLAYER_BONUS_NVERT	17
+
+#define toSkinId(skin) ((skin-1)*2)
+
+#endif // #ifndef PLAYERSKINS_H

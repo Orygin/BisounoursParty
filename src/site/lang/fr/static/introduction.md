@@ -1,0 +1,3 @@
+Bienvenue sur le site de <strong>Bisounours Party</strong> !<br/>
+Bisounours Party est une modification hardcore pour Half Life 2 à propos de Bisounours qui se battent pour de la drogue dans un univers coloré.<br/><br/>
+Pour en savoir plus sur bisounours party, regardez le <a href='' onclick="document.getElementById('Trailer').style.display = 'block';return false;">trailer</a> ou dirigez vous sur la page d'<a href="http://www.bisounoursparty.com/a-propos/">à propos</a>

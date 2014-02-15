@@ -1,0 +1,15 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "Vehicle/rubbertrainfloor001a"
+	"$surfaceprop" "rubber"
+	"$nodecal" 1
+	"Proxies"
+	{
+		"TextureScroll"
+		{
+			"texturescrollvar" "$basetexturetransform"
+			"texturescrollrate" 0.44
+			"texturescrollangle" 0
+		}
+	}
+}

@@ -1,0 +1,8 @@
+version 1
+nodes
+  0 "Cylinder01"  -1
+end
+skeleton
+time 0
+  0 -0.002607 -0.006617 -9.873309 1.570796 -0.000000 0.000000
+end

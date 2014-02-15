@@ -1,0 +1,6 @@
+"UnlitGeneric"
+{
+	"$basetexture" "bisoutexture/npc/zombie"
+	"$decal" 1
+	"$decalscale" 0.0625
+}

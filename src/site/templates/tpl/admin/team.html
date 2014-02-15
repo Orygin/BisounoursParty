@@ -1,0 +1,21 @@
+<include tpl="header.html" />
+			<article>
+				<header>
+					<h2>{PAGE_TITLE}</h2>
+				</header>
+				<article>
+                                    <ul>
+					<block name="users">
+                                            <form action="/admin/team/edit/{users.USER_ID}" method="post">
+                                            <li><div style="float: right;"><input type="poste" name="poste" id="title" value="{users.USER_POSTE}"/>  <input type="submit" value="{LANG_SEND}" /></div><a href="/admin/team/delete/{users.USER_ID}"><img src="/templates/img/delete.png" /></a>   <a href="http://www.bisounoursparty.com/forum/profile.php?id={users.USER_ID}">{users.USER_NICK}</a></li>
+                                            </form><br />
+                                        <blockelse />
+                                            Error, no team member found.
+                                        </block>
+                                        <form action="/admin/team/add/" method="post">
+                                        <li><div style="float: right;"><input type="poste" name="poste" id="title"/>  <input type="submit" value="{LANG_SEND}" /></div>User id :<input type="user_id" name="user_id" id="title"/></li>
+                                        </form>
+                                    </ul>
+				</article>
+			</article>
+<include tpl="footer.html" />

@@ -1,0 +1,8 @@
+"UnlitGeneric"
+{
+	"$basetexture" "bisoutexture/bisouboisarcenciel"
+	"$surfaceprop" "wood"
+	"$parallaxmap" "Wood/woodwall006a_height"
+	"$parallaxmapscale" .05
+	"%keywords" "bisou"
+}

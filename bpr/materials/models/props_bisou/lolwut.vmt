@@ -1,0 +1,9 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "models\props_bisou/lolwut"
+	"$bumpmap" "models/weapons/Normal"
+	"$model" 1
+
+	"$phong" 1
+	"$halflambert" 1
+}

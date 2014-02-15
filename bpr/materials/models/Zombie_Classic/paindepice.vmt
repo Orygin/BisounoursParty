@@ -1,0 +1,9 @@
+"VertexLitGeneric"
+{
+    "$baseTexture" "models/Zombie_Classic/paindepice"
+    "$bumpmap" "models/Zombie_classic/paindepice_normal"
+    "$envmap" "env_cubemap"
+    "$normalmapalphaenvmapmask" 1
+    "$envmaptint" "[0.2 0.1 0]"
+    "$envmapcontrast" 1
+}

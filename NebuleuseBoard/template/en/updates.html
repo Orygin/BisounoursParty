@@ -1,0 +1,55 @@
+<div id="ContentTopButton1" ng-click="addUpdate()" style="cursor:pointer;">
+	New update
+</div>
+<p>
+	Current game version : {{settings.gameVersion}}<br/>
+	There are currently {{updates.length}} update<span ng-show="updates.length>1">s</span> avalaible to clients.<br/>
+	There are currently {{mirrors.length}} mirror<span ng-show="mirrors.length>1">s</span> servers avalaible.
+	<h3>Updates</h3>
+	<table class="table table-condensed">
+		<thead>
+			<th></th>
+			<th>Version</th>
+			<th>Size</th>
+			<th>Date</th>
+			<th>Changelog</th>
+		</thead>
+		<tbody>
+			<tr ng-repeat="update in updates | orderBy:'version':'true'" ng-class="{'info': (update.version == settings.gameVersion), 'error': (!update.fullyPropagated)}">
+				<td>
+					<i class="icon-remove" ng-click="deleteUpdate(update)" style="cursor:pointer" title="Delete"></i> 
+					<!--<i class="icon-download-alt" title="Download" style="cursor:pointer"></i> -->
+					<i class="icon-star" ng-show="update.fullyPropagated && (update.version != settings.gameVersion)" ng-click="setVersion(update.version)" title="Set this version as the current" style="cursor:pointer"></i>
+				</td>
+				<td>
+					{{update.version}} 
+					<i class="icon-warning-sign" ng-show="!update.fullyPropagated" title="Not fully propagated"></i>
+				</td>
+				<td>{{update.size}} Mb</td>
+				<td>{{update.date}}</td>
+				<td><i class="icon-eye-open" ng-click="showLog(update)" style="cursor:pointer"></i></td>
+			</tr>
+		</tbody>
+	</table>
+	<h3>Mirrors</h3>
+	<table class="table table-condensed">
+		<thead>
+			<th></th>
+			<th>Name</th>
+			<th>Adress</th>
+		</thead>
+		<tbody>
+			<tr ng-repeat="mirror in mirrors">
+				<td>
+					<i class="icon-remove" title="Delete" style="cursor:pointer"></i> 
+					<i class="icon-pencil" title="Edit" style="cursor:pointer"></i>
+				</td>
+				<td>
+					{{mirror.name}} 
+					<i class="icon-warning-sign" ng-show="!mirror.responding" title="Not responding"></i>
+				</td>
+				<td>{{mirror.address}}</td>
+			</tr>
+		</tbody>
+	</table>
+</p>

@@ -1,0 +1,12 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "models/player/rouge/mort"
+	"$bumpmap" "models/player/normalmort"
+	"$model" 1
+
+	"$phong" "1"
+	"$lightwarptexture" "lightwarp2"
+	"$phongexponent" "1"
+	"$phongboost" .1
+	"$phongfresnelranges" "[1 1 1]"
+}

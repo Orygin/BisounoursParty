@@ -1,0 +1,68 @@
+"Water"
+{
+	"%compilewater" 1
+	"$forceexpensive" 1
+	"$reflectentities" 1
+	"$envmap" "env_cubemap"
+	"%tooltexture" "dev/water_normal"
+	"$refracttexture" "_rt_WaterRefraction"
+	"$refractamount" 1
+	"$refracttint" "[.9 .9 .9]"
+	"Water_DX60"
+	{
+		"$fallbackmaterial" "water/water_rouge01_dx70"
+	}
+	"Water_DX80"
+	{
+		"$refractamount" .13
+		"$reflectamount" 2.5
+		"Proxies"
+		{
+			"AnimatedTexture"
+			{
+				"animatedtexturevar" "$normalmap"
+				"animatedtextureframenumvar" "$bumpframe"
+				"animatedtextureframerate" 30.00
+			}
+		}
+	}
+	"Water_DX81"
+	{
+		"$refractamount" .13
+		"$reflectamount" 2.5
+		"Proxies"
+		{
+			"AnimatedTexture"
+			{
+				"animatedtexturevar" "$normalmap"
+				"animatedtextureframenumvar" "$bumpframe"
+				"animatedtextureframerate" 30.00
+			}
+		}
+	}	
+	"$reflecttexture" "_rt_WaterReflection"
+	"$reflectamount" .75
+	"$reflecttint" "[1 .95 .85]"
+	"$scale" "[1 1]"
+	"$bumpmap" "dev/water_dudv"
+	"$normalmap" "dev/water_normal"
+	"$surfaceprop" "water"
+	"$bottommaterial" "water/water_rouge01_beneath"
+	"$bumpframe" 0
+	"$fogenable" 1
+	"$fogcolor" "{255 0 0}"
+	"$fogstart" 0
+	"$fogend" 300
+	"$scroll1" "[.03 .03 .1]"
+	"$scroll2" "[-.05 .05 .15]"
+	"Proxies"
+	{
+		"TextureScroll"
+		{
+			"texturescrollvar" "$bumptransform"
+			"texturescrollrate" .02
+			"texturescrollangle" 65.00
+		}
+	}
+	"%keywords" "bisou"
+}

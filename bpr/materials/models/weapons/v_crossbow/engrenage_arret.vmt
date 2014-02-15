@@ -1,0 +1,8 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "Models/Weapons/v_crossbow/engrenage"
+	"$bumpmap" "models/weapons/Normal"
+	"$model" 1
+
+	"$phong" "1"
+}

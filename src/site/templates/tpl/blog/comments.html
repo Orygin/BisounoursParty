@@ -1,0 +1,19 @@
+			<block name="comments">
+			<article>
+				<header>
+					<h2><a href="/{LANG_URL_DEVBLOG}/{LANG_URL_ARTICLE}/{articles.ARTICLE_ID}-{articles.ARTICLE_TITLE|niceurl}">{articles.ARTICLE_TITLE}</a></h2>
+				</header>
+				<article>
+					<!--<time>
+						<div class="news_day">{comments.ARTICLE_DATE_DAY}</div>
+						<div class="news_month">{comments.ARTICLE_DATE_MONTH}</div>
+						<div class="news_year">{comments.ARTICLE_DATE_YEAR}</div>
+						<div class="news_time">{comments.ARTICLE_DATE_HOUR}h{comments.ARTICLE_DATE_MINUTE}</div>
+					</time>-->
+					{comments.COMMENT_CONTENT|markdown}
+				</article>
+				<footer>
+					{LANG_BLOG_COMMENT_AUTHOR}<a href="/{LANG_URL_MEMBER}/{comments.COMMENT_AUTHOR_ID}-{comments.COMMENT_AUTHOR_NICK|niceurl}" class="author">{comments.COMMENTS_AUTHOR_NICK}</a>{LANG_BLOG_COMMENTS_CATEGORY}<a href="/{LANG_URL_DEVBLOG}/{LANG_URL_BLOG_CATEGORY}/{articles.ARTICLE_CATEGORY_ID}-{articles.ARTICLE_CATEGORY_NAME|niceurl}">{articles.ARTICLE_TITLE}</a>
+				</footer>
+			</article>
+			<blockelse />

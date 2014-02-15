@@ -1,0 +1,20 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models\items\push\sphere"
+	$surfaceprop ball
+	$model 1
+	"$bumpmap" "models/player/normalvie"
+	"$nodecal" "1"
+
+	"$phong" "1"
+	"$lightwarptexture" "lightwarp2"
+	"$halflambert" 1
+
+	"$phongexponent" "10"
+	"$phongboost" ".3"
+	"$phongfresnelranges"	"[.1 1 8]"
+
+	"$rimlight" "1"
+	"$rimlightexponent" "8"
+	"$rimlightboost" "10"
+}

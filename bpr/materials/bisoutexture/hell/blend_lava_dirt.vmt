@@ -1,0 +1,9 @@
+"WorldVertexTransition"
+{
+	"$basetexture" "bisoutexture/hell/rock01_lava"
+	"$basetexture2" "bisoutexture/hell/dirt01"
+	"%tooltexture" "bisoutexture/blend_tool"
+	"%keywords" "bisou"
+	"$surfaceprop" "rock"
+	"$surfaceprop2" "gravel"
+}

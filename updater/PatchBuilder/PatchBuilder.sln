@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{002A2DE9-8BB6-484D-9802-7E4AD4084715}") = "PatchBuilder", "PatchBuilder.visualdproj", "{625B006C-A030-4CF0-B925-53ADF75F93B2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{625B006C-A030-4CF0-B925-53ADF75F93B2}.Debug|Win32.ActiveCfg = Debug|Win32
+		{625B006C-A030-4CF0-B925-53ADF75F93B2}.Debug|Win32.Build.0 = Debug|Win32
+		{625B006C-A030-4CF0-B925-53ADF75F93B2}.Release|Win32.ActiveCfg = Release|Win32
+		{625B006C-A030-4CF0-B925-53ADF75F93B2}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

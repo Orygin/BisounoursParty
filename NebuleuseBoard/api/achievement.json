@@ -1,0 +1,9 @@
+{
+	"icon": "img/avatar.jpg",
+	"id": 2,
+	"name": "testachivement",
+	"fullName": "Test",
+	"fullDesc": "Beep Boop",
+	"progress": 1,
+	"progressMax": 420
+}

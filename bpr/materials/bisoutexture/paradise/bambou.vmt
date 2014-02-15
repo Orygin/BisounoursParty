@@ -1,0 +1,9 @@
+"LightmappedGeneric"
+{
+	"$basetexture" 	"bisoutexture/paradise/bambou"
+	"$bumpmap" 		"bisoutexture/paradise/bambounormal"
+	"$surfaceprop" 	"bambou"
+	"$translucent" 	1
+	"$nodecal" 		1
+	"%keywords" 	"bisou"
+}

@@ -1,0 +1,16 @@
+"UnlitTwoTexture"
+{
+	"$basetexture" "bisoutexture/cascade_fade"
+	"$texture2" "bisoutexture/cascade"
+	"$additive" "1"
+	"$nocull" 1
+	"Proxies"
+	{
+		"TextureScroll"
+		{
+			"texturescrollvar" "$texture2transform"
+			"texturescrollrate" 2.5
+			"texturescrollangle" -90
+		}
+	}
+}

@@ -1,0 +1,6 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/props/Flag_Vert"
+	"$translucent" 1
+	$nocull 1
+}

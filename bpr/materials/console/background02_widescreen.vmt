@@ -1,0 +1,10 @@
+"UnlitGeneric"
+{
+	"$basetexture" "console/background02_widescreen"
+	"$basetexturetransform" "center 0.5 1 scale 1 .8 rotate 0 translate 0 0" 
+	"$vertexcolor" 1
+	"$vertexalpha" 1
+	"$ignorez" 1
+	"$no_fullbright" 1
+	"$nolod" 1
+}

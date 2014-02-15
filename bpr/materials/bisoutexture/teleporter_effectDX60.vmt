@@ -1,0 +1,19 @@
+"UnlitGeneric"
+{
+   "$basetexture" "dev/water"
+   "$surfaceprop" "nuage"
+   "$additive" 1
+
+		"AnimatedTexture"
+		{
+			"animatedtexturevar" "$basetexture"
+			"animatedtextureframenumvar" "$frame"
+			"animatedtextureframerate" 20.00
+		}
+		"TextureScroll"
+		{
+			"texturescrollvar" "$basetexture"
+			"texturescrollrate" .10
+			"texturescrollangle" 90.00
+		}
+}

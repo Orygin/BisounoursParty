@@ -1,0 +1,124 @@
+// NOTE:  THIS FILE IS AUTOMATICALLY REGENERATED, 
+//DO NOT EDIT THIS HEADER, YOUR COMMENTS WILL BE LOST IF YOU DO
+// Multiplayer options script
+//
+// Format:
+//  Version [float]
+//  Options description followed by 
+//  Options defaults
+//
+// Option description syntax:
+//
+//  "cvar" { "Prompt" { type [ type info ] } { default } }
+//
+//  type = 
+//   BOOL   (a yes/no toggle)
+//   STRING
+//   NUMBER
+//   LIST
+//
+// type info:
+// BOOL                 no type info
+// NUMBER       min max range, use -1 -1 for no limits
+// STRING       no type info
+// LIST          delimited list of options value pairs
+//
+//
+// default depends on type
+// BOOL is "0" or "1"
+// NUMBER is "value"
+// STRING is "value"
+// LIST is "index", where index "0" is the first element of the list
+
+
+// Half-Life Server Configuration Layout Script (stores last settings chosen, too)
+// File generated:  Sun Nov 04 02:43:54 AM
+//
+//
+// Cvar	-	Setting
+
+VERSION 1.0
+
+DESCRIPTION SERVER_OPTIONS
+{
+	"hostname"
+	{
+		"#Valve_Hostname"
+		{ STRING }
+		{ "Bisounours Party server" }
+	}
+
+	"sv_password"
+	{
+		"#Valve_Server_Password"
+		{ STRING }
+		{ "" }
+	}
+
+	"mp_falldamage"
+	{
+		"#Valve_Falling_Damage"
+		{
+			LIST
+			"#Valve_Normal" "0"
+			"#Valve_Realistic" "1"
+			"#Valve_Fall_None" "2"
+		}
+		{ "1" }
+	}
+
+	"mp_teamplay"
+	{
+		"#Valve_Teamplay"
+		{
+			LIST
+			"#Bp_deathmatch" "0"
+			"#Bp_teamplay" "1"
+			"#Bp_random" "2"
+		}
+		{ "0" }
+	}
+
+	"mp_co_difficulty"
+	{
+		"#Bp_coop_difficulty"
+		{
+			LIST
+			"#Bp_coop_difficulty_auto" "0"
+			"#Bp_coop_difficulty_easy" "1"
+			"#Bp_coop_difficulty_normal" "2"
+			"#Bp_coop_difficulty_hard" "3"
+			"#Bp_coop_difficulty_carebear" "4"
+		}
+		{ "3" }
+	}
+
+	"mp_weaponstay"
+	{
+		"#Valve_Weapons_Stay"
+		{ BOOL }
+		{ "0" }
+	}
+
+	"mp_flashlight"
+	{
+		"#Valve_Flashlight"
+		{ BOOL }
+		{ "1" }
+	}
+
+	"mp_forcerespawn"
+	{
+		"#Valve_Force_Respawn"
+		{ BOOL }
+		{ "0" }
+	}
+
+	"mp_pogostick"
+	{
+		"#Bp_server_pogostick"
+		{ BOOL }
+		{ "1" }
+	}
+
+}

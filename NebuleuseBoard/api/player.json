@@ -1,0 +1,26 @@
+{
+	"response": {
+		"players": [
+			{
+				"steamid": "76561197988951608",
+				"communityvisibilitystate": 3,
+				"profilestate": 1,
+				"personaname": "Orygin ✓",
+				"lastlogoff": 1360090613,
+				"commentpermission": 1,
+				"profileurl": "http://steamcommunity.com/id/orygin/",
+				"avatar": "http://media.steampowered.com/steamcommunity/public/images/avatars/79/79d4d4b2adedcb62fc712840c02f41a67c7c981f.jpg",
+				"avatarmedium": "http://media.steampowered.com/steamcommunity/public/images/avatars/79/79d4d4b2adedcb62fc712840c02f41a67c7c981f_medium.jpg",
+				"avatarfull": "http://media.steampowered.com/steamcommunity/public/images/avatars/79/79d4d4b2adedcb62fc712840c02f41a67c7c981f_full.jpg",
+				"personastate": 1,
+				"realname": "Louis",
+				"primaryclanid": "103582791429523011",
+				"timecreated": 1174595446,
+				"loccountrycode": "BE",
+				"locstatecode": "06",
+				"loccityid": 6541
+			}
+		]
+		
+	}
+}

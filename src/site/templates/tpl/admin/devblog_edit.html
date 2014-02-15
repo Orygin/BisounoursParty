@@ -1,0 +1,33 @@
+<include tpl="header.html" />
+			<article>
+				<header>
+					<h2><a href="http://www.bisounoursparty.com/admin/">{PAGE_TITLE}</a> > <a href="http://www.bisounoursparty.com/admin/devblog/">DevBlog</a> > {LANG_ADMIN_EDIT}</h2>
+				</header>
+                                <article>
+                                            <form action="/admin/devblog/updateArticle/{ARTICLE_ID}" method="post">
+                                            <p>{LANG_BLOG_USINGMD|markdown}</p>
+                                            <input type="text" name="title" id="title" size="60" value="{ARTICLE_TITLE}"/>
+                                            <textarea name="content" rows="16" cols="80">{ARTICLE_CONTENT}</textarea>
+                                                   <select name="categorie" id="categorie">
+                                                       <block name="menu_categories">
+                                                           <if cond="{$ARTICLE_CATEGORY} == {$menu_categories.MENU_CATEGORY_ID} ">
+                                                                <option value="{menu_categories.MENU_CATEGORY_ID}" selected="selected">{menu_categories.MENU_CATEGORY_NAME}</option>
+                                                            <else />
+                                                                <option value="{menu_categories.MENU_CATEGORY_ID}">{menu_categories.MENU_CATEGORY_NAME}</option>
+                                                           </if>
+                                                       </block>
+                                                   </select>
+                                                   <if cond="{$ARTICLE_LANG} == 'fr'">
+                                                <input type="radio" name="lang" value="fr" id="fr" checked="checked" /> <label for="fr">Français</label>
+                                                <input type="radio" name="lang" value="en" id="en" /> <label for="en">English</label>
+                                                <else />
+                                                <input type="radio" name="lang" value="fr" id="fr" /> <label for="fr">Français</label>
+                                                <input type="radio" name="lang" value="en" id="en" checked="checked" /> <label for="en">English</label>
+                                                   </if>
+                                        <input type="submit" value="{LANG_SEND}" />    
+                                        </form>
+				</article>
+                            	<footer>
+				</footer>
+			</article>
+<include tpl="footer.html" />

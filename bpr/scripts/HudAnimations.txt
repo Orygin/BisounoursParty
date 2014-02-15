@@ -1,0 +1,358 @@
+//	Animate <panel name> <variable> <target value> <interpolator> <start time> <duration>
+//		variables:
+//			FgColor
+//			BgColor
+//			Position
+//			Size
+//			Blur
+//			TextColor
+//			TextColor2
+//			Alpha	(hud weapon selection only)
+//			SelectionAlpha (hud weapon selection only)
+//			TextScan (hud weapon selection only)
+//
+//		interpolator:
+//			Linear
+//			Accel (starts moving slow, ends fast)
+//			Deaccel (starts moving fast, ends slow)
+//
+//	RunEvent <event name> <start time>
+//		starts another even running at the specified time
+//
+//	StopEvent <event name> <start time>
+//		stops another event that is current running at the specified time
+//
+//	StopAnimation <panel name> <variable> <start time>
+//		stops all animations refering to the specified variable in the specified panel
+//
+//	StopPanelAnimations <panel name> <start time>
+//		stops all active animations operating on the specified panel
+//
+//
+// Useful game console commands:
+//	cl_Animationinfo <hudelement name> or <panelname> 
+//		displays all the animatable variables for the hud element
+
+event LevelInit
+{
+	Animate	HudHealthLogo	BgColor	"0 0 0 1"		Linear 	0.0	0.0 //MERWAN, BUG : Si on mets l'alpha du fond r 0, toutes les autres images disparaissent du hud (WTF?)
+}
+
+event OpenWeaponSelectionMenu
+{
+	StopEvent CloseWeaponSelectionMenu		0.0
+	StopEvent WeaponPickup				0.0
+	StopEvent FadeOutWeaponSelectionMenu	0.0
+
+	Animate HudWeaponSelection Alpha 		"128"			Linear 0.0 0.1
+	Animate HudWeaponSelection TextColor	"ColorWhite"	Linear 0.0 0.1
+	Animate HudWeaponSelection NumberColor	"ColorWhite"	Linear 0.0 0.1
+	
+}
+
+event FadeOutWeaponSelectionMenu
+{
+	Animate HudWeaponSelection TextColor	"ColorTransparent"	Linear 0.5 1.0
+	Animate HudWeaponSelection NumberColor	"ColorTransparent"	Linear 0.5 1.0
+	Animate HudWeaponSelection Alpha		"0" 				Linear 0.5 1.0
+
+}
+
+event CloseWeaponSelectionMenu
+{
+	Animate HudWeaponSelection TextColor	"ColorTransparent"	Linear 0.0 0.1
+	Animate HudWeaponSelection NumberColor	"ColorTransparent"	Linear 0.0 0.1
+	Animate HudWeaponSelection Alpha		"0" 				Linear 0.0 0.1
+
+}
+
+event HealthIncreasedAbove20
+{
+	StopEvent	HealthLoop  0.0
+	StopEvent	HealthPulse 0.0
+	StopEvent	HealthLow   0.0
+
+	Animate HudDamageIndicator DmgFullscreenColor	"0 0 0 0"		Linear 0.0 0.0
+
+	Animate	HudHealth		Blur		"3"			Linear	0.0		0.1
+	Animate	HudHealth		Blur		"0"			Deaccel	0.1		2.0
+}
+
+event HealthIncreasedBelow20
+{
+	Animate	HudHealth		Blur		"3"			Linear	0.0		0.1
+	Animate	HudHealth		Blur		"0"			Deaccel	0.1		2.0
+}
+
+event HudPlayerDeath
+{
+	StopEvent	HealthLoop  0.0
+	StopEvent	HealthPulse 0.0
+	StopEvent	HealthLow   0.0
+
+	Animate HudDamageIndicator DmgFullscreenColor	"255 0 0 8"			Deaccel 0.1 0.2
+	Animate HudDamageIndicator DmgFullscreenColor	"255 0 0 48"		Deaccel 0.3 4.0
+}
+
+// health has been damaged to below 20%
+event HealthLow
+{
+	Animate	HudHealth		Blur		"3"			Linear	0.0		0.1
+	Animate	HudHealth		Blur		"0"			Deaccel	0.1		2.0
+
+	RunEvent HudTakeDamageHighBehind 0.0
+
+	RunEvent HealthPulse	0.0
+}
+
+event HealthPulse
+{
+	Animate HudDamageIndicator DmgFullscreenColor	"255 0 0 40"	Linear 	0.0 0.0
+	Animate HudDamageIndicator DmgFullscreenColor	"0 0 0 0"		Deaccel 0.1 1.2
+	Animate HudDamageIndicator DmgFullscreenColor	"255 0 0 40"	Linear 	1.3 0.2
+
+	RunEvent HealthLoop	1.5
+}
+
+// call to loop HealthPulse
+event HealthLoop
+{
+	RunEvent HealthPulse 0.0
+}
+
+event SuitPowerIncreasedAbove20
+{
+}
+
+event SuitPowerIncreasedBelow20
+{
+}
+
+event SuitPowerZero
+{
+}
+
+event HealthDamageTaken
+{
+}
+
+event SuitDamageTaken
+{
+}
+
+// suit armor has been damaged to below 20%
+event SuitArmorLow
+{
+}
+
+// ammo has been picked up
+event AmmoIncreased
+{
+}
+
+// ammo has been decreased, but there is still some remaining
+event AmmoDecreased
+{
+
+}
+
+// primary ammo is zero
+event AmmoEmpty
+{
+}
+
+// ammo2 is the total ammo for a weapon that uses clip ammo
+event Ammo2Increased
+{
+}
+
+// total ammo has been decreased, but there is still some remaining
+event Ammo2Decreased
+{
+}
+
+// total ammo is zero
+event Ammo2Empty
+{
+
+}
+
+event AmmoSecondaryIncreased
+{
+}
+
+event AmmoSecondaryDecreased
+{
+}
+
+event AmmoSecondaryEmpty
+{
+}
+
+event WeaponChanged
+{
+}
+
+event HudTakeDamageFront
+{
+	RunEvent HudTakeDamageLeft	0.0
+	RunEvent HudTakeDamageRight	0.0
+}
+
+event HudTakeDamageLeft
+{
+	Animate HudDamageIndicator DmgColorLeft	"255 88 0 100"	Linear 0.0 0.0
+	Animate HudDamageIndicator DmgColorLeft	"255 0 0 100"	Linear 0.0 0.3
+	Animate HudDamageIndicator DmgColorLeft	"255 0 0 0"		Deaccel 0.3 0.5
+}
+
+event HudTakeDamageRight
+{
+	Animate HudDamageIndicator DmgColorRight	"255 88 0 100"	Linear 0.0 0.0
+	Animate HudDamageIndicator DmgColorRight	"255 0 0 100"	Linear 0.0 0.3
+	Animate HudDamageIndicator DmgColorRight	"255 0 0 0"		Deaccel 0.3 0.5
+}
+
+event HudTakeDamageBehind
+{
+	RunEvent HudTakeDamageLeft	0.0
+	RunEvent HudTakeDamageRight	0.0
+}
+
+event HudTakeDamageHighLeft
+{
+	Animate HudDamageIndicator DmgHighColorLeft	"255 88 0 200"	Linear 0.0 0.0
+	Animate HudDamageIndicator DmgHighColorLeft	"255 0 0 100"	Linear 0.0 0.4
+	Animate HudDamageIndicator DmgHighColorLeft	"255 0 0 0"		Deaccel 0.4 2.4
+}
+
+event HudTakeDamageHighRight
+{
+	Animate HudDamageIndicator DmgHighColorRight	"255 88 0 200"	Linear 0.0 0.0
+	Animate HudDamageIndicator DmgHighColorRight	"255 0 0 100"	Linear 0.0 0.4
+	Animate HudDamageIndicator DmgHighColorRight	"255 0 0 0"		Deaccel	0.4 2.4
+}
+
+event HudTakeDamageHigh
+{
+	Animate HudDamageIndicator DmgFullscreenColor	"255 88 0 100"	Linear 0.0 0.0
+	Animate HudDamageIndicator DmgFullscreenColor	"255 0 0 100"	Linear 0.0 0.4
+	Animate HudDamageIndicator DmgFullscreenColor	"255 0 0 0"		Deaccel 0.4 2.4
+}
+
+event HudTakeDamageDrown
+{
+	Animate HudDamageIndicator DmgFullscreenColor	"100 88 255 100"	Linear 0.0 0.0
+	Animate HudDamageIndicator DmgFullscreenColor	"100 150 255 100"	Linear 0.0 0.4
+	Animate HudDamageIndicator DmgFullscreenColor	"0 0 0 0"			Deaccel 0.4 2.4
+}
+
+event HudTakeDamagePoison
+{
+}
+
+event HudTakeDamageBurn
+{
+	Animate HudDamageIndicator DmgFullscreenColor	"255 0 0 100"	Linear 0.0 0.0
+	Animate HudDamageIndicator DmgFullscreenColor	"255 0 0 0"		Deaccel 0.2 0.4
+}
+
+event HudTakeDamageRadiation
+{
+	Animate HudDamageIndicator DmgFullscreenColor	"255 255 255 128"	Deaccel 0.0 0.1
+	Animate HudDamageIndicator DmgFullscreenColor	"255 255 255 0"	Deaccel 0.1 0.4
+	RunEvent HudTakeDamageBehind 0.0
+}
+
+event HintMessageShow
+{
+	StopPanelAnimations HudHintDisplay	0.0
+
+	Animate HudHintDisplay HintSize	"1"		Deaccel 0.0	0.3
+	Animate HudHintDisplay FgColor	"FgColor" 	Linear 0.4      0.4
+
+	// flash text
+	Animate HudHintDisplay FgColor	"FgColor" 	Linear 1.5 0.01
+	Animate HudHintDisplay FgColor	"255 220 0 255" Linear 2.0 0.2
+	Animate HudHintDisplay FgColor	"FgColor" 	Linear 2.2 0.2
+	Animate HudHintDisplay FgColor	"255 220 0 255" Linear 3.0 0.2
+	Animate HudHintDisplay FgColor	"FgColor" 	Linear 3.2 0.2
+
+	// hide the panel after a while	
+	Animate HudHintDisplay FgColor	"255 220 0 0"   Linear  10.0 	0.2
+	Animate HudHintDisplay HintSize	"0"		Deaccel 10.2	0.3
+}
+
+
+event HintMessageHide
+{
+	Animate HudHintDisplay FgColor	"255 220 0 0"   Linear  0.0 	0.2
+	Animate HudHintDisplay HintSize	"0"		Deaccel 0.2	0.3
+}
+
+event KeyHintMessageShow
+{
+	StopPanelAnimations HudHintKeyDisplay	0.0
+
+	// show the hints
+	Animate HudHintKeyDisplay Alpha	255 Linear 0.0 0.5
+
+	// flash text
+	Animate HudHintKeyDisplay FgColor	"FgColor" 	Linear 0.0 0.01
+	Animate HudHintKeyDisplay FgColor	"255 220 0 255" Linear 0.5 0.2
+	Animate HudHintKeyDisplay FgColor	"FgColor" 	Linear 0.7 0.2
+	Animate HudHintKeyDisplay FgColor	"255 220 0 255" Linear 1.5 0.2
+	Animate HudHintKeyDisplay FgColor	"FgColor" 	Linear 1.7 0.2
+
+	// hide the panel after a while	
+	Animate HudHintKeyDisplay Alpha	0 Linear 12.0 1.0
+}
+
+event KeyHintMessageHide
+{
+	Animate HudHintKeyDisplay Alpha	0 Linear 0.0 0.5
+}
+
+event PoisonDamageTaken
+{
+	Animate 	HudPoisonDamageIndicator 	Alpha	255 Linear 0.0 1.0
+	RunEvent 	PoisonLoop	0.0
+}
+
+event PoisonDamageCured
+{
+	StopEvent 	PoisonDamageTaken	0.0
+	StopEvent 	PoisonLoop		0.0
+	StopEvent 	PoisonPulse		0.0
+	Animate 	HudPoisonDamageIndicator 	Alpha	0 Linear 0.0 1.0
+}
+
+event PoisonPulse
+{
+	Animate HudPoisonDamageIndicator	TextColor	"255 100 255 255"		Accel	0.0		1.1
+	Animate HudPoisonDamageIndicator	TextColor	"255 0 255 255"			Deaccel	1.2		2.0
+	Animate HudPoisonDamageIndicator	BgColor		"255 0 255 30"			Accel	0.0		1.1
+	Animate HudPoisonDamageIndicator	BgColor		"255 100 255 30"		Deaccel	1.2		2.0
+	
+	Animate HudDamageIndicator DmgFullscreenColor	"160 255 70 40"	Linear 	0.0 0.8
+	Animate HudDamageIndicator DmgFullscreenColor	"160 255 70 0"		Deaccel 0.8 1.2
+	
+	RunEvent PoisonLoop	2.0
+}
+
+event PoisonLoop
+{
+	RunEvent PoisonPulse 0.0
+}
+
+event ShowCommentary
+{
+	StopEvent	HideCommentary 0.0
+	Animate 	HudCommentary 	Alpha	255 Linear 0.0 0.5
+}
+
+event HideCommentary
+{
+	StopEvent	ShowCommentary 0.0
+	Animate 	HudCommentary 	Alpha	0 Linear 0.0 0.5
+}

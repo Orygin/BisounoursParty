@@ -1,0 +1,10 @@
+"LightmappedGeneric"
+{
+	"$basetexture" 	"Models/props_bisou/reveil/reveil"
+
+	"$envmap" "env_cubemap"
+	"$surfaceprop" "metal"
+	"$envmapcontrast" 0
+	"$envmapsaturation" 1
+	"$envmaptint" "[1 .90 .10]"
+}

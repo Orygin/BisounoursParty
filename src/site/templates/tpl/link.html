@@ -1,0 +1,20 @@
+<include tpl="header.html" />
+			<article>
+				<header>
+					<h2>{PAGE_TITLE}</h2>
+				</header>
+				<article>
+                                    <if cond="{$ISCONNECTED} == 1">
+                                        <if cond="{$USER_CLOUDLINKED} == 0">
+                                            {LANG_LINK_NOTLINKED|markdown}<br/>
+                                            <a href="{USER_CONNECTLINK}"><img src="http://steamcommunity.com/public/images/signinthroughsteam/sits_small.png" /></a>
+                                        <else /><p>
+                                            {LANG_LINK_LINKED|markdown}<br/>
+                                        <img    src="{PLAYER_AVATAR}" style="float:left;"/><div style="float:justified;"><br/><strong>{PLAYER_NAME}</strong></div><div style="float:right;"><a href="/link/unlink">{LANG_LINK_UNLINK}</a></div><br/><br/><br/><br/>
+                                        </p></if>
+                                    <else />
+                                    {LANG_MENU_NOTCONNECTED}
+                                    </if>
+				</article>
+			</article>
+<include tpl="footer.html" />

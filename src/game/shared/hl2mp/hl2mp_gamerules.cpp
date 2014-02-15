@@ -1,0 +1,2868 @@
+//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//
+// Purpose: 
+//
+// $NoKeywords: $
+//=============================================================================//
+#include "cbase.h"
+#include "hl2mp_gamerules.h"
+#include "viewport_panel_names.h"
+#include "gameeventdefs.h"
+#include <KeyValues.h>
+#include "ammodef.h"
+#include <igameresources.h>
+
+#ifdef CLIENT_DLL
+	#include "c_hl2mp_player.h"
+	#include "../client/Cloud/bp_cloud.h"
+#else
+	#include "eventqueue.h"
+	#include "player.h"
+	#include "gamerules.h"
+	#include "game.h"
+	#include "items.h"
+	#include "entitylist.h"
+	#include "mapentities.h"
+	#include "in_buttons.h"
+	#include <ctype.h>
+	#include "voice_gamemgr.h"
+	#include "iscorer.h"
+	#include "hl2mp_player.h"
+	#include "weapon_hl2mpbasehlmpcombatweapon.h"
+	#include "weapon_carebearstare.h"
+	#include "team.h"
+	#include "voice_gamemgr.h"
+	#include "hl2mp_gameinterface.h"
+	#include "hl2mp_cvars.h"
+	#include "playerSkins.h"
+	#include "autovocals.h"
+	#include "weapon_pushball.h"
+	#include "game_config.h"
+
+	#include "hl2mp_bot_temp.h"
+
+extern void respawn(CBaseEntity *pEdict, bool fCopyCorpse);
+
+// Utility function
+bool FindInList( const char **pStrings, const char *pToFind )
+{
+	int i = 0;
+	while ( pStrings[i][0] != 0 )
+	{
+		if ( Q_stricmp( pStrings[i], pToFind ) == 0 )
+			return true;
+		i++;
+	}
+
+	return false;
+}
+
+ConVar mp_armor_respawn_time( "mp_armor_respawn_time", "30", FCVAR_GAMEDLL | FCVAR_NOTIFY );
+ConVar mp_weapon_respawn_time( "mp_weapon_respawn_time", "30", FCVAR_GAMEDLL | FCVAR_NOTIFY );
+ConVar mp_item_respawn_time( "mp_item_respawn_time", "20", FCVAR_GAMEDLL | FCVAR_NOTIFY );
+
+//ConVar sv_hl2mp_weapon_respawn_time( "sv_hl2mp_weapon_respawn_time", "20", FCVAR_GAMEDLL | FCVAR_NOTIFY );
+//ConVar sv_hl2mp_item_respawn_time( "sv_hl2mp_item_respawn_time", "30", FCVAR_GAMEDLL | FCVAR_NOTIFY );
+ConVar sv_report_client_settings("sv_report_client_settings", "0", FCVAR_GAMEDLL | FCVAR_NOTIFY );
+
+extern ConVar mp_chattime;
+
+extern CBaseEntity	 *g_pLastCombineSpawn;
+extern CBaseEntity	 *g_pLastRebelSpawn;
+
+#define WEAPON_MAX_DISTANCE_FROM_SPAWN 64
+
+#endif
+
+
+REGISTER_GAMERULES_CLASS( CHL2MPRules );
+
+BEGIN_NETWORK_TABLE_NOBASE( CHL2MPRules, DT_HL2MPRules )
+
+	#ifdef CLIENT_DLL
+		RecvPropFloat( RECVINFO(m_flPhaseTimeLeft)),
+		RecvPropBool( RECVINFO( m_bTeamPlayEnabled ) ),
+		RecvPropInt( RECVINFO( m_iGameType ) ),
+		RecvPropBool( RECVINFO(m_bIsFortsBuildPhase)),
+		RecvPropBool( RECVINFO(m_bIsFirstBuildPhase)),
+		RecvPropFloat( RECVINFO(m_flGameStartTime)),
+		RecvPropFloat( RECVINFO(m_flHumiliationEndTime)),
+		RecvPropFloat( RECVINFO(m_flTimeLimitMod)),
+		RecvPropInt( RECVINFO(m_iForcePogo)),
+		RecvPropInt( RECVINFO(m_iForceTimeLimit)),
+	#else
+		SendPropFloat( SENDINFO(m_flPhaseTimeLeft) ),
+		SendPropBool( SENDINFO( m_bTeamPlayEnabled ) ),
+		SendPropInt( SENDINFO( m_iGameType ), 4, SPROP_UNSIGNED ),
+		SendPropBool( SENDINFO(m_bIsFortsBuildPhase)),
+		SendPropBool( SENDINFO(m_bIsFirstBuildPhase)),
+		SendPropFloat( SENDINFO(m_flGameStartTime), 0, SPROP_COORD ),
+		SendPropFloat( SENDINFO(m_flHumiliationEndTime), 0, SPROP_COORD ),
+		SendPropFloat( SENDINFO(m_flTimeLimitMod), 0, SPROP_COORD ),
+		SendPropInt( SENDINFO(m_iForcePogo) ),
+		SendPropInt( SENDINFO(m_iForceTimeLimit) ),
+	#endif
+
+END_NETWORK_TABLE()
+
+
+LINK_ENTITY_TO_CLASS( hl2mp_gamerules, CHL2MPGameRulesProxy );
+IMPLEMENT_NETWORKCLASS_ALIASED( HL2MPGameRulesProxy, DT_HL2MPGameRulesProxy )
+
+static HL2MPViewVectors g_HL2MPViewVectors(
+	Vector( 0, 0, 64 ),       //VEC_VIEW (m_vView) 
+							  
+	Vector(-16, -16, 0 ),	  //VEC_HULL_MIN (m_vHullMin)
+	Vector( 16,  16,  72 ),	  //VEC_HULL_MAX (m_vHullMax)
+							  					
+	Vector(-16, -16, 0 ),	  //VEC_DUCK_HULL_MIN (m_vDuckHullMin)
+	Vector( 16,  16,  36 ),	  //VEC_DUCK_HULL_MAX	(m_vDuckHullMax)
+	Vector( 0, 0, 28 ),		  //VEC_DUCK_VIEW		(m_vDuckView)
+							  					
+	Vector(-10, -10, -10 ),	  //VEC_OBS_HULL_MIN	(m_vObsHullMin)
+	Vector( 10,  10,  10 ),	  //VEC_OBS_HULL_MAX	(m_vObsHullMax)
+							  					
+	Vector( 0, 0, 14 ),		  //VEC_DEAD_VIEWHEIGHT (m_vDeadViewHeight)
+
+	Vector(-16, -16, 0 ),	  //VEC_CROUCH_TRACE_MIN (m_vCrouchTraceMin)
+	Vector( 16,  16,  60 )	  //VEC_CROUCH_TRACE_MAX (m_vCrouchTraceMax)
+);
+
+static const char *s_PreserveEnts[] =
+{
+	"ai_network",
+	"ai_hint",
+	"hl2mp_gamerules",
+	"team_manager",
+	"player_manager",
+	"env_soundscape",
+	"env_soundscape_proxy",
+	"env_soundscape_triggerable",
+	"env_sun",
+	"env_wind",
+	"env_fog_controller",
+	"func_brush",
+	"func_wall",
+	"func_buyzone",
+	"func_illusionary",
+	"infodecal",
+	"info_projecteddecal",
+	"info_node",
+	"info_target",
+	"info_node_hint",
+	"info_player_deathmatch",
+	"info_player_combine",
+	"info_player_rebel",
+	"info_map_parameters",
+	"keyframe_rope",
+	"move_rope",
+	"info_ladder",
+	"player",
+	"point_viewcontrol",
+	"scene_manager",
+	"shadow_control",
+	"sky_camera",
+	"soundent",
+	"trigger_soundscape",
+	"viewmodel",
+	"predicted_viewmodel",
+	"worldspawn",
+	"point_devshot_camera",
+	"", // END Marker
+};
+
+
+
+#ifdef CLIENT_DLL
+	void RecvProxy_HL2MPRules( const RecvProp *pProp, void **pOut, void *pData, int objectID )
+	{
+		CHL2MPRules *pRules = HL2MPRules();
+		Assert( pRules );
+		*pOut = pRules;
+	}
+
+	BEGIN_RECV_TABLE( CHL2MPGameRulesProxy, DT_HL2MPGameRulesProxy )
+		RecvPropDataTable( "hl2mp_gamerules_data", 0, 0, &REFERENCE_RECV_TABLE( DT_HL2MPRules ), RecvProxy_HL2MPRules )
+	END_RECV_TABLE()
+#else
+	void* SendProxy_HL2MPRules( const SendProp *pProp, const void *pStructBase, const void *pData, CSendProxyRecipients *pRecipients, int objectID )
+	{
+		CHL2MPRules *pRules = HL2MPRules();
+		Assert( pRules );
+		return pRules;
+	}
+
+	BEGIN_SEND_TABLE( CHL2MPGameRulesProxy, DT_HL2MPGameRulesProxy )
+		SendPropDataTable( "hl2mp_gamerules_data", 0, &REFERENCE_SEND_TABLE( DT_HL2MPRules ), SendProxy_HL2MPRules )
+	END_SEND_TABLE()
+#endif
+
+#ifndef CLIENT_DLL
+
+	class CVoiceGameMgrHelper : public IVoiceGameMgrHelper
+	{
+	public:
+		virtual bool		CanPlayerHearPlayer( CBasePlayer *pListener, CBasePlayer *pTalker, bool &bProximity )
+		{
+			return ( pListener->GetTeamNumber() == pTalker->GetTeamNumber() );
+		}
+	};
+	CVoiceGameMgrHelper g_VoiceGameMgrHelper;
+	IVoiceGameMgrHelper *g_pVoiceGameMgrHelper = &g_VoiceGameMgrHelper;
+
+#endif
+
+// NOTE: the indices here must match TEAM_TERRORIST, TEAM_CT, TEAM_SPECTATOR, etc.
+char *sTeamNames[] =
+{
+	"Unassigned",
+	"Spectator",
+	"Pink",
+	"Green",
+};
+
+CHL2MPRules::CHL2MPRules()
+{
+
+#ifndef CLIENT_DLL
+	// Create the team managers
+	for ( int i = 0; i < ARRAYSIZE( sTeamNames ); i++ )
+	{
+		CTeam *pTeam = static_cast<CTeam*>(CreateEntityByName( "team_manager" ));
+		pTeam->Init( sTeamNames[i], i );
+
+		g_Teams.AddToTail( pTeam );
+	}
+
+	m_bTeamPlayEnabled = teamplay.GetBool();
+	m_flIntermissionEndTime = 0.0f;
+	
+
+	m_hRespawnableItemsAndWeapons.RemoveAll();
+	m_tmNextPeriodicThink = 0;
+	m_flRestartGameTime = 0;
+	m_fPushRespawnDelay = 0;
+	m_flPushLastBallCheck = 0;
+	m_bPushRespawn = false;
+	m_bCompleteReset = false;
+	m_bHeardAllPlayersReady = false;
+	m_bAwaitingReadyRestart = false;
+	m_bDomDidPointCheck = false;
+
+	if(m_bTeamPlayEnabled)
+		SetGameType(GAME_TDM);
+	else
+		SetGameType(GAME_DM);
+
+	m_iForceBunnyhop = 1;
+	m_iForcePogo = 1;
+	m_iForceFlashlight = 1;
+
+	m_iForceFallDamage = -1;
+
+	m_iForceTimeLimit = -1;
+	m_iForceFragLimit = -1;
+	m_iForceStartArmor = -1;
+
+	m_flForceDomScoreTimer = -1;
+	m_iForceDomScoreMultiplier = -1;
+
+	m_flLastPhaseTime = 0.0f;
+	m_flLastDomScoreTime = 0.0f;
+	m_flIntermissionEndTime = 0.0f;
+	m_flHumiliationEndTime = 0.0f;
+	m_flPhaseTimeLeft = 0.0f;
+	m_flTimeLimitMod = 0.0f;
+
+	m_bDontDropWeapons = false;
+	m_bOnlyGiveFlower = false;
+	m_nWinningTeam = 0;
+	m_pBestPlayer = NULL;
+	m_bAlreadySetSkill = false;
+	m_flGameStartTime = gpGlobals->curtime;
+	m_bIsFirstBuildPhase = true;
+
+	for(int i = 0; i < FORTS_MAX_INFOS; i++)
+	{
+		m_apFortsInfosGreen[i] = NULL;
+		m_apFortsInfosPink[i] = NULL;
+	}
+
+	for(int i = 0; i < DOM_MAX_ZONES; i++)
+		m_iDomZones[i] = -1;
+
+	InitDefaultAIRelationships();
+
+	m_hRespawnableItemsAndWeapons.RemoveAll();
+#else
+	m_flGameStartTime = gpGlobals->curtime;
+	m_flHumiliationEndTime = 0.0f;
+#endif
+}
+
+const CViewVectors* CHL2MPRules::GetViewVectors()const
+{
+	return &g_HL2MPViewVectors;
+}
+
+const HL2MPViewVectors* CHL2MPRules::GetHL2MPViewVectors()const
+{
+	return &g_HL2MPViewVectors;
+}
+	
+CHL2MPRules::~CHL2MPRules( void )
+{
+#ifndef CLIENT_DLL
+	// Note, don't delete each team since they are in the gEntList and will 
+	// automatically be deleted from there, instead.
+	g_Teams.Purge();
+#endif
+}
+	 #ifndef CLIENT_DLL 
+void CHL2MPRules::InitDefaultAIRelationships( void )
+	{
+		int i, j;
+
+		//  Allocate memory for default relationships
+		CBaseCombatCharacter::AllocateDefaultRelationships();
+
+		// --------------------------------------------------------------
+		// First initialize table so we can report missing relationships
+		// --------------------------------------------------------------
+		for (i=0;i<NUM_AI_CLASSES;i++)
+		{
+			for (j=0;j<NUM_AI_CLASSES;j++)
+			{
+				// By default all relationships are neutral of priority zero
+				CBaseCombatCharacter::SetDefaultRelationship( (Class_T)i, (Class_T)j, D_NU, 0 );
+			}
+		}
+
+		// ------------------------------------------------------------
+		//	> CLASS_ANTLION
+		// ------------------------------------------------------------
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION,			CLASS_NONE,				D_NU, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION,			CLASS_PLAYER,			D_HT, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION,			CLASS_BARNACLE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION,			CLASS_BULLSEYE,			D_NU, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION,			CLASS_BULLSQUID,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION,			CLASS_CITIZEN_PASSIVE,	D_HT, 0);	
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION,			CLASS_CITIZEN_REBEL,	D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION,			CLASS_COMBINE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION,			CLASS_COMBINE_GUNSHIP,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION,			CLASS_COMBINE_HUNTER,	D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION,			CLASS_CONSCRIPT,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION,			CLASS_FLARE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION,			CLASS_HEADCRAB,			D_HT, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION,			CLASS_HOUNDEYE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION,			CLASS_MANHACK,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION,			CLASS_METROPOLICE,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION,			CLASS_MILITARY,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION,			CLASS_MISSILE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION,			CLASS_SCANNER,			D_HT, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION,			CLASS_STALKER,			D_HT, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION,			CLASS_VORTIGAUNT,		D_HT, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION,			CLASS_ZOMBIE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION,			CLASS_PROTOSNIPER,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION,			CLASS_ANTLION,			D_LI, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION,			CLASS_EARTH_FAUNA,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION,			CLASS_PLAYER_ALLY,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION,			CLASS_PLAYER_ALLY_VITAL,D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION,			CLASS_HACKED_ROLLERMINE,D_HT, 0);
+
+		// ------------------------------------------------------------
+		//	> CLASS_BARNACLE
+		//
+		//  In this case, the relationship D_HT indicates which characters
+		//  the barnacle will try to eat.
+		// ------------------------------------------------------------
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BARNACLE,			CLASS_NONE,				D_NU, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BARNACLE,			CLASS_PLAYER,			D_HT, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BARNACLE,			CLASS_ANTLION,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BARNACLE,			CLASS_BARNACLE,			D_LI, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BARNACLE,			CLASS_BULLSEYE,			D_NU, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_BARNACLE,			CLASS_BULLSQUID,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BARNACLE,			CLASS_CITIZEN_PASSIVE,	D_HT, 0);	
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BARNACLE,			CLASS_CITIZEN_REBEL,	D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BARNACLE,			CLASS_COMBINE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BARNACLE,			CLASS_COMBINE_GUNSHIP,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BARNACLE,			CLASS_COMBINE_HUNTER,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BARNACLE,			CLASS_CONSCRIPT,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BARNACLE,			CLASS_FLARE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BARNACLE,			CLASS_HEADCRAB,			D_HT, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_BARNACLE,			CLASS_HOUNDEYE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BARNACLE,			CLASS_MANHACK,			D_FR, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BARNACLE,			CLASS_METROPOLICE,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BARNACLE,			CLASS_MILITARY,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BARNACLE,			CLASS_MISSILE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BARNACLE,			CLASS_SCANNER,			D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BARNACLE,			CLASS_STALKER,			D_HT, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BARNACLE,			CLASS_VORTIGAUNT,		D_HT, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BARNACLE,			CLASS_ZOMBIE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BARNACLE,			CLASS_PROTOSNIPER,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BARNACLE,			CLASS_EARTH_FAUNA,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BARNACLE,			CLASS_PLAYER_ALLY,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BARNACLE,			CLASS_PLAYER_ALLY_VITAL,D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BARNACLE,			CLASS_HACKED_ROLLERMINE,D_HT, 0);
+
+		// ------------------------------------------------------------
+		//	> CLASS_BULLSEYE
+		// ------------------------------------------------------------
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSEYE,			CLASS_NONE,				D_NU, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSEYE,			CLASS_PLAYER,			D_NU, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSEYE,			CLASS_ANTLION,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSEYE,			CLASS_BARNACLE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSEYE,			CLASS_BULLSEYE,			D_NU, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSEYE,			CLASS_BULLSQUID,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSEYE,			CLASS_CITIZEN_PASSIVE,	D_NU, 0);	
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSEYE,			CLASS_CITIZEN_REBEL,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSEYE,			CLASS_COMBINE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSEYE,			CLASS_COMBINE_GUNSHIP,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSEYE,			CLASS_COMBINE_HUNTER,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSEYE,			CLASS_CONSCRIPT,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSEYE,			CLASS_FLARE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSEYE,			CLASS_HEADCRAB,			D_NU, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSEYE,			CLASS_HOUNDEYE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSEYE,			CLASS_MANHACK,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSEYE,			CLASS_METROPOLICE,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSEYE,			CLASS_MILITARY,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSEYE,			CLASS_MISSILE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSEYE,			CLASS_SCANNER,			D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSEYE,			CLASS_STALKER,			D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSEYE,			CLASS_VORTIGAUNT,		D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSEYE,			CLASS_ZOMBIE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSEYE,			CLASS_PROTOSNIPER,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSEYE,			CLASS_EARTH_FAUNA,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSEYE,			CLASS_PLAYER_ALLY,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSEYE,			CLASS_PLAYER_ALLY_VITAL,D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSEYE,			CLASS_HACKED_ROLLERMINE,D_NU, 0);
+
+		// ------------------------------------------------------------
+		//	> CLASS_BULLSQUID
+		// ------------------------------------------------------------
+		/*
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSQUID,			CLASS_NONE,				D_NU, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSQUID,			CLASS_PLAYER,			D_HT, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSQUID,			CLASS_ANTLION,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSQUID,			CLASS_BARNACLE,			D_FR, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSQUID,			CLASS_BULLSEYE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSQUID,			CLASS_BULLSQUID,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSQUID,			CLASS_CITIZEN_PASSIVE,	D_HT, 0);	
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSQUID,			CLASS_CITIZEN_REBEL,	D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSQUID,			CLASS_COMBINE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSQUID,			CLASS_COMBINE_GUNSHIP,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSQUID,			CLASS_COMBINE_HUNTER,	D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSQUID,			CLASS_CONSCRIPT,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSQUID,			CLASS_FLARE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSQUID,			CLASS_HEADCRAB,			D_HT, 1);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSQUID,			CLASS_HOUNDEYE,			D_HT, 1);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSQUID,			CLASS_MANHACK,			D_FR, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSQUID,			CLASS_METROPOLICE,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSQUID,			CLASS_MILITARY,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSQUID,			CLASS_MISSILE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSQUID,			CLASS_SCANNER,			D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSQUID,			CLASS_STALKER,			D_HT, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSQUID,			CLASS_VORTIGAUNT,		D_HT, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSQUID,			CLASS_ZOMBIE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSQUID,			CLASS_PROTOSNIPER,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSQUID,			CLASS_EARTH_FAUNA,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSQUID,			CLASS_PLAYER_ALLY,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSQUID,			CLASS_PLAYER_ALLY_VITAL,D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_BULLSQUID,			CLASS_HACKED_ROLLERMINE,D_HT, 0);
+		*/
+		// ------------------------------------------------------------
+		//	> CLASS_CITIZEN_PASSIVE
+		// ------------------------------------------------------------
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_PASSIVE,	CLASS_NONE,				D_NU, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_PASSIVE,	CLASS_PLAYER,			D_NU, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_PASSIVE,	CLASS_ANTLION,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_PASSIVE,	CLASS_BARNACLE,			D_FR, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_PASSIVE,	CLASS_BULLSEYE,			D_NU, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_PASSIVE,	CLASS_BULLSQUID,		D_FR, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_PASSIVE,	CLASS_CITIZEN_PASSIVE,	D_NU, 0);	
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_PASSIVE,	CLASS_CITIZEN_REBEL,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_PASSIVE,	CLASS_COMBINE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_PASSIVE,	CLASS_COMBINE_GUNSHIP,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_PASSIVE,	CLASS_COMBINE_HUNTER,	D_FR, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_PASSIVE,	CLASS_CONSCRIPT,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_PASSIVE,	CLASS_FLARE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_PASSIVE,	CLASS_HEADCRAB,			D_FR, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_PASSIVE,	CLASS_HOUNDEYE,			D_FR, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_PASSIVE,	CLASS_MANHACK,			D_FR, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_PASSIVE,	CLASS_METROPOLICE,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_PASSIVE,	CLASS_MILITARY,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_PASSIVE,	CLASS_MISSILE,			D_FR, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_PASSIVE,	CLASS_SCANNER,			D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_PASSIVE,	CLASS_STALKER,			D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_PASSIVE,	CLASS_VORTIGAUNT,		D_LI, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_PASSIVE,	CLASS_ZOMBIE,			D_FR, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_PASSIVE,	CLASS_PROTOSNIPER,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_PASSIVE,	CLASS_EARTH_FAUNA,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_PASSIVE,	CLASS_PLAYER_ALLY,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_PASSIVE,	CLASS_PLAYER_ALLY_VITAL,D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_PASSIVE,	CLASS_HACKED_ROLLERMINE,D_NU, 0);
+
+		// ------------------------------------------------------------
+		//	> CLASS_CITIZEN_REBEL
+		// ------------------------------------------------------------
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_REBEL,		CLASS_NONE,				D_NU, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_REBEL,		CLASS_PLAYER,			D_NU, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_REBEL,		CLASS_ANTLION,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_REBEL,		CLASS_BARNACLE,			D_FR, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_REBEL,		CLASS_BULLSEYE,			D_NU, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_REBEL,		CLASS_BULLSQUID,		D_FR, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_REBEL,		CLASS_CITIZEN_PASSIVE,	D_NU, 0);	
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_REBEL,		CLASS_CITIZEN_REBEL,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_REBEL,		CLASS_COMBINE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_REBEL,		CLASS_COMBINE_GUNSHIP,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_REBEL,		CLASS_COMBINE_HUNTER,	D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_REBEL,		CLASS_CONSCRIPT,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_REBEL,		CLASS_FLARE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_REBEL,		CLASS_HEADCRAB,			D_HT, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_REBEL,		CLASS_HOUNDEYE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_REBEL,		CLASS_MANHACK,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_REBEL,		CLASS_METROPOLICE,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_REBEL,		CLASS_MILITARY,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_REBEL,		CLASS_MISSILE,			D_FR, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_REBEL,		CLASS_SCANNER,			D_HT, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_REBEL,		CLASS_STALKER,			D_HT, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_REBEL,		CLASS_VORTIGAUNT,		D_LI, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_REBEL,		CLASS_ZOMBIE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_REBEL,		CLASS_PROTOSNIPER,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_REBEL,		CLASS_EARTH_FAUNA,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_REBEL,		CLASS_PLAYER_ALLY,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_REBEL,		CLASS_PLAYER_ALLY_VITAL,D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CITIZEN_REBEL,		CLASS_HACKED_ROLLERMINE,D_NU, 0);
+
+		// ------------------------------------------------------------
+		//	> CLASS_COMBINE
+		// ------------------------------------------------------------
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE,			CLASS_NONE,				D_NU, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE,			CLASS_PLAYER,			D_HT, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE,			CLASS_ANTLION,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE,			CLASS_BARNACLE,			D_FR, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE,			CLASS_BULLSEYE,			D_NU, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE,			CLASS_BULLSQUID,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE,			CLASS_CITIZEN_PASSIVE,	D_NU, 0);	
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE,			CLASS_CITIZEN_REBEL,	D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE,			CLASS_COMBINE,			D_LI, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE,			CLASS_COMBINE_GUNSHIP,	D_LI, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE,			CLASS_COMBINE_HUNTER,	D_LI, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE,			CLASS_CONSCRIPT,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE,			CLASS_FLARE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE,			CLASS_HEADCRAB,			D_HT, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE,			CLASS_HOUNDEYE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE,			CLASS_MANHACK,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE,			CLASS_METROPOLICE,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE,			CLASS_MILITARY,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE,			CLASS_MISSILE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE,			CLASS_SCANNER,			D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE,			CLASS_STALKER,			D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE,			CLASS_VORTIGAUNT,		D_HT, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE,			CLASS_ZOMBIE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE,			CLASS_PROTOSNIPER,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE,			CLASS_EARTH_FAUNA,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE,			CLASS_PLAYER_ALLY,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE,			CLASS_PLAYER_ALLY_VITAL,D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE,			CLASS_HACKED_ROLLERMINE,D_HT, 0);
+
+		// ------------------------------------------------------------
+		//	> CLASS_COMBINE_GUNSHIP
+		// ------------------------------------------------------------
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP,		CLASS_NONE,				D_NU, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP,		CLASS_PLAYER,			D_HT, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP,		CLASS_ANTLION,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP,		CLASS_BARNACLE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP,		CLASS_BULLSEYE,			D_NU, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP,		CLASS_BULLSQUID,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP,		CLASS_CITIZEN_PASSIVE,	D_NU, 0);	
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP,		CLASS_CITIZEN_REBEL,	D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP,		CLASS_COMBINE,			D_LI, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP,		CLASS_COMBINE_GUNSHIP,	D_LI, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP,		CLASS_COMBINE_HUNTER,	D_LI, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP,		CLASS_CONSCRIPT,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP,		CLASS_FLARE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP,		CLASS_HEADCRAB,			D_NU, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP,		CLASS_HOUNDEYE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP,		CLASS_MANHACK,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP,		CLASS_METROPOLICE,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP,		CLASS_MILITARY,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP,		CLASS_MISSILE,			D_FR, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP,		CLASS_SCANNER,			D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP,		CLASS_STALKER,			D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP,		CLASS_VORTIGAUNT,		D_HT, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP,		CLASS_ZOMBIE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP,		CLASS_PROTOSNIPER,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP,		CLASS_EARTH_FAUNA,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP,		CLASS_PLAYER_ALLY,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP,		CLASS_PLAYER_ALLY_VITAL,D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP,		CLASS_HACKED_ROLLERMINE,D_HT, 0);
+
+		// ------------------------------------------------------------
+		//	> CLASS_COMBINE_HUNTER
+		// ------------------------------------------------------------
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_HUNTER,		CLASS_NONE,				D_NU, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_HUNTER,		CLASS_PLAYER,			D_HT, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_HUNTER,		CLASS_ANTLION,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_HUNTER,		CLASS_BARNACLE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_HUNTER,		CLASS_BULLSEYE,			D_NU, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_HUNTER,	CLASS_BULLSQUID,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_HUNTER,		CLASS_CITIZEN_PASSIVE,	D_HT, 0);	
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_HUNTER,		CLASS_CITIZEN_REBEL,	D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_HUNTER,		CLASS_COMBINE,			D_LI, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_HUNTER,		CLASS_COMBINE_GUNSHIP,	D_LI, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_HUNTER,		CLASS_COMBINE_HUNTER,	D_LI, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_HUNTER,		CLASS_CONSCRIPT,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_HUNTER,		CLASS_FLARE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_HUNTER,		CLASS_HEADCRAB,			D_HT, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_HUNTER,	CLASS_HOUNDEYE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_HUNTER,		CLASS_MANHACK,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_HUNTER,		CLASS_METROPOLICE,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_HUNTER,		CLASS_MILITARY,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_HUNTER,		CLASS_MISSILE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_HUNTER,		CLASS_SCANNER,			D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_HUNTER,		CLASS_STALKER,			D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_HUNTER,		CLASS_VORTIGAUNT,		D_HT, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_HUNTER,		CLASS_ZOMBIE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_HUNTER,		CLASS_PROTOSNIPER,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_HUNTER,		CLASS_EARTH_FAUNA,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_HUNTER,		CLASS_PLAYER_ALLY,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_HUNTER,		CLASS_PLAYER_ALLY_VITAL,D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_HUNTER,		CLASS_HACKED_ROLLERMINE,D_HT, 0);
+
+		// ------------------------------------------------------------
+		//	> CLASS_CONSCRIPT
+		// ------------------------------------------------------------
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CONSCRIPT,			CLASS_NONE,				D_NU, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CONSCRIPT,			CLASS_PLAYER,			D_NU, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CONSCRIPT,			CLASS_ANTLION,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CONSCRIPT,			CLASS_BARNACLE,			D_FR, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CONSCRIPT,			CLASS_BULLSEYE,			D_NU, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_CONSCRIPT,			CLASS_BULLSQUID,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CONSCRIPT,			CLASS_CITIZEN_PASSIVE,	D_NU, 0);	
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CONSCRIPT,			CLASS_CITIZEN_REBEL,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CONSCRIPT,			CLASS_COMBINE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CONSCRIPT,			CLASS_COMBINE_GUNSHIP,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CONSCRIPT,			CLASS_COMBINE_HUNTER,	D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CONSCRIPT,			CLASS_CONSCRIPT,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CONSCRIPT,			CLASS_FLARE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CONSCRIPT,			CLASS_HEADCRAB,			D_HT, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_CONSCRIPT,			CLASS_HOUNDEYE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CONSCRIPT,			CLASS_MANHACK,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CONSCRIPT,			CLASS_METROPOLICE,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CONSCRIPT,			CLASS_MILITARY,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CONSCRIPT,			CLASS_MISSILE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CONSCRIPT,			CLASS_SCANNER,			D_HT, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CONSCRIPT,			CLASS_STALKER,			D_HT, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CONSCRIPT,			CLASS_VORTIGAUNT,		D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CONSCRIPT,			CLASS_ZOMBIE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CONSCRIPT,			CLASS_PROTOSNIPER,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CONSCRIPT,			CLASS_EARTH_FAUNA,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CONSCRIPT,			CLASS_PLAYER_ALLY,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CONSCRIPT,			CLASS_PLAYER_ALLY_VITAL,D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_CONSCRIPT,			CLASS_HACKED_ROLLERMINE,D_NU, 0);
+		
+		// ------------------------------------------------------------
+		//	> CLASS_FLARE
+		// ------------------------------------------------------------
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_FLARE,			CLASS_NONE,				D_NU, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_FLARE,			CLASS_PLAYER,			D_NU, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_FLARE,			CLASS_ANTLION,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_FLARE,			CLASS_BARNACLE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_FLARE,			CLASS_BULLSEYE,			D_NU, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_FLARE,			CLASS_BULLSQUID,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_FLARE,			CLASS_CITIZEN_PASSIVE,	D_NU, 0);	
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_FLARE,			CLASS_CITIZEN_REBEL,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_FLARE,			CLASS_COMBINE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_FLARE,			CLASS_COMBINE_GUNSHIP,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_FLARE,			CLASS_COMBINE_HUNTER,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_FLARE,			CLASS_CONSCRIPT,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_FLARE,			CLASS_FLARE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_FLARE,			CLASS_HEADCRAB,			D_NU, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_FLARE,			CLASS_HOUNDEYE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_FLARE,			CLASS_MANHACK,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_FLARE,			CLASS_METROPOLICE,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_FLARE,			CLASS_MILITARY,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_FLARE,			CLASS_MISSILE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_FLARE,			CLASS_FLARE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_FLARE,			CLASS_SCANNER,			D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_FLARE,			CLASS_STALKER,			D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_FLARE,			CLASS_VORTIGAUNT,		D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_FLARE,			CLASS_ZOMBIE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_FLARE,			CLASS_PROTOSNIPER,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_FLARE,			CLASS_EARTH_FAUNA,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_FLARE,			CLASS_PLAYER_ALLY,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_FLARE,			CLASS_PLAYER_ALLY_VITAL,D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_FLARE,			CLASS_HACKED_ROLLERMINE,D_NU, 0);
+
+		// ------------------------------------------------------------
+		//	> CLASS_HEADCRAB
+		// ------------------------------------------------------------
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HEADCRAB,			CLASS_NONE,				D_NU, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HEADCRAB,			CLASS_PLAYER,			D_HT, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HEADCRAB,			CLASS_ANTLION,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HEADCRAB,			CLASS_BARNACLE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HEADCRAB,			CLASS_BULLSEYE,			D_NU, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_HEADCRAB,			CLASS_BULLSQUID,		D_FR, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HEADCRAB,			CLASS_CITIZEN_PASSIVE,	D_HT, 0);	
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HEADCRAB,			CLASS_CITIZEN_REBEL,	D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HEADCRAB,			CLASS_COMBINE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HEADCRAB,			CLASS_COMBINE_GUNSHIP,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HEADCRAB,			CLASS_COMBINE_HUNTER,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HEADCRAB,			CLASS_CONSCRIPT,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HEADCRAB,			CLASS_FLARE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HEADCRAB,			CLASS_HEADCRAB,			D_NU, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_HEADCRAB,			CLASS_HOUNDEYE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HEADCRAB,			CLASS_MANHACK,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HEADCRAB,			CLASS_METROPOLICE,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HEADCRAB,			CLASS_MILITARY,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HEADCRAB,			CLASS_MISSILE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HEADCRAB,			CLASS_SCANNER,			D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HEADCRAB,			CLASS_STALKER,			D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HEADCRAB,			CLASS_VORTIGAUNT,		D_HT, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HEADCRAB,			CLASS_ZOMBIE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HEADCRAB,			CLASS_PROTOSNIPER,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HEADCRAB,			CLASS_EARTH_FAUNA,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HEADCRAB,			CLASS_PLAYER_ALLY,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HEADCRAB,			CLASS_PLAYER_ALLY_VITAL,D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HEADCRAB,			CLASS_HACKED_ROLLERMINE,D_FR, 0);
+
+		// ------------------------------------------------------------
+		//	> CLASS_HOUNDEYE
+		// ------------------------------------------------------------
+		/*
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HOUNDEYE,			CLASS_NONE,				D_NU, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HOUNDEYE,			CLASS_PLAYER,			D_HT, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HOUNDEYE,			CLASS_ANTLION,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HOUNDEYE,			CLASS_BARNACLE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HOUNDEYE,			CLASS_BULLSEYE,			D_NU, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_HOUNDEYE,			CLASS_BULLSQUID,		D_FR, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HOUNDEYE,			CLASS_CITIZEN_PASSIVE,	D_HT, 0);	
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HOUNDEYE,			CLASS_CITIZEN_REBEL,	D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HOUNDEYE,			CLASS_COMBINE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HOUNDEYE,			CLASS_COMBINE_GUNSHIP,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HOUNDEYE,			CLASS_COMBINE_HUNTER,	D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HOUNDEYE,			CLASS_CONSCRIPT,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HOUNDEYE,			CLASS_FLARE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HOUNDEYE,			CLASS_HEADCRAB,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HOUNDEYE,			CLASS_HOUNDEYE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HOUNDEYE,			CLASS_MANHACK,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HOUNDEYE,			CLASS_METROPOLICE,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HOUNDEYE,			CLASS_MILITARY,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HOUNDEYE,			CLASS_MISSILE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HOUNDEYE,			CLASS_SCANNER,			D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HOUNDEYE,			CLASS_STALKER,			D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HOUNDEYE,			CLASS_VORTIGAUNT,		D_HT, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HOUNDEYE,			CLASS_ZOMBIE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HOUNDEYE,			CLASS_PROTOSNIPER,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HOUNDEYE,			CLASS_EARTH_FAUNA,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HOUNDEYE,			CLASS_PLAYER_ALLY,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HOUNDEYE,			CLASS_PLAYER_ALLY_VITAL,D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HOUNDEYE,			CLASS_HACKED_ROLLERMINE,D_HT, 0);
+		*/
+
+		// ------------------------------------------------------------
+		//	> CLASS_MANHACK
+		// ------------------------------------------------------------
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK,			CLASS_NONE,				D_NU, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK,			CLASS_PLAYER,			D_HT, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK,			CLASS_ANTLION,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK,			CLASS_BARNACLE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK,			CLASS_BULLSEYE,			D_NU, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK,			CLASS_BULLSQUID,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK,			CLASS_CITIZEN_PASSIVE,	D_HT, 0);	
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK,			CLASS_CITIZEN_REBEL,	D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK,			CLASS_COMBINE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK,			CLASS_COMBINE_GUNSHIP,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK,			CLASS_COMBINE_HUNTER,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK,			CLASS_CONSCRIPT,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK,			CLASS_FLARE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK,			CLASS_HEADCRAB,			D_HT,-1);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK,			CLASS_HOUNDEYE,			D_HT,-1);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK,			CLASS_MANHACK,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK,			CLASS_METROPOLICE,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK,			CLASS_MILITARY,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK,			CLASS_MISSILE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK,			CLASS_SCANNER,			D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK,			CLASS_STALKER,			D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK,			CLASS_VORTIGAUNT,		D_HT, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK,			CLASS_ZOMBIE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK,			CLASS_PROTOSNIPER,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK,			CLASS_EARTH_FAUNA,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK,			CLASS_PLAYER_ALLY,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK,			CLASS_PLAYER_ALLY_VITAL,D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK,			CLASS_HACKED_ROLLERMINE,D_HT, 0);
+
+		// ------------------------------------------------------------
+		//	> CLASS_METROPOLICE
+		// ------------------------------------------------------------
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE,		CLASS_NONE,				D_NU, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE,		CLASS_PLAYER,			D_HT, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE,		CLASS_ANTLION,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE,		CLASS_BARNACLE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE,		CLASS_BULLSEYE,			D_NU, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE,		CLASS_BULLSQUID,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE,		CLASS_CITIZEN_PASSIVE,	D_NU, 0);	
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE,		CLASS_CITIZEN_REBEL,	D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE,		CLASS_COMBINE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE,		CLASS_COMBINE_GUNSHIP,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE,		CLASS_COMBINE_HUNTER,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE,		CLASS_CONSCRIPT,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE,		CLASS_FLARE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE,		CLASS_HEADCRAB,			D_HT, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE,		CLASS_HOUNDEYE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE,		CLASS_MANHACK,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE,		CLASS_METROPOLICE,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE,		CLASS_MILITARY,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE,		CLASS_MISSILE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE,		CLASS_SCANNER,			D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE,		CLASS_STALKER,			D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE,		CLASS_VORTIGAUNT,		D_HT, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE,		CLASS_ZOMBIE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE,		CLASS_PROTOSNIPER,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE,		CLASS_EARTH_FAUNA,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE,		CLASS_PLAYER_ALLY,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE,		CLASS_PLAYER_ALLY_VITAL,D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE,		CLASS_HACKED_ROLLERMINE,D_HT, 0);
+
+		// ------------------------------------------------------------
+		//	> CLASS_MILITARY
+		// ------------------------------------------------------------
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MILITARY,			CLASS_NONE,				D_NU, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MILITARY,			CLASS_PLAYER,			D_HT, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MILITARY,			CLASS_ANTLION,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MILITARY,			CLASS_BARNACLE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MILITARY,			CLASS_BULLSEYE,			D_NU, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_MILITARY,			CLASS_BULLSQUID,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MILITARY,			CLASS_CITIZEN_PASSIVE,	D_NU, 0);	
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MILITARY,			CLASS_CITIZEN_REBEL,	D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MILITARY,			CLASS_COMBINE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MILITARY,			CLASS_COMBINE_GUNSHIP,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MILITARY,			CLASS_COMBINE_HUNTER,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MILITARY,			CLASS_CONSCRIPT,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MILITARY,			CLASS_FLARE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MILITARY,			CLASS_HEADCRAB,			D_HT, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_MILITARY,			CLASS_HOUNDEYE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MILITARY,			CLASS_MANHACK,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MILITARY,			CLASS_METROPOLICE,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MILITARY,			CLASS_MILITARY,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MILITARY,			CLASS_MISSILE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MILITARY,			CLASS_SCANNER,			D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MILITARY,			CLASS_STALKER,			D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MILITARY,			CLASS_VORTIGAUNT,		D_HT, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MILITARY,			CLASS_ZOMBIE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MILITARY,			CLASS_PROTOSNIPER,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MILITARY,			CLASS_EARTH_FAUNA,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MILITARY,			CLASS_PLAYER_ALLY,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MILITARY,			CLASS_PLAYER_ALLY_VITAL,D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MILITARY,			CLASS_HACKED_ROLLERMINE,D_HT, 0);
+
+		// ------------------------------------------------------------
+		//	> CLASS_MISSILE
+		// ------------------------------------------------------------
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE,			CLASS_NONE,				D_NU, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE,			CLASS_PLAYER,			D_HT, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE,			CLASS_ANTLION,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE,			CLASS_BARNACLE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE,			CLASS_BULLSEYE,			D_NU, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE,			CLASS_BULLSQUID,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE,			CLASS_CITIZEN_PASSIVE,	D_NU, 0);	
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE,			CLASS_CITIZEN_REBEL,	D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE,			CLASS_COMBINE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE,			CLASS_COMBINE_GUNSHIP,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE,			CLASS_COMBINE_HUNTER,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE,			CLASS_CONSCRIPT,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE,			CLASS_FLARE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE,			CLASS_HEADCRAB,			D_HT, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE,			CLASS_HOUNDEYE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE,			CLASS_MANHACK,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE,			CLASS_METROPOLICE,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE,			CLASS_MILITARY,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE,			CLASS_MISSILE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE,			CLASS_SCANNER,			D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE,			CLASS_STALKER,			D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE,			CLASS_VORTIGAUNT,		D_HT, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE,			CLASS_ZOMBIE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE,			CLASS_PROTOSNIPER,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE,			CLASS_EARTH_FAUNA,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE,			CLASS_PLAYER_ALLY,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE,			CLASS_PLAYER_ALLY_VITAL,D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE,			CLASS_HACKED_ROLLERMINE,D_HT, 0);
+
+		// ------------------------------------------------------------
+		//	> CLASS_NONE
+		// ------------------------------------------------------------
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_NONE,				CLASS_NONE,				D_NU, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_NONE,				CLASS_PLAYER,			D_NU, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_NONE,				CLASS_ANTLION,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_NONE,				CLASS_BARNACLE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_NONE,				CLASS_BULLSEYE,			D_NU, 0);	
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_NONE,				CLASS_BULLSQUID,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_NONE,				CLASS_CITIZEN_PASSIVE,	D_NU, 0);	
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_NONE,				CLASS_CITIZEN_REBEL,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_NONE,				CLASS_COMBINE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_NONE,				CLASS_COMBINE_GUNSHIP,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_NONE,				CLASS_COMBINE_HUNTER,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_NONE,				CLASS_CONSCRIPT,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_NONE,				CLASS_FLARE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_NONE,				CLASS_HEADCRAB,			D_NU, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_NONE,				CLASS_HOUNDEYE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_NONE,				CLASS_MANHACK,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_NONE,				CLASS_METROPOLICE,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_NONE,				CLASS_MILITARY,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_NONE,				CLASS_SCANNER,			D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_NONE,				CLASS_STALKER,			D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_NONE,				CLASS_VORTIGAUNT,		D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_NONE,				CLASS_ZOMBIE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_NONE,				CLASS_PROTOSNIPER,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_NONE,				CLASS_EARTH_FAUNA,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_NONE,				CLASS_PLAYER_ALLY,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_NONE,				CLASS_PLAYER_ALLY_VITAL,D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_NONE,				CLASS_HACKED_ROLLERMINE,D_NU, 0);
+
+		// ------------------------------------------------------------
+		//	> CLASS_PLAYER
+		// ------------------------------------------------------------
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER,			CLASS_NONE,				D_NU, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER,			CLASS_PLAYER,			D_NU, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER,			CLASS_ANTLION,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER,			CLASS_BARNACLE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER,			CLASS_BULLSEYE,			D_HT, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER,			CLASS_BULLSQUID,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER,			CLASS_CITIZEN_PASSIVE,	D_LI, 0);	
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER,			CLASS_CITIZEN_REBEL,	D_LI, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER,			CLASS_COMBINE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER,			CLASS_COMBINE_GUNSHIP,	D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER,			CLASS_COMBINE_HUNTER,	D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER,			CLASS_CONSCRIPT,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER,			CLASS_FLARE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER,			CLASS_HEADCRAB,			D_HT, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER,			CLASS_HOUNDEYE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER,			CLASS_MANHACK,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER,			CLASS_METROPOLICE,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER,			CLASS_MILITARY,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER,			CLASS_MISSILE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER,			CLASS_SCANNER,			D_HT, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER,			CLASS_STALKER,			D_HT, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER,			CLASS_VORTIGAUNT,		D_LI, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER,			CLASS_ZOMBIE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER,			CLASS_PROTOSNIPER,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER,			CLASS_EARTH_FAUNA,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER,			CLASS_PLAYER_ALLY,		D_LI, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER,			CLASS_PLAYER_ALLY_VITAL,D_LI, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER,			CLASS_HACKED_ROLLERMINE,D_LI, 0);
+
+		// ------------------------------------------------------------
+		//	> CLASS_PLAYER_ALLY
+		// ------------------------------------------------------------
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY,			CLASS_NONE,				D_NU, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY,			CLASS_PLAYER,			D_LI, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY,			CLASS_ANTLION,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY,			CLASS_BARNACLE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY,			CLASS_BULLSEYE,			D_NU, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY,			CLASS_BULLSQUID,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY,			CLASS_CITIZEN_PASSIVE,	D_NU, 0);	
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY,			CLASS_CITIZEN_REBEL,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY,			CLASS_COMBINE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY,			CLASS_COMBINE_GUNSHIP,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY,			CLASS_COMBINE_HUNTER,	D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY,			CLASS_CONSCRIPT,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY,			CLASS_FLARE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY,			CLASS_HEADCRAB,			D_FR, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY,			CLASS_HOUNDEYE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY,			CLASS_MANHACK,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY,			CLASS_METROPOLICE,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY,			CLASS_MILITARY,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY,			CLASS_MISSILE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY,			CLASS_SCANNER,			D_HT, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY,			CLASS_STALKER,			D_HT, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY,			CLASS_VORTIGAUNT,		D_LI, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY,			CLASS_ZOMBIE,			D_FR, 1);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY,			CLASS_PROTOSNIPER,		D_FR, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY,			CLASS_EARTH_FAUNA,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY,			CLASS_PLAYER_ALLY,		D_LI, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY,			CLASS_PLAYER_ALLY_VITAL,D_LI, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY,			CLASS_HACKED_ROLLERMINE,D_LI, 0);
+
+		// ------------------------------------------------------------
+		//	> CLASS_PLAYER_ALLY_VITAL
+		// ------------------------------------------------------------
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY_VITAL,	CLASS_NONE,				D_NU, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY_VITAL,	CLASS_PLAYER,			D_LI, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY_VITAL,	CLASS_ANTLION,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY_VITAL,	CLASS_BARNACLE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY_VITAL,	CLASS_BULLSEYE,			D_NU, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY_VITAL,	CLASS_BULLSQUID,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY_VITAL,	CLASS_CITIZEN_PASSIVE,	D_NU, 0);	
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY_VITAL,	CLASS_CITIZEN_REBEL,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY_VITAL,	CLASS_COMBINE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY_VITAL,	CLASS_COMBINE_GUNSHIP,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY_VITAL,	CLASS_COMBINE_HUNTER,	D_FR, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY_VITAL,	CLASS_CONSCRIPT,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY_VITAL,	CLASS_FLARE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY_VITAL,	CLASS_HEADCRAB,			D_HT, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY_VITAL,	CLASS_HOUNDEYE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY_VITAL,	CLASS_MANHACK,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY_VITAL,	CLASS_METROPOLICE,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY_VITAL,	CLASS_MILITARY,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY_VITAL,	CLASS_MISSILE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY_VITAL,	CLASS_SCANNER,			D_HT, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY_VITAL,	CLASS_STALKER,			D_HT, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY_VITAL,	CLASS_VORTIGAUNT,		D_LI, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY_VITAL,	CLASS_ZOMBIE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY_VITAL,	CLASS_PROTOSNIPER,		D_FR, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY_VITAL,	CLASS_EARTH_FAUNA,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY_VITAL,	CLASS_PLAYER_ALLY,		D_LI, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY_VITAL,	CLASS_PLAYER_ALLY_VITAL,D_LI, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY_VITAL,	CLASS_HACKED_ROLLERMINE,D_LI, 0);
+
+		// ------------------------------------------------------------
+		//	> CLASS_SCANNER
+		// ------------------------------------------------------------	
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER,			CLASS_NONE,				D_NU, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER,			CLASS_PLAYER,			D_HT, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER,			CLASS_ANTLION,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER,			CLASS_BARNACLE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER,			CLASS_BULLSEYE,			D_NU, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER,			CLASS_BULLSQUID,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER,			CLASS_CITIZEN_PASSIVE,	D_NU, 0);	
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER,			CLASS_CITIZEN_REBEL,	D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER,			CLASS_COMBINE,			D_LI, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER,			CLASS_COMBINE_GUNSHIP,	D_LI, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER,			CLASS_COMBINE_HUNTER,	D_LI, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER,			CLASS_CONSCRIPT,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER,			CLASS_FLARE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER,			CLASS_HEADCRAB,			D_NU, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER,			CLASS_HOUNDEYE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER,			CLASS_MANHACK,			D_LI, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER,			CLASS_METROPOLICE,		D_LI, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER,			CLASS_MILITARY,			D_LI, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER,			CLASS_MISSILE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER,			CLASS_SCANNER,			D_LI, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER,			CLASS_STALKER,			D_LI, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER,			CLASS_VORTIGAUNT,		D_HT, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER,			CLASS_ZOMBIE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER,			CLASS_PROTOSNIPER,		D_LI, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER,			CLASS_EARTH_FAUNA,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER,			CLASS_PLAYER_ALLY,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER,			CLASS_PLAYER_ALLY_VITAL,D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER,			CLASS_HACKED_ROLLERMINE,D_HT, 0);
+
+		// ------------------------------------------------------------
+		//	> CLASS_STALKER
+		// ------------------------------------------------------------	
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER,			CLASS_NONE,				D_NU, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER,			CLASS_PLAYER,			D_HT, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER,			CLASS_ANTLION,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER,			CLASS_BARNACLE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER,			CLASS_BULLSEYE,			D_NU, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER,			CLASS_BULLSQUID,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER,			CLASS_CITIZEN_PASSIVE,	D_NU, 0);	
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER,			CLASS_CITIZEN_REBEL,	D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER,			CLASS_COMBINE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER,			CLASS_COMBINE_GUNSHIP,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER,			CLASS_COMBINE_HUNTER,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER,			CLASS_CONSCRIPT,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER,			CLASS_FLARE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER,			CLASS_HEADCRAB,			D_NU, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER,			CLASS_HOUNDEYE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER,			CLASS_MANHACK,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER,			CLASS_METROPOLICE,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER,			CLASS_MILITARY,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER,			CLASS_MISSILE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER,			CLASS_SCANNER,			D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER,			CLASS_STALKER,			D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER,			CLASS_VORTIGAUNT,		D_HT, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER,			CLASS_ZOMBIE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER,			CLASS_PROTOSNIPER,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER,			CLASS_EARTH_FAUNA,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER,			CLASS_PLAYER_ALLY,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER,			CLASS_PLAYER_ALLY_VITAL,D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER,			CLASS_HACKED_ROLLERMINE,D_HT, 0);
+
+		// ------------------------------------------------------------
+		//	> CLASS_VORTIGAUNT
+		// ------------------------------------------------------------	
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT,		CLASS_NONE,				D_NU, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT,		CLASS_PLAYER,			D_LI, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT,		CLASS_ANTLION,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT,		CLASS_BARNACLE,			D_FR, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT,		CLASS_BULLSEYE,			D_NU, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT,		CLASS_BULLSQUID,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT,		CLASS_CITIZEN_PASSIVE,	D_LI, 0);	
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT,		CLASS_CITIZEN_REBEL,	D_LI, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT,		CLASS_COMBINE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT,		CLASS_COMBINE_GUNSHIP,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT,		CLASS_COMBINE_HUNTER,	D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT,		CLASS_CONSCRIPT,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT,		CLASS_FLARE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT,		CLASS_HEADCRAB,			D_HT, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT,		CLASS_HOUNDEYE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT,		CLASS_MANHACK,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT,		CLASS_METROPOLICE,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT,		CLASS_MILITARY,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT,		CLASS_MISSILE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT,		CLASS_SCANNER,			D_HT, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT,		CLASS_STALKER,			D_HT, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT,		CLASS_VORTIGAUNT,		D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT,		CLASS_ZOMBIE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT,		CLASS_PROTOSNIPER,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT,		CLASS_EARTH_FAUNA,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT,		CLASS_PLAYER_ALLY,		D_LI, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT,		CLASS_PLAYER_ALLY_VITAL,D_LI, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT,		CLASS_HACKED_ROLLERMINE,D_LI, 0);
+
+		// ------------------------------------------------------------
+		//	> CLASS_ZOMBIE
+		// ------------------------------------------------------------	
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE,			CLASS_NONE,				D_NU, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE,			CLASS_PLAYER,			D_HT, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE,			CLASS_ANTLION,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE,			CLASS_BARNACLE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE,			CLASS_BULLSEYE,			D_NU, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE,			CLASS_BULLSQUID,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE,			CLASS_CITIZEN_PASSIVE,	D_HT, 0);	
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE,			CLASS_CITIZEN_REBEL,	D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE,			CLASS_COMBINE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE,			CLASS_COMBINE_GUNSHIP,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE,			CLASS_COMBINE_HUNTER,	D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE,			CLASS_CONSCRIPT,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE,			CLASS_FLARE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE,			CLASS_HEADCRAB,			D_NU, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE,			CLASS_HOUNDEYE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE,			CLASS_MANHACK,			D_FR, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE,			CLASS_METROPOLICE,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE,			CLASS_MILITARY,			D_FR, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE,			CLASS_MISSILE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE,			CLASS_SCANNER,			D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE,			CLASS_STALKER,			D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE,			CLASS_VORTIGAUNT,		D_HT, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE,			CLASS_ZOMBIE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE,			CLASS_PROTOSNIPER,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE,			CLASS_EARTH_FAUNA,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE,			CLASS_PLAYER_ALLY,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE,			CLASS_PLAYER_ALLY_VITAL,D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE,			CLASS_HACKED_ROLLERMINE,D_HT, 0);
+
+		// BP Le pedobear a les mêmes gouts que le zombie. wait, what ?
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PEDOBEAR,			CLASS_NONE,				D_NU, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PEDOBEAR,			CLASS_PLAYER,			D_HT, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PEDOBEAR,			CLASS_ANTLION,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PEDOBEAR,			CLASS_BARNACLE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PEDOBEAR,			CLASS_BULLSEYE,			D_NU, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE,			CLASS_BULLSQUID,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PEDOBEAR,			CLASS_CITIZEN_PASSIVE,	D_HT, 0);	
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PEDOBEAR,			CLASS_CITIZEN_REBEL,	D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PEDOBEAR,			CLASS_COMBINE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PEDOBEAR,			CLASS_COMBINE_GUNSHIP,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PEDOBEAR,			CLASS_COMBINE_HUNTER,	D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PEDOBEAR,			CLASS_CONSCRIPT,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PEDOBEAR,			CLASS_FLARE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PEDOBEAR,			CLASS_HEADCRAB,			D_NU, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_PEDOBEAR,			CLASS_HOUNDEYE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PEDOBEAR,			CLASS_MANHACK,			D_FR, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PEDOBEAR,			CLASS_METROPOLICE,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PEDOBEAR,			CLASS_MILITARY,			D_FR, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PEDOBEAR,			CLASS_MISSILE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PEDOBEAR,			CLASS_SCANNER,			D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PEDOBEAR,			CLASS_STALKER,			D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PEDOBEAR,			CLASS_VORTIGAUNT,		D_HT, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PEDOBEAR,			CLASS_PEDOBEAR,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PEDOBEAR,			CLASS_PROTOSNIPER,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PEDOBEAR,			CLASS_EARTH_FAUNA,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PEDOBEAR,			CLASS_PLAYER_ALLY,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PEDOBEAR,			CLASS_PLAYER_ALLY_VITAL,D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PEDOBEAR,			CLASS_HACKED_ROLLERMINE,D_HT, 0);
+
+		// ------------------------------------------------------------
+		//	> CLASS_PROTOSNIPER
+		// ------------------------------------------------------------	
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER,			CLASS_NONE,				D_NU, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER,			CLASS_PLAYER,			D_HT, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER,			CLASS_ANTLION,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER,			CLASS_BARNACLE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER,			CLASS_BULLSEYE,			D_NU, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER,			CLASS_BULLSQUID,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER,			CLASS_CITIZEN_PASSIVE,	D_HT, 0);	
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER,			CLASS_CITIZEN_REBEL,	D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER,			CLASS_COMBINE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER,			CLASS_COMBINE_GUNSHIP,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER,			CLASS_COMBINE_HUNTER,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER,			CLASS_CONSCRIPT,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER,			CLASS_FLARE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER,			CLASS_HEADCRAB,			D_HT, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER,			CLASS_HOUNDEYE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER,			CLASS_MANHACK,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER,			CLASS_METROPOLICE,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER,			CLASS_MILITARY,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER,			CLASS_MISSILE,			D_NU, 5);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER,			CLASS_SCANNER,			D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER,			CLASS_STALKER,			D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER,			CLASS_VORTIGAUNT,		D_HT, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER,			CLASS_ZOMBIE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER,			CLASS_PROTOSNIPER,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER,			CLASS_EARTH_FAUNA,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER,			CLASS_PLAYER_ALLY,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER,			CLASS_PLAYER_ALLY_VITAL,D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER,			CLASS_HACKED_ROLLERMINE,D_HT, 0);
+
+		// ------------------------------------------------------------
+		//	> CLASS_EARTH_FAUNA
+		//
+		// Hates pretty much everything equally except other earth fauna.
+		// This will make the critter choose the nearest thing as its enemy.
+		// ------------------------------------------------------------	
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA,			CLASS_NONE,				D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA,			CLASS_PLAYER,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA,			CLASS_ANTLION,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA,			CLASS_BARNACLE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA,			CLASS_BULLSEYE,			D_NU, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA,			CLASS_BULLSQUID,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA,			CLASS_CITIZEN_PASSIVE,	D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA,			CLASS_CITIZEN_REBEL,	D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA,			CLASS_COMBINE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA,			CLASS_COMBINE_GUNSHIP,	D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA,			CLASS_COMBINE_HUNTER,	D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA,			CLASS_CONSCRIPT,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA,			CLASS_FLARE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA,			CLASS_HEADCRAB,			D_HT, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA,			CLASS_HOUNDEYE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA,			CLASS_MANHACK,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA,			CLASS_METROPOLICE,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA,			CLASS_MILITARY,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA,			CLASS_MISSILE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA,			CLASS_SCANNER,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA,			CLASS_STALKER,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA,			CLASS_VORTIGAUNT,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA,			CLASS_ZOMBIE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA,			CLASS_PROTOSNIPER,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA,			CLASS_EARTH_FAUNA,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA,			CLASS_PLAYER_ALLY,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA,			CLASS_PLAYER_ALLY_VITAL,D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA,			CLASS_HACKED_ROLLERMINE,D_NU, 0);
+
+		// ------------------------------------------------------------
+		//	> CLASS_HACKED_ROLLERMINE
+		// ------------------------------------------------------------
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HACKED_ROLLERMINE,			CLASS_NONE,				D_NU, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HACKED_ROLLERMINE,			CLASS_PLAYER,			D_LI, 0);			
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HACKED_ROLLERMINE,			CLASS_ANTLION,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HACKED_ROLLERMINE,			CLASS_BARNACLE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HACKED_ROLLERMINE,			CLASS_BULLSEYE,			D_NU, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_HACKED_ROLLERMINE,			CLASS_BULLSQUID,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HACKED_ROLLERMINE,			CLASS_CITIZEN_PASSIVE,	D_NU, 0);	
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HACKED_ROLLERMINE,			CLASS_CITIZEN_REBEL,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HACKED_ROLLERMINE,			CLASS_COMBINE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HACKED_ROLLERMINE,			CLASS_COMBINE_GUNSHIP,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HACKED_ROLLERMINE,			CLASS_COMBINE_HUNTER,	D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HACKED_ROLLERMINE,			CLASS_CONSCRIPT,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HACKED_ROLLERMINE,			CLASS_FLARE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HACKED_ROLLERMINE,			CLASS_HEADCRAB,			D_HT, 0);
+		//CBaseCombatCharacter::SetDefaultRelationship(CLASS_HACKED_ROLLERMINE,			CLASS_HOUNDEYE,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HACKED_ROLLERMINE,			CLASS_MANHACK,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HACKED_ROLLERMINE,			CLASS_METROPOLICE,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HACKED_ROLLERMINE,			CLASS_MILITARY,			D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HACKED_ROLLERMINE,			CLASS_MISSILE,			D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HACKED_ROLLERMINE,			CLASS_SCANNER,			D_NU, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HACKED_ROLLERMINE,			CLASS_STALKER,			D_HT, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HACKED_ROLLERMINE,			CLASS_VORTIGAUNT,		D_LI, 0);		
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HACKED_ROLLERMINE,			CLASS_ZOMBIE,			D_HT, 1);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HACKED_ROLLERMINE,			CLASS_PROTOSNIPER,		D_NU, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HACKED_ROLLERMINE,			CLASS_EARTH_FAUNA,		D_HT, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HACKED_ROLLERMINE,			CLASS_PLAYER_ALLY,		D_LI, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HACKED_ROLLERMINE,			CLASS_PLAYER_ALLY_VITAL,D_LI, 0);
+		CBaseCombatCharacter::SetDefaultRelationship(CLASS_HACKED_ROLLERMINE,			CLASS_HACKED_ROLLERMINE,D_LI, 0);
+	}
+	#endif
+void CHL2MPRules::CreateStandardEntities( void )
+{
+
+#ifndef CLIENT_DLL
+	// Create the entity that will send our data to the client.
+
+	BaseClass::CreateStandardEntities();
+
+	g_pLastCombineSpawn = NULL;
+	g_pLastRebelSpawn = NULL;
+
+#ifdef _DEBUG
+	CBaseEntity *pEnt = 
+#endif
+	CBaseEntity::Create( "hl2mp_gamerules", vec3_origin, vec3_angle );
+	Assert( pEnt );
+#endif
+}
+
+//=========================================================
+// FlWeaponRespawnTime - what is the time in the future
+// at which this weapon may spawn?
+//=========================================================
+float CHL2MPRules::FlWeaponRespawnTime( CBaseCombatWeapon *pWeapon )
+{
+#ifndef CLIENT_DLL
+	if ( weaponstay.GetInt() > 0 )
+	{
+		// make sure it's only certain weapons
+		if ( !(pWeapon->GetWeaponFlags() & ITEM_FLAG_LIMITINWORLD) )
+		{
+			return 0;		// weapon respawns almost instantly
+		}
+	}
+
+	return mp_weapon_respawn_time.GetFloat();
+#endif
+
+	return 0;		// weapon respawns almost instantly
+}
+
+
+bool CHL2MPRules::IsIntermission( void )
+{
+#ifndef CLIENT_DLL
+	return m_flIntermissionEndTime > gpGlobals->curtime;
+#endif
+
+	return false;
+}
+
+bool CHL2MPRules::IsHumiliation( void )
+{
+	return m_flHumiliationEndTime > gpGlobals->curtime;
+}
+
+extern ConVar mp_forts_buildtime;
+extern ConVar mp_forts_firstbuildtime;
+extern ConVar mp_forts_fighttime;
+extern ConVar mp_forts_roundlimit;
+extern ConVar mp_dom_scoretime;
+extern ConVar mp_dom_scoremultiplier;
+extern ConVar mp_co_difficulty;
+extern ConVar mp_scorelimit_dom;
+extern ConVar mp_scorelimit_tdm;
+extern ConVar mp_scorelimit_forts;
+extern ConVar mp_scorelimit_push;
+extern ConVar mp_forts_egality;
+
+void CHL2MPRules::PlayerKilled( CBasePlayer *pVictim, const CTakeDamageInfo &info )
+{
+#ifndef CLIENT_DLL
+	if ( IsIntermission() )
+		return;
+	BaseClass::PlayerKilled( pVictim, info );
+#endif
+}
+void CHL2MPRules::PushTeamScored (int team, bool respawn, float delay)
+{
+#ifndef CLIENT_DLL
+	int PreScorePink, PreScoreGreen;
+
+	PreScorePink = g_Teams[TEAM_PINK]->GetScore();
+	PreScoreGreen = g_Teams[TEAM_GREEN]->GetScore();
+
+	if(team == TEAM_GREEN)
+		g_Teams[TEAM_PINK]->AddScore(1);
+
+	else if (team == TEAM_PINK)
+		g_Teams[TEAM_GREEN]->AddScore(1);
+	
+	m_bPushRespawn = respawn;
+	if(respawn)
+		m_fPushRespawnDelay = gpGlobals->curtime + delay;
+	
+	if(PreScorePink == PreScoreGreen)
+	{
+		if(g_Teams[TEAM_PINK]->GetScore() > g_Teams[TEAM_GREEN]->GetScore()) // Pink is at advantage
+			g_GameConfig->TeamWinning(TEAM_PINK);
+		else if(g_Teams[TEAM_PINK]->GetScore() < g_Teams[TEAM_GREEN]->GetScore()) // Green is at advantage
+			g_GameConfig->TeamWinning(TEAM_GREEN);
+	}
+	else if(g_Teams[TEAM_PINK]->GetScore() == g_Teams[TEAM_GREEN]->GetScore()) // Egality
+		g_GameConfig->TeamWinning(-1);
+
+#endif
+}
+#define DOM_SAFETIME 60
+class CGameDomCaptureZone
+{
+public:
+	CGameDomCaptureZone(void);
+	void Activate(void);
+	void CaptureZoneTouch(CBaseEntity *pEntity);
+	void SoundThink(void);
+	int CGameDomCaptureZone::DetermineZoneID(void);
+	void ResetScoreTimer(void);
+	void Capture(int team);
+};
+
+extern void Game_RespawnPushBall();
+
+void CHL2MPRules::Think( void )
+{
+
+#ifndef CLIENT_DLL
+	
+	CGameRules::Think();
+
+	if((HL2MPRules()->GetGameType() == GAME_COOP) && !m_bAlreadySetSkill)
+	{
+		char szCommand[256];
+
+		int skill = (mp_co_difficulty.GetInt() >= 1 && mp_co_difficulty.GetInt() <= 4) ? mp_co_difficulty.GetInt() : 1;
+		Q_snprintf( szCommand,sizeof(szCommand), "exec skill_level%d.cfg\n", skill );
+		engine->ServerCommand( szCommand );
+		m_bAlreadySetSkill = true;
+	}
+
+
+	if((m_flHumiliationEndTime != 0) && (m_flHumiliationEndTime < gpGlobals->curtime))
+	{
+		m_flHumiliationEndTime = 0;
+		GoToIntermission();
+	}
+
+	if(m_flHumiliationEndTime != 0)
+	{
+		int iTotal = m_hRespawnableItemsAndWeapons.Count();
+		if ( iTotal > 0 )
+		{
+			for ( int i = 0; i < iTotal; i++ )
+			{
+				CBaseEntity *pObject = m_hRespawnableItemsAndWeapons[i].Get();
+			
+				if ( pObject )
+				{
+					UTIL_Remove(pObject);
+				}
+			}
+		}
+	}
+
+	if ( g_fGameOver )   // someone else quit the game already
+	{
+		// check to see if we should change levels now
+		if ( m_flIntermissionEndTime < gpGlobals->curtime )
+			ChangeLevel(); // intermission is over
+
+		return;
+	}
+
+	float flTimeLimit = (m_iForceTimeLimit != -1) ? m_iForceTimeLimit : mp_timelimit.GetFloat();
+	flTimeLimit *= 60; // Var en minutes, code en secondes
+	flTimeLimit += m_flTimeLimitMod;
+	float flFragLimit = (m_iForceFragLimit != -1) ? m_iForceFragLimit : fraglimit.GetFloat();
+	float flDomScoreTimer = (m_flForceDomScoreTimer != -1) ? m_flForceDomScoreTimer : mp_dom_scoretime.GetFloat();
+	int iDomScoreMultiplier = (m_iForceDomScoreMultiplier != -1) ? m_iForceDomScoreMultiplier : mp_dom_scoremultiplier.GetInt();
+
+	// On ignore le timelimit en forts (ou changemap après avoir passé ving minutes à construire)
+	// Et aussi en DOM, parce que Klems il a dit qu'il le faut
+	if(m_iGameType != GAME_FORTS && m_iGameType != GAME_DOM)
+	{
+		if ( flTimeLimit != 0 && gpGlobals->curtime >= flTimeLimit )
+		{		
+			GoToHumiliation();
+			return;
+		}
+	}
+
+	//FORTS MODE
+	if( m_iGameType == GAME_FORTS )
+	{	
+
+		float flPhaseLimit = 0;
+		static int fightRoundNo = 1;
+
+		if(IsFortsBuildPhase())
+			flPhaseLimit = m_bIsFirstBuildPhase ? mp_forts_firstbuildtime.GetFloat() * 60 : mp_forts_buildtime.GetFloat() * 60;
+		else
+			flPhaseLimit = mp_forts_fighttime.GetFloat() * 60;
+
+		flPhaseLimit += m_flLastPhaseTime;
+		m_flPhaseTimeLeft = flPhaseLimit;
+		#ifndef CLIENT_DLL
+		// Si mp_forts_egality = 0, pas besoin d'être a égalité pour changer de phase
+		const bool egality = mp_forts_egality.GetBool() ? g_Teams[TEAM_PINK]->GetScore() == g_Teams[TEAM_GREEN]->GetScore() : true;
+#else
+		IGameResources *gr = GameResources();
+
+		if ( !gr )
+			return;
+		const bool egality = mp_forts_egality.GetBool() ? gr->GetTeamScore(TEAM_PINK) == gr->GetTeamScore(TEAM_GREEN) : true;
+		#endif
+		if ( flPhaseLimit != 0 && gpGlobals->curtime >= flPhaseLimit && m_flHumiliationEndTime == 0	&& egality )
+		{
+			m_bIsFirstBuildPhase = false;
+			m_flLastPhaseTime = gpGlobals->curtime;
+
+			if(!IsFortsBuildPhase()) // On vient de terminer notre fight round numéro fightRoundNo
+			{
+				fightRoundNo++;
+				if(fightRoundNo >= mp_forts_roundlimit.GetInt())
+				{
+					GoToHumiliation();
+					return;
+				}
+			}
+
+			GoToFortsInterphase();
+
+			return;
+		}
+	}
+
+	else if (m_iGameType == GAME_PUSH)
+	{
+		if(g_Teams[TEAM_PINK]->GetScore() >= mp_scorelimit_push.GetInt() || g_Teams[TEAM_GREEN]->GetScore() >= mp_scorelimit_push.GetInt())
+			GoToHumiliation();
+
+		if(m_flPushLastBallCheck + 2.0f < gpGlobals->curtime) // check every two seconds
+		{
+			bool bSeenBall = false;
+
+			
+			for ( int i = 0; i < MAX_PLAYERS; i++ )  //Avoid the ball disappearing and having multiple balls
+			{
+				CBasePlayer *pPlayer = UTIL_PlayerByIndex(i);
+				if ( !pPlayer || !pPlayer->GetActiveWeapon() )
+					continue;
+
+				if(!strcmp("weapon_pushball", pPlayer->GetActiveWeapon()->GetClassname()) && !bSeenBall)
+					bSeenBall = true;
+				else if (!strcmp("weapon_pushball", pPlayer->GetActiveWeapon()->GetClassname()) && bSeenBall)
+					pPlayer->GetActiveWeapon()->Remove();
+				
+			}
+
+			CBaseEntity* pResult = gEntList.FindEntityByClassname(NULL,"weapon_pushball");
+			while (pResult)
+			{
+				CWeaponPushBall* pWep = dynamic_cast<CWeaponPushBall*>(pResult);
+				if (pWep && bSeenBall)
+					pWep->Remove();
+				else if (pWep && !bSeenBall)
+					bSeenBall = true;
+ 
+				pResult = gEntList.FindEntityByClassname(pResult,"weapon_pushball");
+			}
+
+			if(!bSeenBall)
+				Game_RespawnPushBall();
+
+			m_flPushLastBallCheck = gpGlobals->curtime;
+		}
+
+		if(!IsHumiliation() && m_fPushRespawnDelay < gpGlobals->curtime && m_bPushRespawn)
+		{
+			m_bPushRespawn = false;
+			for ( int i = 0; i < MAX_PLAYERS; i++ )
+			{
+				CBasePlayer *pPlayer = UTIL_PlayerByIndex( i );
+
+				if ( !pPlayer )
+					continue;
+				
+				pPlayer->Respawn(false);
+			}
+			CBaseEntity* pResult = gEntList.FindEntityByClassname(NULL,"item_*"); // Respawn items and weapons (force them to think their materialize)
+			while (pResult)
+			{
+				pResult->SetNextThink(gpGlobals->curtime);
+				pResult = gEntList.FindEntityByClassname(pResult,"item_*");
+			}
+			pResult = gEntList.FindEntityByClassname(NULL,"weapon_*");
+			while (pResult)
+			{
+				pResult->SetNextThink(gpGlobals->curtime);
+				pResult = gEntList.FindEntityByClassname(pResult,"weapon_*");
+			}
+			if(g_GameConfig)
+				g_GameConfig->PushNewRound();
+		}
+
+	}
+	//DOM MODE
+	else if(m_iGameType == GAME_DOM && (gpGlobals->curtime > (m_flLastDomScoreTime + flDomScoreTimer)))
+	{
+		m_flLastDomScoreTime = gpGlobals->curtime;
+		int countPink = 0;
+		int countGreen = 0;
+
+		for(int i = 0; i < DOM_MAX_ZONES; i++)
+			if(m_iDomZones[i] == TEAM_PINK)
+				countPink++;
+			else if(m_iDomZones[i] == TEAM_GREEN)
+				countGreen++;
+
+		countPink = !countPink ? 0 : (((countPink * countPink) - countPink) * iDomScoreMultiplier) + 1;
+		countGreen = !countGreen ? 0 : (((countGreen * countGreen) - countGreen) * iDomScoreMultiplier) + 1;
+
+		g_Teams[TEAM_PINK]->AddScore(countPink);
+		g_Teams[TEAM_GREEN]->AddScore(countGreen);
+	}
+
+	if(m_iGameType == GAME_DOM && !m_bDomDidPointCheck && gpGlobals->curtime > DOM_SAFETIME) // Cap the first point we find to avoid being stuck in dom
+	{
+
+		bool onecapped = false;
+
+		for(int i = 0; i < DOM_MAX_ZONES; i++)
+			if(m_iDomZones[i] == TEAM_PINK || m_iDomZones[i] == TEAM_GREEN)
+				onecapped = true;
+
+		if(!onecapped)
+		{
+			CBaseEntity *pEntity2 = gEntList.FindEntityByClassname(NULL, "game_dom_capturezone");
+			if(pEntity2)
+			{
+				CGameDomCaptureZone *pZone = (CGameDomCaptureZone*)pEntity2;
+				if(pZone)
+					pZone->Capture(TEAM_PINK);
+			}
+
+		}
+		m_bDomDidPointCheck = true;
+	}
+	
+	int specificScoreLimit = 0;
+	switch(m_iGameType)
+	{
+		case GAME_DOM:
+			specificScoreLimit = mp_scorelimit_dom.GetInt();
+			break;
+		case GAME_TDM:
+			specificScoreLimit = mp_scorelimit_tdm.GetInt();
+			break;
+		case GAME_FORTS:
+			specificScoreLimit = mp_scorelimit_forts.GetInt();
+			break;
+	};
+
+	if(specificScoreLimit != 0)
+	{
+		if(g_Teams[TEAM_PINK]->GetScore() >= specificScoreLimit || g_Teams[TEAM_GREEN]->GetScore() >= specificScoreLimit)
+		{
+			GoToHumiliation();
+
+			return;
+		}
+	}
+
+	if ( flFragLimit && GetGameType() == GAME_DM && !IsHumiliation())
+	{
+		// check if any player is over the frag limit
+		for ( int i = 1; i <= gpGlobals->maxClients; i++ )
+		{
+			CBasePlayer *pPlayer = UTIL_PlayerByIndex( i );
+
+			if ( pPlayer && pPlayer->FragCount() >= flFragLimit )
+			{
+				GoToHumiliation();
+				ToHL2MPPlayer(pPlayer)->EarnAchievement("FirstInDM");
+				return;
+			}
+		}
+	}
+
+	ManageObjectRelocation();
+
+#endif
+}
+void CHL2MPRules::GoToFortsInterphase( void )
+{
+#ifndef CLIENT_DLL
+	if( m_iGameType != GAME_FORTS )
+		return;
+#endif
+	m_bIsFortsBuildPhase = !m_bIsFortsBuildPhase;
+	#ifndef CLIENT_DLL
+	// Suppression de tous les porteurs d'infos
+	for(int i = 0; i < FORTS_MAX_INFOS; i++)
+	{
+		if(HL2MPRules()->m_apFortsInfosPink[i] != NULL)
+		{
+			HL2MPRules()->m_apFortsInfosPink[i]->m_nSkin = toSkinId(PLAYER_SKIN_ROSE);
+			HL2MPRules()->m_apFortsInfosPink[i] = NULL;
+		}
+		if(HL2MPRules()->m_apFortsInfosGreen[i] != NULL)
+		{
+			HL2MPRules()->m_apFortsInfosGreen[i]->m_nSkin = toSkinId(PLAYER_SKIN_VERT);
+			HL2MPRules()->m_apFortsInfosGreen[i] = NULL;
+		}
+	}
+
+	for ( int i = 0; i < MAX_PLAYERS; i++ )
+	{
+		CBasePlayer *pPlayer = UTIL_PlayerByIndex( i );
+
+		if ( !pPlayer )
+			continue;
+
+		pPlayer->Respawn(false);
+	}
+
+	// On Freeze tout les props qui ne le sont pas, histoire de pas avoir des legos volants en fight
+	CBaseEntity *pEntity = NULL;
+	while ((pEntity = gEntList.FindEntityByClassname( pEntity, "prop_physics" )) != NULL)
+	{
+		// Supression de tous les props qui étaient en train d'être placés, comme ça on est sûr que les props
+		// sont pas figés en l'air là ou il faudrait pas, vu que le joueur a été pris de cours.
+		// Also, la méthode pour savoir s'il était porté suce à mort, ne pas utiliser de render mode particulier
+		// dans les maps forts_ donc...
+		if(pEntity->GetRenderMode() != kRenderNormal)
+		{
+			pEntity->Remove();
+			continue;
+		}
+
+		IPhysicsObject *pPhysicsObject = pEntity->VPhysicsGetObject();
+		if(!pPhysicsObject)
+			continue;
+		pPhysicsObject->EnableMotion(false);
+	}
+
+#endif
+}
+
+void CHL2MPRules::GoToIntermission( void )
+{
+#ifndef CLIENT_DLL
+	if ( g_fGameOver )
+		return;
+
+	g_fGameOver = true;
+
+	m_flIntermissionEndTime = gpGlobals->curtime + mp_chattime.GetInt();
+
+	for ( int i = 0; i < MAX_PLAYERS; i++ )
+	{
+		CBasePlayer *pPlayer = UTIL_PlayerByIndex( i );
+
+		if ( !pPlayer )
+			continue;
+
+		pPlayer->ShowViewPortPanel( PANEL_SCOREBOARD );
+		pPlayer->AddFlag( FL_FROZEN );
+	}
+#endif
+	
+}
+
+ConVar mp_humiliationtime("mp_humiliationtime", "15", FCVAR_CHEAT | FCVAR_REPLICATED);
+void CHL2MPRules::GoToHumiliation( void )
+{
+	#ifndef CLIENT_DLL
+	if ( g_fGameOver || m_flHumiliationEndTime != 0)
+		return;
+#endif
+#ifdef CLIENT_DLL
+		if ( m_flHumiliationEndTime != 0)
+		return;
+#endif
+
+	m_flHumiliationEndTime = gpGlobals->curtime + mp_humiliationtime.GetInt();
+#ifndef CLIENT_DLL
+	int iTotal = m_hRespawnableItemsAndWeapons.Count();
+	if ( iTotal > 0 )
+	{
+		for ( int i = 0; i < iTotal; i++ )
+		{
+			CBaseEntity *pObject = m_hRespawnableItemsAndWeapons[i].Get();
+			
+			if ( pObject )
+			{
+				UTIL_Remove(pObject);
+			}
+		}
+	}
+
+	if(IsTeamplay())
+	{
+		if(g_Teams[TEAM_PINK]->GetScore() > g_Teams[TEAM_GREEN]->GetScore())
+			m_nWinningTeam = TEAM_PINK;
+		else if(g_Teams[TEAM_GREEN]->GetScore() > g_Teams[TEAM_PINK]->GetScore())
+			m_nWinningTeam = TEAM_GREEN;
+	}
+
+	// Égalité ? YOU FAIL.
+	if(m_nWinningTeam == 0 && IsTeamplay())
+	{
+		CRecipientFilter filter;
+		filter.AddAllPlayers();
+		CBaseEntity::EmitSound(filter, NULL, "Gameplay.Endgame.Draw");
+		m_flHumiliationEndTime = 0;
+		GoToIntermission();
+	}
+
+	int bestScore = 0;
+	for ( int i = 0; i < MAX_PLAYERS; i++ )
+	{
+		CBasePlayer *pPlayer = UTIL_PlayerByIndex(i);
+		if ( !pPlayer )
+			continue;
+
+		if(pPlayer->FragCount() >= bestScore)
+		{
+			m_pBestPlayer = pPlayer;
+			bestScore = pPlayer->FragCount();
+
+		}
+
+		if(IsTeamplay())
+		{
+			if(!pPlayer->IsAlive())
+				continue;
+
+			pPlayer->RemoveAllItems(false);
+			if(pPlayer->GetTeamNumber() == m_nWinningTeam)
+				pPlayer->GiveNamedItem("weapon_bat");
+			else
+				pPlayer->GiveNamedItem("weapon_flower");
+		}
+	}
+
+	CRecipientFilter winFilter;
+	CRecipientFilter failFilter;
+	if(!IsTeamplay())
+	{
+		winFilter.RemoveAllRecipients();
+		failFilter.AddAllPlayers();
+		for ( int i = 0; i < MAX_PLAYERS; i++ )
+		{
+			CBasePlayer *pPlayer = UTIL_PlayerByIndex( i );
+
+			if ( !pPlayer )
+				continue;
+
+			if(pPlayer->IsAlive())
+				pPlayer->RemoveAllItems(false);
+
+			if(pPlayer == m_pBestPlayer)
+			{
+				winFilter.AddRecipient(pPlayer);
+				failFilter.RemoveRecipient(pPlayer);
+				if(pPlayer->IsAlive())
+					pPlayer->GiveNamedItem("weapon_bat");
+					//Ce joueur viens de win le DM
+			}
+			else if(pPlayer->IsAlive())
+				pPlayer->GiveNamedItem("weapon_flower");
+		}
+	}
+	else
+	{
+		winFilter.AddRecipientsByTeam(g_Teams[m_nWinningTeam]);
+		failFilter.AddRecipientsByTeam(g_Teams[m_nWinningTeam == TEAM_PINK ? TEAM_GREEN : TEAM_PINK]);
+	}
+
+	winFilter.MakeReliable();
+	failFilter.MakeReliable();
+	CBaseEntity::EmitSound(winFilter, NULL, "Gameplay.Endgame.Win");
+	CBaseEntity::EmitSound(failFilter, NULL, "Gameplay.Endgame.Fail");
+
+#endif	
+}
+
+bool CHL2MPRules::CheckGameOver()
+{
+#ifndef CLIENT_DLL
+	if ( g_fGameOver )   // someone else quit the game already
+	{
+		// check to see if we should change levels now
+		if ( m_flIntermissionEndTime < gpGlobals->curtime )
+		{
+			ChangeLevel(); // intermission is over			
+		}
+
+		return true;
+	}
+#endif
+
+	return false;
+}
+
+// when we are within this close to running out of entities,  items 
+// marked with the ITEM_FLAG_LIMITINWORLD will delay their respawn
+#define ENTITY_INTOLERANCE	100
+
+//=========================================================
+// FlWeaponRespawnTime - Returns 0 if the weapon can respawn 
+// now,  otherwise it returns the time at which it can try
+// to spawn again.
+//=========================================================
+float CHL2MPRules::FlWeaponTryRespawn( CBaseCombatWeapon *pWeapon )
+{
+#ifndef CLIENT_DLL
+	if ( pWeapon && (pWeapon->GetWeaponFlags() & ITEM_FLAG_LIMITINWORLD) )
+	{
+		if ( gEntList.NumberOfEntities() < (gpGlobals->maxEntities - ENTITY_INTOLERANCE) )
+			return 0;
+
+		// we're past the entity tolerance level,  so delay the respawn
+		return FlWeaponRespawnTime( pWeapon );
+	}
+#endif
+	return 0;
+}
+
+//=========================================================
+// VecWeaponRespawnSpot - where should this weapon spawn?
+// Some game variations may choose to randomize spawn locations
+//=========================================================
+Vector CHL2MPRules::VecWeaponRespawnSpot( CBaseCombatWeapon *pWeapon )
+{
+#ifndef CLIENT_DLL
+	CWeaponHL2MPBase *pHL2Weapon = dynamic_cast< CWeaponHL2MPBase*>( pWeapon );
+
+	if ( pHL2Weapon )
+	{
+		return pHL2Weapon->GetOriginalSpawnOrigin();
+	}
+#endif
+	
+	return pWeapon->GetAbsOrigin();
+}
+
+#ifndef CLIENT_DLL
+
+CItem* IsManagedObjectAnItem( CBaseEntity *pObject )
+{
+	return dynamic_cast< CItem*>( pObject );
+}
+
+CWeaponHL2MPBase* IsManagedObjectAWeapon( CBaseEntity *pObject )
+{
+	return dynamic_cast< CWeaponHL2MPBase*>( pObject );
+}
+
+bool GetObjectsOriginalParameters( CBaseEntity *pObject, Vector &vOriginalOrigin, QAngle &vOriginalAngles )
+{
+	if ( CItem *pItem = IsManagedObjectAnItem( pObject ) )
+	{
+		if ( pItem->m_flNextResetCheckTime > gpGlobals->curtime )
+			 return false;
+		
+		vOriginalOrigin = pItem->GetOriginalSpawnOrigin();
+		vOriginalAngles = pItem->GetOriginalSpawnAngles();
+
+		pItem->m_flNextResetCheckTime = gpGlobals->curtime + mp_item_respawn_time.GetFloat();
+		return true;
+	}
+	else if ( CWeaponHL2MPBase *pWeapon = IsManagedObjectAWeapon( pObject )) 
+	{
+		if ( pWeapon->m_flNextResetCheckTime > gpGlobals->curtime )
+			 return false;
+
+		vOriginalOrigin = pWeapon->GetOriginalSpawnOrigin();
+		vOriginalAngles = pWeapon->GetOriginalSpawnAngles();
+
+		pWeapon->m_flNextResetCheckTime = gpGlobals->curtime + mp_weapon_respawn_time.GetFloat();
+		return true;
+	}
+
+	return false;
+}
+
+void CHL2MPRules::ManageObjectRelocation( void )
+{
+	int iTotal = m_hRespawnableItemsAndWeapons.Count();
+
+	if ( iTotal > 0 )
+	{
+		for ( int i = 0; i < iTotal; i++ )
+		{
+			CBaseEntity *pObject = m_hRespawnableItemsAndWeapons[i].Get();
+			
+			if ( pObject )
+			{
+				Vector vSpawOrigin;
+				QAngle vSpawnAngles;
+
+				if ( GetObjectsOriginalParameters( pObject, vSpawOrigin, vSpawnAngles ) == true )
+				{
+					float flDistanceFromSpawn = (pObject->GetAbsOrigin() - vSpawOrigin ).Length();
+
+					if ( flDistanceFromSpawn > WEAPON_MAX_DISTANCE_FROM_SPAWN )
+					{
+						bool shouldReset = false;
+						IPhysicsObject *pPhysics = pObject->VPhysicsGetObject();
+
+						if ( pPhysics )
+						{
+							shouldReset = pPhysics->IsAsleep();
+						}
+						else
+						{
+							shouldReset = (pObject->GetFlags() & FL_ONGROUND) ? true : false;
+						}
+
+						if ( shouldReset )
+						{
+							pObject->Teleport( &vSpawOrigin, &vSpawnAngles, NULL );
+							pObject->EmitSound( "AlyxEmp.Charge" );
+
+							IPhysicsObject *pPhys = pObject->VPhysicsGetObject();
+
+							if ( pPhys )
+							{
+								pPhys->Wake();
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+//=========================================================
+//AddLevelDesignerPlacedWeapon
+//=========================================================
+void CHL2MPRules::AddLevelDesignerPlacedObject( CBaseEntity *pEntity )
+{
+	if ( m_hRespawnableItemsAndWeapons.Find( pEntity ) == -1 )
+	{
+		m_hRespawnableItemsAndWeapons.AddToTail( pEntity );
+	}
+}
+
+//=========================================================
+//RemoveLevelDesignerPlacedWeapon
+//=========================================================
+void CHL2MPRules::RemoveLevelDesignerPlacedObject( CBaseEntity *pEntity )
+{
+	if ( m_hRespawnableItemsAndWeapons.Find( pEntity ) != -1 )
+	{
+		m_hRespawnableItemsAndWeapons.FindAndRemove( pEntity );
+	}
+}
+
+//=========================================================
+// Where should this item respawn?
+// Some game variations may choose to randomize spawn locations
+//=========================================================
+Vector CHL2MPRules::VecItemRespawnSpot( CItem *pItem )
+{
+	return pItem->GetOriginalSpawnOrigin();
+}
+
+//=========================================================
+// What angles should this item use to respawn?
+//=========================================================
+QAngle CHL2MPRules::VecItemRespawnAngles( CItem *pItem )
+{
+	return pItem->GetOriginalSpawnAngles();
+}
+
+//=========================================================
+// At what time in the future may this Item respawn?
+//=========================================================
+float CHL2MPRules::FlItemRespawnTime( CItem *pItem )
+{
+	if(FClassnameIs(pItem, "item_armor_small") || FClassnameIs(pItem, "item_armor_medium") || FClassnameIs(pItem, "item_armor_large"))
+		return mp_armor_respawn_time.GetFloat();
+	else
+		return mp_item_respawn_time.GetFloat();
+}
+
+
+//=========================================================
+// CanHaveWeapon - returns false if the player is not allowed
+// to pick up this weapon
+//=========================================================
+bool CHL2MPRules::CanHavePlayerItem( CBasePlayer *pPlayer, CBaseCombatWeapon *pItem )
+{
+	if ( weaponstay.GetInt() > 0 )
+	{
+		if ( pPlayer->Weapon_OwnsThisType( pItem->GetClassname(), pItem->GetSubType() ) )
+			 return false;
+	}
+
+	return BaseClass::CanHavePlayerItem( pPlayer, pItem );
+}
+
+#endif
+
+//=========================================================
+// WeaponShouldRespawn - any conditions inhibiting the
+// respawning of this weapon?
+//=========================================================
+int CHL2MPRules::WeaponShouldRespawn( CBaseCombatWeapon *pWeapon )
+{
+#ifndef CLIENT_DLL
+	if ( pWeapon->HasSpawnFlags( SF_NORESPAWN ) )
+	{
+		return GR_WEAPON_RESPAWN_NO;
+	}
+#endif
+
+	return GR_WEAPON_RESPAWN_YES;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Player has just left the game
+//-----------------------------------------------------------------------------
+void CHL2MPRules::ClientDisconnected( edict_t *pClient )
+{
+#ifndef CLIENT_DLL
+	// Msg( "CLIENT DISCONNECTED, REMOVING FROM TEAM.\n" );
+
+	CBasePlayer *pPlayer = (CBasePlayer *)CBaseEntity::Instance( pClient );
+	if ( pPlayer )
+	{
+		// Remove the player from his team
+		if ( pPlayer->GetTeam() )
+		{
+			pPlayer->GetTeam()->RemovePlayer( pPlayer );
+		}
+	}
+
+	BaseClass::ClientDisconnected( pClient );
+
+#endif
+}
+
+
+//=========================================================
+// Deathnotice. 
+//=========================================================
+
+extern ConVar mp_pushfrag_delay;
+
+void CHL2MPRules::DeathNotice( CBasePlayer *pVictim, const CTakeDamageInfo &info )
+{
+#ifndef CLIENT_DLL
+	// Work out what killed the player, and send a message to all clients about it
+	const char *killer_weapon_name = "world";		// by default, the player is killed by the world
+	int killer_ID = 0;
+
+	// Find the killer & the scorer
+	CBaseEntity *pInflictor = info.GetInflictor();
+	CBaseEntity *pKiller = info.GetAttacker();
+	CBasePlayer *pScorer = GetDeathScorer( pKiller, pInflictor );
+
+	//BP préparation des autovocals du respawn
+	bool isTK = false;
+	if((!pScorer && !pKiller->IsNPC() && !pKiller->IsPlayer()) || pVictim == pScorer)
+		pVictim->m_nAutovocalAtRespawn = RSASUICIDE;
+	else if(pScorer)
+	{
+		//BP Si on est la même personne, on est aussi de la même équipe, on évite de faire comme si on avait buté un copain
+		if((pVictim->GetTeamNumber() == pScorer->GetTeamNumber()) && IsTeamplay())
+		{
+			pScorer->PlayAutovocal(TK, 0.5f);
+			pVictim->m_nAutovocalAtRespawn = RSATKED;
+			isTK = true;
+		}
+	}
+
+	bool pushFrag = false;
+	if(pVictim->m_pLastAttacker != NULL && ((pVictim->m_flLastDamageTime + mp_pushfrag_delay.GetFloat()) > gpGlobals->curtime))
+	{
+		if(info.GetDamageType() == DMG_FALL)
+		{
+			pKiller = pVictim->m_pLastAttacker;
+			pScorer = pVictim->m_pLastAttacker;
+			pushFrag = true;
+			if(!isTK)
+				pVictim->m_nAutovocalAtRespawn = AUTOVOCAL_NONE;
+		}
+	}
+
+	// Custom kill type?
+	if ( info.GetDamageCustom() && !pushFrag )
+	{
+		if(pInflictor)
+			killer_weapon_name = pInflictor->GetClassname();
+		else
+			killer_weapon_name = GetDamageCustomString( info );
+
+		if (pScorer)
+			killer_ID = pScorer->GetUserID();
+	}
+	else
+	{
+		// Is the killer a client?
+		if (pScorer)
+		{
+			if(!isTK)
+			{
+				pScorer->m_iFragCount++;
+
+				if(pScorer->m_iFragCount >= 7)
+				{
+					pScorer->PlayAutovocal(GENOCIDE, 0.5f);
+					ToHL2MPPlayer(pScorer)->EarnAchievement("MonsterKiller");
+				}
+				else if(pScorer->m_iFragCount >= 3)
+					pScorer->PlayAutovocal(RAMPAGE, 0.5f);
+			}
+			else // Si c'est un TK, on reset le fragCount
+				pScorer->m_iFragCount = 0;
+
+			killer_ID = pScorer->GetUserID();
+			
+			if (pInflictor)
+			{
+				if ( pInflictor == pScorer )
+				{
+					// If the inflictor is the killer,  then it must be their current weapon doing the damage
+					if ( pScorer->GetActiveWeapon() )
+						killer_weapon_name = pScorer->GetActiveWeapon()->GetClassname();
+				}
+				else
+					killer_weapon_name = pInflictor->GetClassname();  // it's just that easy
+			}
+		}
+		else
+			killer_weapon_name = pKiller->GetClassname();
+
+		if (strcmp( killer_weapon_name, "weapon_bat") == 0 )
+		{
+			if(!isTK)
+				pScorer->PlayAutovocal(BATFRAG);
+		}
+		if (strcmp( killer_weapon_name, "npc_mine") == 0 )
+		{
+			if(!isTK)
+				pScorer->PlayAutovocal(MINEFRAG);
+		}
+
+		// strip the NPC_* or weapon_* from the inflictor's classname
+		if ( strncmp( killer_weapon_name, "weapon_", 7 ) == 0 )
+			killer_weapon_name += 7;
+		else if ( strncmp( killer_weapon_name, "npc_", 4 ) == 0 )
+			killer_weapon_name += 4;
+		else if ( strncmp( killer_weapon_name, "func_", 5 ) == 0 )
+			killer_weapon_name += 5;
+		else if ( strstr( killer_weapon_name, "physics" ) )
+			killer_weapon_name = "physics";
+
+		//BP En cas de push...
+		if(pushFrag)
+		{
+			killer_weapon_name = "pushfrag";
+
+			if(!isTK)
+				pScorer->PlayAutovocal(PUSHFRAG);
+		}
+	}
+
+	IGameEvent *event = gameeventmanager->CreateEvent("player_death");
+	if(event)
+	{
+		event->SetInt("userid", pVictim->GetUserID());
+		event->SetInt("attacker", killer_ID);
+		event->SetString("weapon", killer_weapon_name);
+		event->SetInt("priority", 7);
+
+		gameeventmanager->FireEvent(event);
+	}
+#endif
+}
+
+void CHL2MPRules::ClientSettingsChanged( CBasePlayer *pPlayer )
+{
+#ifndef CLIENT_DLL
+	
+	CHL2MP_Player *pHL2Player = ToHL2MPPlayer( pPlayer );
+	if ( pHL2Player == NULL )
+		return;
+
+	/*const char *pCurrentModel = modelinfo->GetModelName( pPlayer->GetModel() );
+	const char *szModelName = engine->GetClientConVarValue( engine->IndexOfEdict( pPlayer->edict() ), "cl_playermodel" );
+
+	//If we're different.
+	if ( stricmp( szModelName, pCurrentModel ) )
+	{
+		//Too soon, set the cvar back to what it was.
+		//Note: this will make this function be called again
+		//but since our models will match it'll just skip this whole dealio.
+		if ( pHL2Player->GetNextModelChangeTime() >= gpGlobals->curtime )
+		{
+			char szReturnString[512];
+
+			Q_snprintf( szReturnString, sizeof (szReturnString ), "cl_playermodel %s\n", pCurrentModel );
+			engine->ClientCommand ( pHL2Player->edict(), szReturnString );
+
+			Q_snprintf( szReturnString, sizeof( szReturnString ), "Please wait %d more seconds before trying to switch.\n", (int)(pHL2Player->GetNextModelChangeTime() - gpGlobals->curtime) );
+			ClientPrint( pHL2Player, HUD_PRINTTALK, szReturnString );
+			return;
+		}
+
+		if ( HL2MPRules()->IsTeamplay() == false )
+		{
+			pHL2Player->SetPlayerModel();
+
+			const char *pszCurrentModelName = modelinfo->GetModelName( pHL2Player->GetModel() );
+
+			char szReturnString[128];
+			Q_snprintf( szReturnString, sizeof( szReturnString ), "Your player model is: %s\n", pszCurrentModelName );
+
+			ClientPrint( pHL2Player, HUD_PRINTTALK, szReturnString );
+		}
+		else
+		{
+			if ( Q_stristr( szModelName, "models/human") )
+			{
+				pHL2Player->ChangeTeam( TEAM_GREEN );
+			}
+			else
+			{
+				pHL2Player->ChangeTeam( TEAM_PINK );
+			}
+		}
+	}*/
+	if ( sv_report_client_settings.GetInt() == 1 )
+	{
+		UTIL_LogPrintf( "\"%s\" cl_cmdrate = \"%s\"\n", pHL2Player->GetPlayerName(), engine->GetClientConVarValue( pHL2Player->entindex(), "cl_cmdrate" ));
+	}
+
+	BaseClass::ClientSettingsChanged( pPlayer );
+#endif
+	
+}
+
+int CHL2MPRules::PlayerRelationship( CBaseEntity *pPlayer, CBaseEntity *pTarget )
+{
+#ifndef CLIENT_DLL
+	// half life multiplay has a simple concept of Player Relationships.
+	// you are either on another player's team, or you are not.
+	if( GetGameType() == GAME_COOP && pTarget->IsPlayer() )
+		return GR_TEAMMATE;
+
+	if ( !pPlayer || !pTarget || !pTarget->IsPlayer() || IsTeamplay() == false )
+		return GR_NOTTEAMMATE;
+
+	if ( (*GetTeamID(pPlayer) != '\0') && (*GetTeamID(pTarget) != '\0') && !stricmp( GetTeamID(pPlayer), GetTeamID(pTarget) ) )
+	{
+		return GR_TEAMMATE;
+	}
+#endif
+
+	return GR_NOTTEAMMATE;
+}
+
+const char *CHL2MPRules::GetGameDescription( void )
+{ 
+	switch(GetGameType()){
+		case GAME_DM:
+			return "Deathmatch";
+			break;
+		case GAME_TDM:
+			return "Team Deathmatch";
+			break;
+		case GAME_CTB:
+			return "Capture the Bear";
+			break;
+		case GAME_FORTS:
+			if(IsFortsBuildPhase())
+				return "Forts (Build)";
+			else
+				return "Forts (Fight)";
+			break;
+		case GAME_DOM:
+			return "Domination";
+			break;
+		case GAME_KOTH:
+			return "King Of The Hill";
+			break;
+		case GAME_PUSH:
+			return "Push";
+			break;
+		case GAME_COOP:
+			return "Cooperation";
+			break;
+		default:
+			return "Unknown";
+			break;
+	}
+} 
+//float CHL2MPRules::FlPlayerFallDamage( CBasePlayer *pPlayer )
+//	{
+//		int iFallDamage = m_iForceFallDamage;
+//
+//		switch ( iFallDamage )
+//		{
+//		case 1://progressive
+//			pPlayer->m_Local.m_flFallVelocity -= PLAYER_MAX_SAFE_FALL_SPEED;
+//			return pPlayer->m_Local.m_flFallVelocity * DAMAGE_FOR_FALL_SPEED;
+//			break;
+//		case 2: //BP Pas de dégats
+//			return 0;
+//			break;
+//		default:
+//		//case 0:// fixed
+//			return 10;
+//			break;
+//		}
+//	} 
+
+float CHL2MPRules::GetMapRemainingTime()
+{
+	// if timelimit is disabled, return 0
+	if ( mp_timelimit.GetInt() <= 0 )
+		return 0;
+
+	// timelimit is in minutes
+	float flTimeLimit = (m_iForceTimeLimit != -1) ? m_iForceTimeLimit : mp_timelimit.GetFloat();
+	flTimeLimit *= 60; // Var en minutes, code en secondes
+	flTimeLimit += m_flTimeLimitMod;
+
+	float timeleft = (m_flGameStartTime + flTimeLimit ) - gpGlobals->curtime;
+
+	return timeleft;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CHL2MPRules::Precache( void )
+{
+	CBaseEntity::PrecacheScriptSound( "AlyxEmp.Charge" );
+	CBaseEntity::PrecacheScriptSound( "Gameplay.Endgame.Win" );
+	CBaseEntity::PrecacheScriptSound( "Gameplay.Endgame.Fail" );
+}
+
+bool CHL2MPRules::ShouldCollide( int collisionGroup0, int collisionGroup1 )
+{
+	if ( collisionGroup0 > collisionGroup1 )
+	{
+		// swap so that lowest is always first
+		swap(collisionGroup0,collisionGroup1);
+	}
+
+	if(collisionGroup1 == COLLISION_GROUP_PROJECTILE && (collisionGroup0 == COLLISION_GROUP_PLAYER || collisionGroup0 == COLLISION_GROUP_PLAYER_MOVEMENT) ) // BP We want our projectiles to hit players
+		return true;
+
+	if ( (collisionGroup0 == COLLISION_GROUP_PLAYER || collisionGroup0 == COLLISION_GROUP_PLAYER_MOVEMENT) &&
+		collisionGroup1 == COLLISION_GROUP_WEAPON )
+	{
+		return false;
+	}
+
+	return BaseClass::ShouldCollide( collisionGroup0, collisionGroup1 ); 
+
+}
+
+bool CHL2MPRules::ClientCommand( CBaseEntity *pEdict, const CCommand &args )
+{
+#ifndef CLIENT_DLL
+	if( BaseClass::ClientCommand( pEdict, args ) )
+		return true;
+
+
+	CHL2MP_Player *pPlayer = (CHL2MP_Player *) pEdict;
+
+	if ( pPlayer->ClientCommand( args ) )
+		return true;
+#endif
+
+	return false;
+}
+
+// shared ammo definition
+// JAY: Trying to make a more physical bullet response
+#define BULLET_MASS_GRAINS_TO_LB(grains)	(0.002285*(grains)/16.0f)
+#define BULLET_MASS_GRAINS_TO_KG(grains)	lbs2kg(BULLET_MASS_GRAINS_TO_LB(grains))
+
+// exaggerate all of the forces, but use real numbers to keep them consistent
+#define BULLET_IMPULSE_EXAGGERATION			3.5
+// convert a velocity in ft/sec and a mass in grains to an impulse in kg in/s
+#define BULLET_IMPULSE(grains, ftpersec)	((ftpersec)*12*BULLET_MASS_GRAINS_TO_KG(grains)*BULLET_IMPULSE_EXAGGERATION)
+
+ConVar sk_ammo_max_smg("sk_ammo_max_smg", "300", FCVAR_REPLICATED);
+ConVar sk_ammo_max_flower("sk_ammo_max_flower", "50", FCVAR_REPLICATED);
+ConVar sk_ammo_max_buckshot("sk_ammo_max_buckshot", "12", FCVAR_REPLICATED);
+ConVar sk_ammo_max_rpg("sk_ammo_max_rpg", "10", FCVAR_REPLICATED);
+ConVar sk_ammo_max_grenade("sk_ammo_max_grenade", "5", FCVAR_REPLICATED);
+ConVar sk_ammo_max_slam("sk_ammo_max_slam", "3", FCVAR_REPLICATED);
+
+CAmmoDef *GetAmmoDef()
+{
+	static CAmmoDef def;
+	static bool bInitted = false;
+	
+	if ( !bInitted )
+	{
+		bInitted = true;
+
+		def.AddAmmoType("AR2",				DMG_BULLET,					TRACER_LINE_AND_WHIZ,	0,			0,			60,			BULLET_IMPULSE(200, 1225),	0 );
+		def.AddAmmoType("AR2AltFire",		DMG_DISSOLVE,				TRACER_NONE,			0,			0,			3,			0,							0 );
+		def.AddAmmoType("Pistol",			DMG_BULLET,					TRACER_LINE_AND_WHIZ,	0,			0,			150,		BULLET_IMPULSE(200, 1225),	0 );
+		def.AddAmmoType("SMG1",				DMG_BULLET,					TRACER_LINE_AND_WHIZ,	0,			0,			225,		BULLET_IMPULSE(200, 1225),	0 );
+		def.AddAmmoType("357",				DMG_BULLET,					TRACER_LINE_AND_WHIZ,	0,			0,			12,			BULLET_IMPULSE(800, 5000),	0 );
+		def.AddAmmoType("XBowBolt",			DMG_BULLET,					TRACER_LINE,			0,			0,			10,			BULLET_IMPULSE(300, 6000),	0 );
+		def.AddAmmoType("Flechette",		DMG_BULLET,					TRACER_LINE,			0,			0,			10,			BULLET_IMPULSE(800, 8000),	0 );
+		def.AddAmmoType("Buckshot",			DMG_BULLET | DMG_BUCKSHOT,	TRACER_LINE,			0,			0,			30,			BULLET_IMPULSE(400, 1200),	0 );
+		def.AddAmmoType("RPG_Round",		DMG_BURN,					TRACER_NONE,			0,			0,			10,			0,							0 );
+		def.AddAmmoType("SMG1_Grenade",		DMG_BURN,					TRACER_NONE,			0,			0,			3,			0,							0 );
+		def.AddAmmoType("Grenade",			DMG_BURN,					TRACER_NONE,			0,			0,			5,			0,							0 );
+		def.AddAmmoType("slam",				DMG_BURN,					TRACER_NONE,			0,			0,			5,			0,							0 );
+	}
+
+	return &def;
+}
+
+#ifdef CLIENT_DLL
+
+	ConVar cl_autowepswitch(
+		"cl_autowepswitch",
+		"1",
+		FCVAR_ARCHIVE | FCVAR_USERINFO,
+		"Automatically switch to picked up weapons (if more powerful)" );
+#else
+bool CHL2MPRules::FShouldSwitchWeapon( CBasePlayer *pPlayer, CBaseCombatWeapon *pWeapon )
+	{		
+		if ( pPlayer->GetActiveWeapon() && pPlayer->IsNetClient() )
+		{
+			// Player has an active item, so let's check cl_autowepswitch.
+			const char *cl_autowepswitch = engine->GetClientConVarValue( engine->IndexOfEdict( pPlayer->edict() ), "cl_autowepswitch" );
+			if ( cl_autowepswitch && atoi( cl_autowepswitch ) <= 0 )
+			{
+				return false;
+			}
+		}
+
+		return BaseClass::FShouldSwitchWeapon( pPlayer, pWeapon );
+	}
+
+#endif
+
+#ifndef CLIENT_DLL
+
+	// Handler for the "bot" command.
+	void Bot_f()
+	{		
+		// Look at -count.
+		int count = 1;
+		count = clamp( count, 1, 16 );
+
+		int iTeam = TEAM_PINK;
+				
+		// Look at -frozen.
+		bool bFrozen = false;
+			
+		// Ok, spawn all the bots.
+		while ( --count >= 0 )
+		{
+			BotPutInServer( bFrozen, iTeam );
+		}
+	}
+
+
+	ConCommand cc_Bot( "bot", Bot_f, "Add a bot.", FCVAR_CHEAT );
+
+#endif
+
+#ifndef CLIENT_DLL
+
+//Tony; Re-working restart game so that it cleans up safely, and then respawns everyone.
+void CHL2MPRules::RestartGame()
+{
+	// bounds check
+	if ( mp_timelimit.GetInt() < 0 )
+	{
+		mp_timelimit.SetValue( 0 );
+	}
+	m_flGameStartTime = gpGlobals->curtime;
+	if ( !IsFinite( m_flGameStartTime.Get() ) )
+	{
+		Warning( "Trying to set a NaN game start time\n" );
+		m_flGameStartTime.GetForModify() = 0.0f;
+	}
+
+	// Pre Map Cleanup
+	for (int i = 1; i <= gpGlobals->maxClients; i++ )
+	{
+		CHL2MP_Player *pPlayer = (CHL2MP_Player*) UTIL_PlayerByIndex( i );
+
+		if ( !pPlayer )
+			continue;
+
+		//Tony; if they aren't a spectator, make sure they get cleaned up before entities are removed!
+		if ( pPlayer->GetTeamNumber() != TEAM_SPECTATOR )
+		{
+				// If they're in a vehicle, make sure they get out!
+				if ( pPlayer->IsInAVehicle() )
+					pPlayer->LeaveVehicle();
+
+				QAngle angles = pPlayer->GetLocalAngles();
+
+				angles.x = 0;
+				angles.z = 0;
+
+				pPlayer->SetLocalAngles( angles );
+				CBaseCombatWeapon *pWeapon = (CBaseCombatWeapon*)pPlayer->GetActiveWeapon();
+				if (pWeapon)
+				{
+					pPlayer->Weapon_Detach( pWeapon );
+					UTIL_Remove( pWeapon );
+				}
+		}
+		pPlayer->RemoveAllItems(true);
+		pPlayer->ClearActiveWeapon();
+		pPlayer->Reset();
+	}
+
+	CleanUpMap();
+	
+	// now that everything is cleaned up, respawn everyone.
+	for (int i = 1; i <= gpGlobals->maxClients; i++ )
+	{
+		CHL2MP_Player *pPlayer = (CHL2MP_Player*) UTIL_PlayerByIndex( i );
+
+		if ( !pPlayer )
+			continue;
+
+		//Tony; if they aren't a spectator, respawn them.
+		if ( pPlayer->GetTeamNumber() != TEAM_SPECTATOR )
+			pPlayer->Spawn();
+	}
+
+	CTeam *pRebels = GetGlobalTeam( TEAM_GREEN );
+	CTeam *pCombine = GetGlobalTeam( TEAM_PINK );
+
+	if ( pRebels )
+	{
+		pRebels->SetScore( 0 );
+	}
+
+	if ( pCombine )
+	{
+		pCombine->SetScore( 0 );
+	}
+
+	m_flIntermissionEndTime = 0;
+	m_flRestartGameTime = 0.0;		
+	m_bCompleteReset = false;
+
+	IGameEvent * event = gameeventmanager->CreateEvent( "round_start" );
+	if ( event )
+	{
+		event->SetInt("fraglimit", 0 );
+		event->SetInt( "priority", 6 ); // HLTV event priority, not transmitted
+
+		event->SetString("objective","DEATHMATCH");
+
+		gameeventmanager->FireEvent( event );
+	}
+}
+
+void CHL2MPRules::CleanUpMap()
+{
+	// Recreate all the map entities from the map data (preserving their indices),
+	// then remove everything else except the players.
+
+	// Get rid of all entities except players.
+	CBaseEntity *pCur = gEntList.FirstEnt();
+	while ( pCur )
+	{
+		CBaseHL2MPCombatWeapon *pWeapon = dynamic_cast< CBaseHL2MPCombatWeapon* >( pCur );
+		// Weapons with owners don't want to be removed..
+		if ( pWeapon )
+		{
+			if ( !pWeapon->GetPlayerOwner() )
+			{
+				UTIL_Remove( pCur );
+			}
+		}
+		// remove entities that has to be restored on roundrestart (breakables etc)
+		else if ( !FindInList( s_PreserveEnts, pCur->GetClassname() ) )
+		{
+			UTIL_Remove( pCur );
+		}
+
+		pCur = gEntList.NextEnt( pCur );
+	}
+
+	// Really remove the entities so we can have access to their slots below.
+	gEntList.CleanupDeleteList();
+
+	// Cancel all queued events, in case a func_bomb_target fired some delayed outputs that
+	// could kill respawning CTs
+	g_EventQueue.Clear();
+
+	// Now reload the map entities.
+	class CHL2MPMapEntityFilter : public IMapEntityFilter
+	{
+	public:
+		virtual bool ShouldCreateEntity( const char *pClassname )
+		{
+			// Don't recreate the preserved entities.
+			if ( !FindInList( s_PreserveEnts, pClassname ) )
+			{
+				return true;
+			}
+			else
+			{
+				// Increment our iterator since it's not going to call CreateNextEntity for this ent.
+				if ( m_iIterator != g_MapEntityRefs.InvalidIndex() )
+					m_iIterator = g_MapEntityRefs.Next( m_iIterator );
+
+				return false;
+			}
+		}
+
+
+		virtual CBaseEntity* CreateNextEntity( const char *pClassname )
+		{
+			if ( m_iIterator == g_MapEntityRefs.InvalidIndex() )
+			{
+				// This shouldn't be possible. When we loaded the map, it should have used 
+				// CCSMapLoadEntityFilter, which should have built the g_MapEntityRefs list
+				// with the same list of entities we're referring to here.
+				Assert( false );
+				return NULL;
+			}
+			else
+			{
+				CMapEntityRef &ref = g_MapEntityRefs[m_iIterator];
+				m_iIterator = g_MapEntityRefs.Next( m_iIterator );	// Seek to the next entity.
+
+				if ( ref.m_iEdict == -1 || engine->PEntityOfEntIndex( ref.m_iEdict ) )
+				{
+					// Doh! The entity was delete and its slot was reused.
+					// Just use any old edict slot. This case sucks because we lose the baseline.
+					return CreateEntityByName( pClassname );
+				}
+				else
+				{
+					// Cool, the slot where this entity was is free again (most likely, the entity was 
+					// freed above). Now create an entity with this specific index.
+					return CreateEntityByName( pClassname, ref.m_iEdict );
+				}
+			}
+		}
+
+	public:
+		int m_iIterator; // Iterator into g_MapEntityRefs.
+	};
+	CHL2MPMapEntityFilter filter;
+	filter.m_iIterator = g_MapEntityRefs.Head();
+
+	// DO NOT CALL SPAWN ON info_node ENTITIES!
+
+	MapEntity_ParseAllEntities( engine->GetMapEntitiesString(), &filter, true );
+}
+
+void CHL2MPRules::CheckChatForReadySignal( CHL2MP_Player *pPlayer, const char *chatmsg )
+{
+	if( m_bAwaitingReadyRestart && FStrEq( chatmsg, mp_ready_signal.GetString() ) )
+	{
+		if( !pPlayer->IsReady() )
+		{
+			pPlayer->SetReady( true );
+		}		
+	}
+}
+
+void CHL2MPRules::CheckRestartGame( void )
+{
+	// Restart the game if specified by the server
+	int iRestartDelay = mp_restartgame.GetInt();
+
+	if ( iRestartDelay > 0 )
+	{
+		if ( iRestartDelay > 60 )
+			iRestartDelay = 60;
+
+
+		// let the players know
+		char strRestartDelay[64];
+		Q_snprintf( strRestartDelay, sizeof( strRestartDelay ), "%d", iRestartDelay );
+		UTIL_ClientPrintAll( HUD_PRINTCENTER, "Game will restart in %s1 %s2", strRestartDelay, iRestartDelay == 1 ? "SECOND" : "SECONDS" );
+		UTIL_ClientPrintAll( HUD_PRINTCONSOLE, "Game will restart in %s1 %s2", strRestartDelay, iRestartDelay == 1 ? "SECOND" : "SECONDS" );
+
+		m_flRestartGameTime = gpGlobals->curtime + iRestartDelay;
+		m_bCompleteReset = true;
+		mp_restartgame.SetValue( 0 );
+	}
+
+	if( mp_readyrestart.GetBool() )
+	{
+		m_bAwaitingReadyRestart = true;
+		m_bHeardAllPlayersReady = false;
+		
+
+		const char *pszReadyString = mp_ready_signal.GetString();
+
+
+		// Don't let them put anything malicious in there
+		if( pszReadyString == NULL || Q_strlen(pszReadyString) > 16 )
+		{
+			pszReadyString = "ready";
+		}
+
+		IGameEvent *event = gameeventmanager->CreateEvent( "hl2mp_ready_restart" );
+		if ( event )
+			gameeventmanager->FireEvent( event );
+
+		mp_readyrestart.SetValue( 0 );
+
+		// cancel any restart round in progress
+		m_flRestartGameTime = -1;
+	}
+}
+
+void CHL2MPRules::CheckAllPlayersReady( void )
+{
+	for (int i = 1; i <= gpGlobals->maxClients; i++ )
+	{
+		CHL2MP_Player *pPlayer = (CHL2MP_Player*) UTIL_PlayerByIndex( i );
+
+		if ( !pPlayer )
+			continue;
+		if ( !pPlayer->IsReady() )
+			return;
+	}
+	m_bHeardAllPlayersReady = true;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+const char *CHL2MPRules::GetChatFormat( bool bTeamOnly, CBasePlayer *pPlayer )
+{
+	if ( !pPlayer )  // dedicated server output
+	{
+		return NULL;
+	}
+
+	const char *pszFormat = NULL;
+
+	// team only
+	if ( bTeamOnly == TRUE )
+	{
+		if ( pPlayer->GetTeamNumber() == TEAM_SPECTATOR )
+		{
+			pszFormat = "HL2MP_Chat_Spec";
+		}
+		else
+		{
+			const char *chatLocation = GetChatLocation( bTeamOnly, pPlayer );
+			if ( chatLocation && *chatLocation )
+			{
+				pszFormat = "HL2MP_Chat_Team_Loc";
+			}
+			else
+			{
+				pszFormat = "HL2MP_Chat_Team";
+			}
+		}
+	}
+	// everyone
+	else
+	{
+		if ( pPlayer->GetTeamNumber() != TEAM_SPECTATOR )
+		{
+			pszFormat = "HL2MP_Chat_All";	
+		}
+		else
+		{
+			pszFormat = "HL2MP_Chat_AllSpec";
+		}
+	}
+
+	return pszFormat;
+}
+
+#endif

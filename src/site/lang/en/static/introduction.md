@@ -1,0 +1,3 @@
+Welcome on the <strong>Bisounours Party</strong> site!<br/>
+Bisounours Party is a hardcore game modification for Half Life 2 about Care bears fighting each other for drugs in a colorful environement.<br/><br/>
+To learn more about Bisounours Party, watch the <a href='' onclick="document.getElementById('Trailer').style.display = 'block';return false;">trailer</a> or head to the <a href="http://www.bisounoursparty.com/about/">about</a> page.<br/>

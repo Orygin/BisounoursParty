@@ -1,0 +1,17 @@
+<include tpl="header.html" />
+			<article>
+				<header>
+					<h2>{PAGE_TITLE}</h2>
+				</header>
+				<article>
+                                    <ul>
+					<block name="users">
+                                            <li><div style="float: right;">{users.USER_POSTE}</div><a href="http://www.bisounoursparty.com/forum/profile.php?id={users.USER_ID}">{users.USER_NICK}</a></li>
+                                            <br />
+                                        <blockelse />
+                                            Error, no team member found.
+                                        </block>
+                                    </ul>
+				</article>
+			</article>
+<include tpl="footer.html" />

@@ -1,0 +1,18 @@
+[
+	{
+		"icon": "img/avatar.jpg",
+		"id": 1,
+		"Name": "Test 1",
+		"Description": "saucisse",
+		"Progress": 419,
+		"ProgressMax": 420 
+	},
+	{
+		"icon": "img/avatar.jpg",
+		"id": 2,
+		"Name": "Test 2",
+		"Description": "Beep Boop",
+		"Progress": 1,
+		"ProgressMax": 420 
+	}
+]

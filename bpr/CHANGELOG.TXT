@@ -1,0 +1,65 @@
+Bisounours Party by Daft-Robot
+http://www.bisounoursparty.com/
+
+2013-09-xx : Version 5.0.5102
+Additions :
+	• New gamemodes : Push
+	• New maps (forts_candytot, push_cacatoes, push_stadium, push_mayanayse, co_factorial, co_corico)
+	• Area of effect to the tranquilizer
+	• Particle effects
+	• Particle muzzleflash
+	• Option to change fov
+	• Option to change skin
+	• Nebuleuse (see faq)
+	• Custom menu
+	• Achievements
+	• Game updater
+	• Linux dedicated servers
+	• English autovocals
+	• Effect when healed
+	• Effect at respawn
+Fixes :
+	• Unnecessary long intro movie
+	• Lot of crashes
+	• Under water being white
+	• Carebears withdrawal
+Tweaks :
+	• Switched to Source engine 2007
+	• Slightly balanced gameplay
+	• dm_castle remade
+	• Flower viewmodel remade
+	• Tweaked UI colors
+
+2009-07-16 : Version 4.1.962 Beta
+Additions :
+	• A bunch of new die/falldeath sounds
+	• A bunch of new sounds for existing autovocals
+	• Autovocal.Taunt when killing a player during his rampage/genocide
+	• cl_disable_radio to disable the in-game radio
+	• The mod version is now written in gameinfo.txt, so you know if you need to update, or not
+Fixes :
+	• Autovocal.Geolocalisation will no longer play during COOP games
+	• Bat given to the first living player instead of the first player during humiliation
+	• Falling items in dm_lolwut
+	• mp_fraglimit renamed to mp_scorelimit_dm
+	• Spawning under the map in dom_tribes
+	• Speaker icon inside of the player model (too low)
+	• Tag showing "Ennemy" instead of "Ally" in COOP
+	• Some various other things...
+Tweaks :
+	• cl_rate is now set to 15000 by default
+	• Fast zombie reskinned (still ugly though), idea stolen from AlexGhost
+	• Larger rainbows in dm_lolwut and some clip was added
+	• Server configuration files redone, added server.cfg, autoexec_server.cfg and setlimits.cfg
+	• The BigShotgun now has a bigger spread cone and more recoil
+	• The nametag now displays how much armor your allies have
+	• The Pistol is now more powerul
+
+
+2009-07-01 : Version 4.0.929 Beta
+Additions :
+	• The whole mod
+Fixes :
+	• Lack of Care Bears
+Tweaks :
+	• <insert a lame joke here>

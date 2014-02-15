@@ -1,0 +1,9 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "Models/props_bisou/bertha_base2"
+	"$model" 1
+	"$nocull" 1
+	"$translucent" 1
+	"$alphatest" 1
+}
+

@@ -1,0 +1,11 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "bisoutexture/vitre"
+	"$envmap" "env_cubemap"
+	"$surfaceprop" "glass"
+	"$translucent" 1
+	"$envmapcontrast" 1
+	"$envmapsaturation" 1
+	"$envmaptint" "[ .5 .5 .75]"
+	"%keywords" "bisou"
+}

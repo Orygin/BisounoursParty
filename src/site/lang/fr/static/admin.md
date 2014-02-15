@@ -1,0 +1,5 @@
+[Gestion du blog](/admin/blog/)  
+[Gestion du Devblog](/admin/devblog/)  
+[Médias](/admin/medias/)  
+[Équipe](/admin/team/)  
+[Téléchargements](/admin/dls/)  

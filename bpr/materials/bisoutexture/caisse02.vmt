@@ -1,0 +1,8 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "bisoutexture/caisse02"
+	"$surfaceprop" "wood"
+	"%keywords" "bisou"
+	"$parallaxmap" "Wood/woodwall006a_height"
+	"$parallaxmapscale" ".05"
+}

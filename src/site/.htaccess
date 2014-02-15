@@ -1,0 +1,72 @@
+Options -Indexes
+Options +FollowSymlinks
+RewriteEngine on
+
+# Events
+RewriteRule ^blog\/categorie\/([0-9]+)(-[a-z0-9-]+)?$ /blog_.php?cat_id=$1 [L]
+RewriteRule ^blog\/article\/page-([0-9]+)?$ /blog_.php?page=$1 [L]
+RewriteRule ^blog\/article\/([0-9]+)(-[a-z0-9-]+)?$ /blog_.php?art_id=$1 [L]
+RewriteRule ^blog\/AddComment\/([0-9]+)(-[a-z0-9-]+)?$ /blog_.php?Add=1&art_id=$1 [L]
+RewriteRule ^blog\/DelComment\/([0-9]+)-([0-9]+)?$ /blog_.php?del=$1&art_id=$2 [L]
+RewriteRule ^blog/?$  /blog_.php [L]
+RewriteRule ^devblog\/categorie\/([0-9]+)(-[a-z0-9-]+)?$ /dev.php?cat_id=$1 [L]
+RewriteRule ^devblog\/article\/page-([0-9]+)?$ /dev.php?page=$1 [L]
+RewriteRule ^devblog\/article\/([0-9]+)(-[a-z0-9-]+)?$ /dev.php?art_id=$1 [L]
+RewriteRule ^devblog\/AddComment\/([0-9]+)(-[a-z0-9-]+)?$ /dev.php?Add=1&art_id=$1 [L]
+RewriteRule ^devblog\/DelComment\/([0-9]+)-([0-9]+)?$ /dev.php?del=$1&art_id=$2 [L]
+RewriteRule ^devblog/?$  /dev.php [L]
+
+RewriteRule ^medias/?$  /images.php [L]
+
+RewriteRule ^admin\/devblog\/addArticle/?$  /adminium.php?page=devblog&action=add [L]
+RewriteRule ^admin\/devblog\/deleteArticle/([0-9]+)?$  /adminium.php?page=devblog&action=del&id=$1 [L]
+RewriteRule ^admin\/devblog\/editArticle/([0-9]+)?$  /adminium.php?page=devblog&action=edit&id=$1 [L]
+RewriteRule ^admin\/devblog\/updateArticle/([0-9]+)?$  /adminium.php?page=devblog&action=update&id=$1 [L]
+
+RewriteRule ^admin\/devblog\/editCategorie/([0-9]+)?$  /adminium.php?page=devblog&action=editcat&id=$1 [L]
+RewriteRule ^admin\/devblog\/newCategorie/?$  /adminium.php?page=devblog&action=newcat [L]
+RewriteRule ^admin\/devblog\/updateCategorie/([0-9]+)?$  /adminium.php?page=devblog&action=updatecat&id=$1 [L]
+RewriteRule ^admin\/devblog\/deleteCategorie/([0-9]+)?$  /adminium.php?page=devblog&action=delcat&id=$1 [L]
+RewriteRule ^admin\/devblog\/addCategorie/?$  /adminium.php?page=devblog&action=addcat [L]
+
+RewriteRule ^admin\/devblog/?$  /adminium.php?page=devblog [L]
+
+RewriteRule ^admin\/team/?$  /adminium.php?page=team [L]
+RewriteRule ^admin\/team/edit/([0-9]+)?$  /adminium.php?page=team&action=edit&id=$1 [L]
+RewriteRule ^admin\/team/delete/([0-9]+)?$  /adminium.php?page=team&action=del&id=$1 [L]
+RewriteRule ^admin\/team/add/?$  /adminium.php?page=team&action=add [L]
+
+RewriteRule ^admin\/blog\/addArticle/?$  /adminium.php?page=blog&action=add [L]
+RewriteRule ^admin\/blog\/deleteArticle/([0-9]+)?$  /adminium.php?page=blog&action=del&id=$1 [L]
+RewriteRule ^admin\/blog\/editArticle/([0-9]+)?$  /adminium.php?page=blog&action=edit&id=$1 [L]
+RewriteRule ^admin\/blog\/updateArticle/([0-9]+)?$  /adminium.php?page=blog&action=update&id=$1 [L]
+
+RewriteRule ^admin\/blog\/editCategorie/([0-9]+)?$  /adminium.php?page=blog&action=editcat&id=$1 [L]
+RewriteRule ^admin\/blog\/newCategorie/?$  /adminium.php?page=blog&action=newcat [L]
+RewriteRule ^admin\/blog\/updateCategorie/([0-9]+)?$  /adminium.php?page=blog&action=updatecat&id=$1 [L]
+RewriteRule ^admin\/blog\/deleteCategorie/([0-9]+)?$  /adminium.php?page=blog&action=delcat&id=$1 [L]
+RewriteRule ^admin\/blog\/addCategorie/?$  /adminium.php?page=blog&action=addcat [L]
+
+RewriteRule ^admin\/blog/?$  /adminium.php?page=blog [L]
+
+RewriteRule ^admin\/media/?$  /adminium.php?page=media [L]
+RewriteRule ^admin\/dls/?$  /adminium.php?page=dl [L]
+RewriteRule ^admin/?$  /adminium.php [L]
+
+RewriteRule ^switch_lang.html?$ /index.php?switch_lang=1 [L]
+RewriteRule ^link/?$ /Steam_Link.php [L]
+RewriteRule ^link/unlink?$ /Steam_Link.php?unlink=1 [L]
+
+RewriteRule ^about/?$  /about.php [L]
+RewriteRule ^a-propos/?$  /about.php [L]
+RewriteRule ^team/?$  /bpteam.php [L]
+RewriteRule ^equipe/?$  /bpteam.php [L]
+RewriteRule ^downloads/?$  /dl.php [L]
+RewriteRule ^download/?$  /dl.php [L]
+
+RewriteRule ^evenement-([0-9]+)(-[a-z0-9-]+)?\.html$  ./event.php?id=$1 [L]
+RewriteRule ^ajouter-evenement\.html$  ./add-event.php [L]
+RewriteRule ^editer-evenement-([0-9]+)(-[a-z0-9-]+)?\.html$  ./edit-event.php?id=$1 [L]
+RewriteRule ^supprimer-evenement-([0-9]+)(-[a-z0-9-]+)?\.html$  ./del-event.php?id=$1 [L]
+RewriteRule ^participer-evenement-([0-9]+)(-[a-z0-9-]+)?\.html$  ./add-player.php?id=$1 [L]
+RewriteRule ^ne-plus-participer-evenement-([0-9]+)(-[a-z0-9-]+)?\.html$  ./del-player.php?id=$1 [L]

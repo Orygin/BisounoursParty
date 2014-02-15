@@ -1,0 +1,164 @@
+
+"co_munist.indoors"
+{
+	"dsp"	"9"
+
+	"playlooping"
+	{
+		"volume"	"0.1"
+		"wave"		"ambient/levels/canals/windmill_wind_loop1.wav"
+		"pitch"		"85"
+	}
+
+	"playlooping"
+	{
+		"volume"	"0.2"
+		"wave"		"ambient/wind/wasteland_wind.wav"
+		"pitch"		"100"
+	}
+
+	"playrandom"
+	{
+		"time"		"10, 20"
+		"volume"	"0.5"
+		"pitch"		"100"
+
+		"rndwave"
+		{
+			"wave"	"ambient/materials/rustypipes1.wav"
+			"wave"	"ambient/materials/rustypipes2.wav"
+			"wave"	"ambient/materials/rustypipes3.wav"
+			"wave"	"ambient/materials/wood_creak1.wav"
+			"wave"	"ambient/materials/wood_creak2.wav"
+			"wave"	"ambient/materials/wood_creak3.wav"
+			"wave"	"ambient/materials/wood_creak4.wav"
+			"wave"	"ambient/materials/wood_creak5.wav"
+			"wave"	"ambient/materials/wood_creak6.wav"
+		}
+	}
+
+	"playrandom"
+	{
+		"time"		"5, 15"
+		"volume"	"0.5"
+		"pitch"		"100"
+
+		"rndwave"
+		{
+			"wave"	"ambient/creatures/rats1.wav"
+			"wave"	"ambient/creatures/rats2.wav"
+			"wave"	"ambient/creatures/rats3.wav"
+			"wave"	"ambient/creatures/rats4.wav"
+			"wave"	"ambient/ratpath01.wav"
+			"wave"	"ambient/ratpath02.wav"
+			"wave"	"ambient/ratpath03.wav"
+		}
+	}
+
+	"playrandom"
+	{
+		"time"		"15, 30"
+		"volume"	"0.1"
+		"pitch"		"100"
+
+		"rndwave"
+		{
+			"wave"	"ambient/wind/wind_snippet3.wav"
+			"wave"	"ambient/wind/wind_snippet4.wav"
+			"wave"	"ambient/wind/wind_snippet5.wav"
+		}
+	}
+}
+
+"co_munist.spawn"
+{
+	"dsp"	"9"
+
+	"playlooping"
+	{
+		"volume"	"0.1"
+		"wave"		"ambient/levels/canals/windmill_wind_loop1.wav"
+		"pitch"		"85"
+	}
+
+	"playlooping"
+	{
+		"volume"	"0.3"
+		"wave"		"ambient/wind/wasteland_wind.wav"
+		"pitch"		"100"
+	}
+
+	"playrandom"
+	{
+		"time"		"10, 20"
+		"volume"	"0.5"
+		"pitch"		"100"
+
+		"rndwave"
+		{
+			"wave"	"ambient/materials/rustypipes1.wav"
+			"wave"	"ambient/materials/rustypipes2.wav"
+			"wave"	"ambient/materials/rustypipes3.wav"
+			"wave"	"ambient/materials/wood_creak1.wav"
+			"wave"	"ambient/materials/wood_creak2.wav"
+			"wave"	"ambient/materials/wood_creak3.wav"
+			"wave"	"ambient/materials/wood_creak4.wav"
+			"wave"	"ambient/materials/wood_creak5.wav"
+			"wave"	"ambient/materials/wood_creak6.wav"
+		}
+	}
+
+	"playrandom"
+	{
+		"time"		"5, 15"
+		"volume"	"0.4"
+		"pitch"		"100"
+
+		"rndwave"
+		{
+			"wave"	"ambient/creatures/pigeon_idle1.wav"
+			"wave"	"ambient/creatures/pigeon_idle2.wav"
+			"wave"	"ambient/creatures/pigeon_idle3.wav"
+			"wave"	"ambient/creatures/pigeon_idle4.wav"
+		}
+	}
+
+	"playrandom"
+	{
+		"time"		"15, 30"
+		"volume"	"0.1"
+		"pitch"		"100"
+
+		"rndwave"
+		{
+			"wave"	"ambient/wind/wind_snippet3.wav"
+			"wave"	"ambient/wind/wind_snippet4.wav"
+			"wave"	"ambient/wind/wind_snippet5.wav"
+		}
+	}
+}
+
+"co_munist.outdoors"
+{
+	"dsp"	"1"
+
+	"playlooping"
+	{
+		"volume"	"0.7"
+		"wave"		"ambient/levels/canals/windmill_wind_loop1.wav"
+		"pitch"		"85"
+	}
+
+	"playrandom"
+	{
+		"time"		"15, 30"
+		"volume"	"0.8"
+		"pitch"		"100"
+
+		"rndwave"
+		{
+			"wave"	"ambient/wind/wind_med1.wav"
+			"wave"	"ambient/wind/wind_med2.wav"
+		}
+	}
+}

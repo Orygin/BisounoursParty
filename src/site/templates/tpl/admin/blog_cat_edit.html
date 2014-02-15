@@ -1,0 +1,24 @@
+<include tpl="header.html" />
+			<article>
+				<header>
+					<h2><a href="http://www.bisounoursparty.com/admin/">{PAGE_TITLE}</a> > <a href="http://www.bisounoursparty.com/admin/blog/">Blog</a> > {LANG_MENU_CATEGORIES} > {LANG_ADMIN_EDIT}</h2>
+				</header>
+                                <article>
+                                    <if cond="{$UPDATE} == 1">
+                                            <form action="/admin/blog/updateCategorie/{CATEGORY_ID}" method="post">
+                                            Francais  <input type="name_fr" name="name_fr" id="title" value="{CATEGORY_NAME_FR}"/>
+                                            English  <input type="name_en" name="name_en" id="title" value="{CATEGORY_NAME_EN}"/>
+                                        <input type="submit" value="{LANG_SEND}" />    
+                                        </form>
+                                       <else />
+                                        <form action="/admin/blog/addCategorie/" method="post">
+                                            Francais  <input type="name_en" name="name_en" id="title" />
+                                            English  <input type="name_fr" name="name_fr" id="title" />
+                                        <input type="submit" value="{LANG_SEND}" />    
+                                        </form>
+                                    </if>
+				</article>
+                            	<footer>
+				</footer>
+			</article>
+<include tpl="footer.html" />

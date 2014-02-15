@@ -1,0 +1,7 @@
+"LightmappedGeneric"
+{
+	"$basetexture"	"models\props\cs_assault\moneytop"
+	"$surfaceprop" "dirt"
+	"$detail" "details"
+	"$detailscale" 0.1
+}

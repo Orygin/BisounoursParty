@@ -1,0 +1,7 @@
+LightmappedGeneric
+{
+	"$basetexture"	"bisoutexture/glass/bisouglass002"
+	"$selfillum" 1
+	"$surfaceprop" "glass"
+	"%keywords" "bisou"
+}

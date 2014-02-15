@@ -1,0 +1,6 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "Models/Weapons/v_crossbow/crossbow4"
+	"$bumpmap" "models/weapons/Normal"
+	"$model" 1
+}

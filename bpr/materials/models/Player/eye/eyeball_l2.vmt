@@ -1,0 +1,7 @@
+"eyes"
+{
+	"$basetexture" "Lights/White002"
+	"$iris" "models/player/eye/pupil_l2"
+	"$halflambert" 1
+	"$nodecal" 1
+}

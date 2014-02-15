@@ -1,0 +1,7 @@
+"VertexLitGeneric"
+{
+	"$translucent" 1
+	"$basetexture" "Decals/blood_gunshot_decal"
+	"$decal" 1
+	"$decalscale" 0.25
+}

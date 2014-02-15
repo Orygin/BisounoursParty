@@ -1,0 +1,238 @@
+"NPC_BaseZombie.Bisou.PoundDoor"
+{
+	"channel"		"CHAN_BODY"
+	"volume"		"0.95"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_NORM"
+
+	"wave"			"npc/zombie/zombie_pound_door.wav"
+}
+
+"NPC_BaseZombie.Bisou.Swat"
+{
+	"channel"		"CHAN_BODY"
+	"volume"		"0.95"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_NORM"
+
+	"wave"			"npc/zombie/zombie_hit.wav"
+}
+
+"Zombie.Bisou.FootstepRight"
+{
+	"channel"		"CHAN_BODY"
+	"volume"		"0.95"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_70dB"
+
+	"rndwave"
+	{
+		"wave"	"npc/zombie/foot1.wav"
+		"wave"	"npc/zombie/foot2.wav"
+		"wave"	"npc/zombie/foot3.wav"
+	}
+}
+
+"Zombie.Bisou.FootstepLeft"
+{
+	"channel"		"CHAN_BODY"
+	"volume"		"0.95"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_70dB"
+
+	"rndwave"
+	{
+		"wave"	"npc/zombie/foot1.wav"
+		"wave"	"npc/zombie/foot2.wav"
+		"wave"	"npc/zombie/foot3.wav"
+	}
+}
+
+"Zombie.Bisou.ScuffRight"
+{
+	"channel"		"CHAN_BODY"
+	"volume"		"0.95"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_70dB"
+
+	"rndwave"
+	{
+		"wave"	"npc/zombie/foot_slide1.wav"
+		"wave"	"npc/zombie/foot_slide2.wav"
+		"wave"	"npc/zombie/foot_slide3.wav"
+	}
+}
+
+"Zombie.Bisou.ScuffLeft"
+{
+	"channel"		"CHAN_BODY"
+	"volume"		"0.95"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_70dB"
+
+	"rndwave"
+	{
+		"wave"	"npc/zombie/foot_slide1.wav"
+		"wave"	"npc/zombie/foot_slide2.wav"
+		"wave"	"npc/zombie/foot_slide3.wav"
+	}
+}
+
+"Zombie.Bisou.AttackHit"
+{
+	"channel"		"CHAN_WEAPON"
+	"volume"		"0.95"
+	"pitch"			"95, 105"
+
+	"soundlevel"	"SNDLVL_NORM"
+
+	"rndwave"
+	{
+		"wave"	"npc/zombie/claw_strike1.wav"
+		"wave"	"npc/zombie/claw_strike2.wav"
+		"wave"	"npc/zombie/claw_strike3.wav"
+	}
+}
+
+"Zombie.Bisou.AttackMiss"
+{
+	"channel"		"CHAN_WEAPON"
+	"volume"		"0.95"
+	"pitch"			"95, 105"
+
+	"soundlevel"	"SNDLVL_NORM"
+
+	"rndwave"
+	{
+		"wave"	"npc/zombie/claw_miss1.wav"
+		"wave"	"npc/zombie/claw_miss2.wav"
+	}
+}
+
+"Zombie.Bisou.Pain"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.95"
+	"pitch"			"95, 104"
+
+	"soundlevel"	"SNDLVL_NORM"
+
+	"wave"	"npc/zombie/zombie/zo_pain1.wav"
+}
+
+"Zombie.Bisou.Alert"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.95"
+	"pitch"			"95, 104"
+
+	"soundlevel"	"SNDLVL_NORM"
+
+	"rndwave"
+	{
+		"wave"	"npc/zombie/zombie/zo_alert10.wav"
+		"wave"	"npc/zombie/zombie/zo_alert20.wav"
+		"wave"	"npc/zombie/zombie/zo_alert30.wav"
+		"wave"	"npc/zombie/zombie/zo_alert40.wav"
+		"wave"	"npc/zombie/zombie/zo_alert50.wav"
+		"wave"	"npc/zombie/zombie/zo_alert60.wav"
+		"wave"	"npc/zombie/zombie/zo_alert70.wav"
+	}
+}
+
+"Zombie.Bisou.Idle"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.75"
+	"pitch"		"92, 105"
+
+	"soundlevel"	"SNDLVL_65db"
+
+	"rndwave"
+	{
+		"wave"	"npc/zombie/zombie/zo_idle1.wav"
+		"wave"	"npc/zombie/zombie/zo_idle2.wav"
+		"wave"	"npc/zombie/zombie/zo_idle3.wav"
+		"wave"	"npc/zombie/zombie/zo_idle4.wav"
+		"wave"	"npc/zombie/zombie/zo_idle6.wav"
+	}
+}
+
+"Zombie.Bisou.Die"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.95"
+	"pitch"			"95, 105"
+
+	"soundlevel"	"SNDLVL_NORM"
+	"rndwave"
+	{
+		"wave"	"npc/zombie/zombie/zo_die1.wav"
+		"wave"	"npc/zombie/zombie/zo_die2.wav"
+	}
+}
+
+"Zombie.Bisou.Attack"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.600"
+	"pitch"			"95, 105"
+
+	"soundlevel"	"SNDLVL_NORM"
+
+	"rndwave"
+	{
+		"wave"	"npc/zombie/zombie/zo_attack1.wav"
+		"wave"	"npc/zombie/zombie/zo_attack2.wav"
+	}
+}
+ 
+"Zombie.Bisou.Moan1"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.95"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_NORM"
+
+	"wave"			"npc/zombie/moan_loop1.wav"
+}
+
+"Zombie.Bisou.Moan2"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.95"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_NORM"
+
+	"wave"			"npc/zombie/moan_loop2.wav"
+}
+
+"Zombie.Bisou.Moan3"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.95"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_NORM"
+
+	"wave"			"npc/zombie/moan_loop3.wav"
+}
+
+"Zombie.Bisou.Moan4"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.95"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_NORM"
+
+	"wave"			"npc/zombie/moan_loop4.wav"
+}

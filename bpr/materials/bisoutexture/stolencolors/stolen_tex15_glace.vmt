@@ -1,0 +1,7 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "bisoutexture/stolencolors/stolen_tex15"
+	"$surfaceprop" "Metal"
+	"$detail" "glace"
+	"$detailscale" 0.15
+}

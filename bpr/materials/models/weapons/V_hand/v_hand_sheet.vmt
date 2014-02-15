@@ -1,0 +1,61 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/Weapons/v_hand/v_hand_sheet"
+	"$bumpmap" "models/Weapons/Normal"
+
+	"$phong" "1"
+	"$lightwarptexture" "lightwarp2"
+	"$halflambert" 1
+	"$phongexponent" "10"
+	"$phongboost" .07
+	"$phongfresnelranges" "[1 1 1]"
+	"$selfillum" 1
+
+	//Constantes
+	"$dix" 			10
+	"$sept" 		7
+	"$cinq" 		5
+	"$zerosept" 	.07
+
+	//Variables
+	"$variable1" 	5
+	"$variable2" 	10
+
+	"Proxies"
+	{
+		"PlayerSkin"
+		{
+			"resultVar"		"$frame"
+		}
+		"LessOrEqual"
+		{
+			"srcVar1"		"$frame"
+			"srcVar2"		"$sept"
+			"lessEqualVar"	"$dix"
+			"greaterVar"	"$cinq"
+			"resultVar"		"$variable1"
+		}
+		"LessOrEqual"
+		{
+			"srcVar1"		"$frame"
+			"srcVar2"		"$sept"
+			"lessEqualVar"	"$zerosept"
+			"greaterVar"	"$dix"
+			"resultVar"		"$variable2"
+		}
+		"Sine"
+		{
+			"resultVar"		"$phongexponent"
+			"sineperiod"	2
+			"sinemin"		10
+			"sinemax"		"$variable1"
+		}
+		"Sine"
+		{
+			"resultVar"		"$phongboost"
+			"sineperiod"	1
+			"sinemin"		.07
+			"sinemax"		"$variable2"
+		}
+	}
+}

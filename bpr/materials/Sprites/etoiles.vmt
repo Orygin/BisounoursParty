@@ -1,0 +1,6 @@
+"unlitgeneric"
+{
+	"$basetexture" "sprites/etoiles"
+	"$additive" 1
+	"%compileNoLight" 1
+}

@@ -1,0 +1,9 @@
+"Achievement_earned"
+{
+	"channel"		"CHAN_STATIC"
+	"volume"		"1.00"
+	"pitch"			"100"
+	"soundlevel"	"SNDLVL_80dB"
+
+	"wave"			"gameplay/achievement_earned.wav"
+}

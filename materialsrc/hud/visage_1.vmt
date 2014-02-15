@@ -1,0 +1,8 @@
+"UnlitGeneric"
+{
+   "$baseTexture" "hud/visage_1"
+   "nomip" "1"
+   "nocompress" "1"
+   "nolod" "1"
+   "$translucent" 1
+}

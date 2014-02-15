@@ -1,0 +1,52 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/weapons/v_hand/main_pelage"
+
+	"$dix" 			10
+	"$sept" 		7
+	"$cinq" 		5
+	"$zerosept" 	.07
+
+	//Variables
+	"$variable1" 	5
+	"$variable2" 	10
+
+	"Proxies"
+	{
+		"PlayerSkin"
+		{
+			"resultVar"		"$frame"
+		}
+		"LessOrEqual"
+		{
+			"srcVar1"		"$frame"
+			"srcVar2"		"$sept"
+			"lessEqualVar"	"$dix"
+			"greaterVar"	"$cinq"
+			"resultVar"		"$variable1"
+		}
+		"LessOrEqual"
+		{
+			"srcVar1"		"$frame"
+			"srcVar2"		"$sept"
+			"lessEqualVar"	"$zerosept"
+			"greaterVar"	"$dix"
+			"resultVar"		"$variable2"
+		}
+		"Sine"
+		{
+			"resultVar"		"$phongexponent"
+			"sineperiod"	2
+			"sinemin"		10
+			"sinemax"		"$variable1"
+		}
+		"Sine"
+		{
+			"resultVar"		"$phongboost"
+			"sineperiod"	1
+			"sinemin"		.07
+			"sinemax"		"$variable2"
+		}
+	}
+
+}

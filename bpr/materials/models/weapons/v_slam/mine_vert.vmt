@@ -1,0 +1,12 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "Models/Weapons/base/mine_vert"
+	"$bumpmap" "models/weapons/Normal"
+	"$model" 1
+
+	"$phong" "1"
+	"$lightwarptexture" "lightwarp2"
+	"$phongexponent" "30"
+	"$phongboost" 2
+	"$phongfresnelranges" "[.05 1 .2]"
+}

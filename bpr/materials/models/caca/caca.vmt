@@ -1,0 +1,11 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/caca/caca"
+	"$bumpmap" "models/caca/caca_bumpspec"
+
+	"$phong" "1"
+	"$phongexponent" "30"
+	"$phongboost" 2
+	"$phongfresnelranges" "[1 1 1]"
+	"$halflambert" 1
+}

@@ -1,0 +1,9 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "bisoutexture/glass/bisouglass001"
+	"$surfaceprop" "glass"	
+	"$translucent" 1
+	"%keywords" "bisou"
+	"$detail" "glace"
+	"$detailscale" 0.05
+}

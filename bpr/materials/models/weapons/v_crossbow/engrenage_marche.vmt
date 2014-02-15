@@ -1,0 +1,15 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "Models/Weapons/v_crossbow/engrenage"
+
+	"$variable" 0
+	"Proxies"
+	{
+		"AnimatedTexture"
+		{
+			"animatedTextureVar" "$basetexture"
+			"animatedTextureFrameNumVar" "$frame"
+			"animatedTextureFrameRate" "10"
+		}
+	}
+}

@@ -1,0 +1,6 @@
+{
+  Uninitvar
+  Memcheck:Cond
+  ...
+  obj:/home/orygin/srcds/orangebox/bin/*
+}

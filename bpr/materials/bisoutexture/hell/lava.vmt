@@ -1,0 +1,16 @@
+"Unlitgeneric"
+{
+	"$basetexture" "bisoutexture/hell/lava"
+	"$surfaceprop" "nuage"
+	"$nodecal" 1
+
+	"Proxies"
+	{
+		"TextureScroll"
+		{
+			"texturescrollvar" "$basetexturetransform"
+			"texturescrollrate" 0.04
+			"texturescrollangle" 0
+		}
+	}
+}

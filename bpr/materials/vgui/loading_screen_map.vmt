@@ -1,0 +1,18 @@
+"UnlitGeneric"
+{
+	"$basetexture" "VGUI/loading"
+	"$no_fullbright" 	1
+	"$nolod" 			1
+	"$ignorez" 			1
+
+	"Proxies"
+	{
+		"TimedRandom"
+		{
+			"rangeMin" 		0
+			"rangeMax"		4
+			"changetime"	1
+			"resultVar"		"$frame"
+		}
+	}
+}

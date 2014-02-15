@@ -1,0 +1,12 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "models\props_bisou/lanternes"
+	"$bumpmap" "models/weapons/Normal"
+
+	"$phong" "1"
+	"$phongexponent" "15"
+	"$phongboost" "3"
+	"$phongfresnelranges" "[1 1 1]"
+
+	$selfillum 1
+}

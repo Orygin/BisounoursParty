@@ -1,0 +1,1 @@
+Vous n'êtes pas connecté, merci de vous [connecter](http://www.bisounoursparty.com/forum/login.php) pour commenter cet article.  

@@ -1,0 +1,10 @@
+"WorldVertexTransition"
+{
+	"$basetexture" "bisoutexture/cartoon_herbe01"
+	"$basetexture2" "bisoutexture/cartoon_terre01"
+	"%tooltexture" "bisoutexture/blend_tool"
+	"$surfaceprop" "grass"
+	"$surfaceprop2" "dirt"
+	"%detailtype" "cartoon_herbestatic"
+	"%keywords" "bisou"
+}

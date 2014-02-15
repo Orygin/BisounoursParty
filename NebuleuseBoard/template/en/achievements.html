@@ -1,0 +1,20 @@
+<div id="ContentTopButton1" ng-click="AddAchievement()">
+	Add Achievement
+</div>
+<div class="AchievementsContainer">
+	<div class="Achievement" ng-repeat="Achievement in Achievements" ng-click="editAchievement(Achievement.id)" style="cursor:pointer">
+		<img class="AchievementIcon" ng-src="img/achievements/{{Achievement.name}}.png" alt="Achievement icon" onError="this.src='img/achievements/none.jpg';"/>
+		<div class="AchievementTitle">{{Achievement.fullName}}</div>
+		<div class="AchievementDescr">{{Achievement.fullDesc}}</div>
+		<div class="AchievementProgress">
+			<div class="TotalProgress" ng-show="Achievement.progressMax > 1"><div class="ProgressMade" style="width:{{ (Achievement.progress / Achievement.progressMax) *100 }}%;"> </div></div><div class="ProgressMax" ng-show="Achievement.progressMax > 1">{{Achievement.progressMax}}</div>
+		</div>
+	</div>
+</div>
+<div class="TextContainer" style="padding-left:615px">
+	<p>
+		This is the achievement page. Here you can edit individual achievements and see stats about them.<br/>
+		If you want to edit or delete a particular achievement, just click on it. You will then taken to its page<br/>
+	</p>
+<div>
+<div class="ClearLeft"> </div>

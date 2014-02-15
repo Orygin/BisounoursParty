@@ -1,0 +1,11 @@
+"WorldVertexTransition"
+{
+	"$basetexture" "bisoutexture/paradise/falaise"
+	"$basetexture2" "bisoutexture/paradise/herbe"
+	"$basetexturetransform" "center .5 .5 scale .2 .2 rotate 0 translate 0 0" 
+	"$blendmodulatetexture" "bisoutexture/paradise/herbe_blendmodulate"
+	"%tooltexture" "bisoutexture/blend_tool"
+	"$surfaceprop" "concrete"
+	"$surfaceprop2" "grass"
+	"%keywords" "bisou"
+}

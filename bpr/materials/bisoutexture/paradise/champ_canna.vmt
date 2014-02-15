@@ -1,0 +1,13 @@
+"WorldVertexTransition"
+{
+	"$basetexture" "bisoutexture/paradise/herbe"
+	"$basetexture2" "bisoutexture/cartoon_terre01"
+	"$blendmodulatetexture" "bisoutexture/paradise/herbe_blendmodulate"
+	
+	"$surfaceprop" "grass"
+	"$surfaceprop2" "dirt"
+	
+	"%detailtype" "cannabis"
+	"%tooltexture" "bisoutexture/blend_tool"
+	"%keywords" "bisou"
+}

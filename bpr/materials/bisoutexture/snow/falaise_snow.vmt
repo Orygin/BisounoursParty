@@ -1,0 +1,11 @@
+"WorldVertexTransition"
+{
+	"$basetexture" "bisoutexture/paradise/falaise"
+	"$basetexture2" "bisoutexture/snow/snow"
+	"$blendmodulatetexture" "bisoutexture/paradise/herbe_blendmodulate"
+	"$lightwarptexture" "bisoutexture/snow/lightwarp"
+	"%tooltexture" "bisoutexture/blend_tool"
+	"$surfaceprop" "concrete"
+	"$surfaceprop2" "snow"
+	"%keywords" "bisou"
+}

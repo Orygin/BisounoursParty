@@ -1,0 +1,45 @@
+//TROLOLOLO LOLOLO LOLOLO §
+//TITLES FOR HALF-LIFE 2
+// Position command $position x y 
+// x & y are from 0 to 1 to be screen resolution independent
+// -1 means center in each dimension
+// Effect command $effect <effect number>
+// effect 0 is fade in/fade out
+// effect 1 is flickery credits
+// effect 2 is write out (training room)
+// Text color r g b command $color
+// fadein time fadeout time / hold time
+// $fadein (message fade in time - per character in effect 2)
+// $fadeout (message fade out time)
+// $holdtime (stay on the screen for this long)
+
+//KLEMS : Definition des comportements basiques
+$position 	-1 0.4
+$effect 	0
+$color 		255 200 255
+$fadein 	0.5
+$fadeout 	0.5
+$holdtime 	1
+//KLEMS : Fin de la definition
+
+SF_FIGHT
+{
+#BP_SF_FIGHT
+}
+
+SF_BUILD
+{
+#BP_SF_BUILD
+}
+
+SF_ZMOBIE_RTFM
+{
+#BP_SF_ZMOBIE_RTFM
+}
+
+$position 	-1 0.6
+SF_ZMOBIE_WON
+{
+#BP_SF_ZMOBIE_WON
+}
+$position 	-1 0.4

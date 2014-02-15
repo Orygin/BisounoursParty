@@ -1,0 +1,9 @@
+"WorldVertexTransition"
+{
+	"$basetexture" "bisoutexture/bisouherberose"
+	"$basetexture2" "bisoutexture/bisouherberose_pave"
+	"%tooltexture" "bisoutexture/blend_tool"
+	"$surfaceprop" "dirt"
+	"$surfaceprop2" "dirt"
+	"%keywords" "bisou"
+}

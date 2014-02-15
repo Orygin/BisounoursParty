@@ -1,0 +1,7 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "bisoutexture/paradise/rock"
+	"$basetexturetransform" "center .5 .5 scale .3 .3 rotate 0 translate 0 0" 
+	"$surfaceprop" "concrete"
+	"%keywords" "bisou"
+}

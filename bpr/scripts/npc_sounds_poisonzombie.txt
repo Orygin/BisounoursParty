@@ -1,0 +1,158 @@
+"NPC_PoisonZombie.Die"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.90"
+	"pitch"			"75, 85"
+
+	"soundlevel"	"SNDLVL_110dB"
+
+	"rndwave"
+	{
+		"wave"	"npc/zombie_poison/pedobear_death1.wav"
+		"wave"	"npc/zombie_poison/pedobear_death2.wav"
+		"wave"	"npc/zombie_poison/pedobear_death3.wav"
+		"wave"	"npc/zombie_poison/pedobear_death4.wav"
+	}
+}
+
+"NPC_PoisonZombie.ThrowWarn"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.90"
+	"pitch"			"75, 85"
+
+	"soundlevel"	"SNDLVL_110dB"
+
+	"rndwave"
+	{
+		"wave"	"npc/zombie_poison/pedobear_attack1.wav"
+		"wave"	"npc/zombie_poison/pedobear_attack2.wav"
+		"wave"	"npc/zombie_poison/pedobear_attack3.wav"
+	}
+}
+
+"NPC_PoisonZombie.Throw"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.90"
+	"pitch"			"75, 85"
+
+	"soundlevel"	"SNDLVL_110dB"
+
+	"rndwave"
+	{
+		"wave"	"npc/zombie_poison/pz_throw2.wav"
+		"wave"	"npc/zombie_poison/pz_throw3.wav"
+	}
+}
+
+"NPC_PoisonZombie.Idle"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.90"
+	"pitch"			"75, 85"
+
+	"soundlevel"	"SNDLVL_110dB"
+
+	"rndwave"
+	{
+		"wave"	"npc/zombie_poison/pedobear_idle1.wav"
+		"wave"	"npc/zombie_poison/pedobear_idle2.wav"
+	}
+}
+
+"NPC_PoisonZombie.Pain"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.90"
+	"pitch"			"75, 85"
+
+	"soundlevel"	"SNDLVL_110dB"
+
+	"rndwave"
+	{
+		"wave"	"npc/zombie_poison/pedobear_pain1.wav"
+		"wave"	"npc/zombie_poison/pedobear_pain2.wav"
+		"wave"	"npc/zombie_poison/pedobear_pain3.wav"
+		"wave"	"npc/zombie_poison/pedobear_pain4.wav"
+	}
+}
+
+"NPC_PoisonZombie.Alert"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.90"
+	"pitch"			"75, 85"
+
+	"soundlevel"	"SNDLVL_110dB"
+
+	"rndwave"
+	{
+		"wave"	"npc/zombie_poison/pedobear_alert1.wav"
+		"wave"	"npc/zombie_poison/pedobear_alert2.wav"
+		"wave"	"npc/zombie_poison/pedobear_alert3.wav"
+		"wave"	"npc/zombie_poison/pedobear_alert4.wav"
+	}
+}
+
+"NPC_PoisonZombie.Attack"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.90"
+	"pitch"			"75, 85"
+
+	"soundlevel"	"SNDLVL_110dB"
+
+	"rndwave"
+	{
+		"wave"	"npc/zombie_poison/pedobear_attack1.wav"
+		"wave"	"npc/zombie_poison/pedobear_attack2.wav"
+		"wave"	"npc/zombie_poison/pedobear_attack3.wav"
+		"wave"	"npc/zombie_poison/pedobear_attack3.wav"
+	}
+}
+
+"NPC_PoisonZombie.FootstepRight"
+{
+	"channel"		"CHAN_BODY"
+	"volume"		"0.90"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_70dB"
+
+	"wave"			"npc/zombie_poison/pz_left_foot1.wav"
+}
+
+"NPC_PoisonZombie.FootstepLeft"
+{
+	"channel"		"CHAN_BODY"
+	"volume"		"0.90"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_70dB"
+
+	"wave"			"npc/zombie_poison/pz_left_foot1.wav"
+}
+
+"NPC_PoisonZombie.FastBreath"
+{
+	"channel"		"CHAN_ITEM"
+	"soundlevel"	"SNDLVL_IDLE"
+
+	"wave"			"npc/zombie_poison/pz_breathe_loop2.wav"
+}
+
+"NPC_PoisonZombie.Moan1"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.90"
+	"pitch"			"75, 85"
+
+	"soundlevel"	"SNDLVL_110dB"
+
+	"rndwave"
+	{
+		"wave"	"npc/zombie_poison/pedobear_idle1.wav"
+		"wave"	"npc/zombie_poison/pedobear_idle2.wav"
+	}
+}

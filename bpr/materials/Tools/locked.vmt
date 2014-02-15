@@ -1,0 +1,6 @@
+"UnlitGeneric"
+{
+	"$basetexture" "tools/locked"
+	"%compileNoLight" 1
+	"$surfaceprop" "nuage"
+}

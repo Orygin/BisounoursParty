@@ -1,0 +1,6 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "bisoutexture/bisou_glace"
+	"$surfaceprop" "glace"
+	"$selfillum" 1
+}

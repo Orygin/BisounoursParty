@@ -1,0 +1,11 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "models/weapons/flechette/metal_rose"
+	"$bumpmap" "models/weapons/flechette/metalnormal"
+	"$selfillum" 1
+
+	"$phong" "1"
+	"$phongexponent" "10"
+	"$phongboost" 20
+	"$phongfresnelranges" "[.05 1 3]"
+}

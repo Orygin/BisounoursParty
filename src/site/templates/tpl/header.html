@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="{LANG_SHORT}">
+	<head>
+		<meta charset="utf-8" />
+                <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>{PAGE_TITLE} &bull; Bisounours Party</title>
+		<!--[if IE]>
+		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js?1282601430"></script>
+		<![endif]-->
+                <script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-703250-5']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+		<link rel="stylesheet" type="text/css" href="{BASE_URL}/templates/css/html5reset.css?1282601430" />
+		<link rel="stylesheet" type="text/css" href="{BASE_URL}/templates/css/style.css?1282601430" />
+		<link rel="icon" href="favicon.ico" type="image/x-icon">
+		<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+                {HEAD_TAG}
+	</head>
+	<body>
+		<header><a href="{BASE_URL}/switch_lang.html"><img src="{BASE_URL}/templates/img/{USER_LANGI}.png" /></a></header>
+
+		<nav id="speedbarre">
+			<ul>
+				<li><a href="{BASE_URL}/">{LANG_SPEEDBARRE_HOME}</a></li>
+                                <li><a href="{BASE_URL}/{LANG_URL_FORUM}/">{LANG_SPEEDBARRE_FORUM}</a></li>
+				<li><a href="{BASE_URL}/{LANG_URL_BLOG}/">{LANG_SPEEDBARRE_BLOG}</a></li>
+				<li><a href="{BASE_URL}/{LANG_URL_DEVBLOG}/">{LANG_SPEEDBARRE_DEVBLOG}</a></li>
+				<li><a href="{BASE_URL}/{LANG_URL_MEDIAS}/">{LANG_SPEEDBARRE_MEDIAS}</a></li>
+				<li><a href="{BASE_URL}/{LANG_URL_TEAM}/">{LANG_SPEEDBARRE_TEAM}</a></li>
+				<li><a href="{BASE_URL}/{LANG_URL_ABOUT}/">{LANG_SPEEDBARRE_ABOUT}</a></li>
+				<li><a href="{BASE_URL}/{LANG_URL_DOWNLOADS}/">{LANG_SPEEDBARRE_DOWNLOADS}</a></li>
+				<li><a href="{BASE_URL}/BetaKey.php">Beta</a></li>
+			</ul>
+		</nav>
+		<nav id="menu">
+			<if condition="{$SECTION} == 'blog' OR {$SECTION} == 'devblog' OR {$SECTION} == 'adminBlog' OR {$SECTION} == 'adminDevBlog'">
+			<nav>
+				<h1>{LANG_MENU_CATEGORIES}</h1>
+				<ul>
+				<block name="menu_categories">
+					<if condition="{$SECTION} == 'blog'">
+					<li><a href="{BASE_URL}/blog/{LANG_URL_BLOG_CATEGORY}/{menu_categories.MENU_CATEGORY_ID}-{menu_categories.MENU_CATEGORY_NAME|niceurl}">{menu_categories.MENU_CATEGORY_NAME} <!--({menu_categories.MENU_CATEGORY_ARTICLES})--></a></li>
+					<elseif condition="{$SECTION} == 'devblog'" />
+					<li><a href="{BASE_URL}/devblog/{LANG_URL_DEVBLOG_CATEGORY}/{menu_categories.MENU_CATEGORY_ID}-{menu_categories.MENU_CATEGORY_NAME|niceurl}">{menu_categories.MENU_CATEGORY_NAME} <!--({menu_categories.MENU_CATEGORY_ARTICLES})--></a></li>
+                                    	<elseif condition="{$SECTION} == 'adminBlog'" />
+					<li><a href="/admin/blog/editCategorie/{menu_categories.MENU_CATEGORY_ID}"><img src="/templates/img/modify.png" /></a>   <a href="/admin/blog/deleteCategorie/{menu_categories.MENU_CATEGORY_ID}"><img src="/templates/img/delete.png" /></a><a href="/blog/categorie/{menu_categories.MENU_CATEGORY_ID}-{menu_categories.MENU_CATEGORY_NAME|niceurl}">{menu_categories.MENU_CATEGORY_NAME} ({menu_categories.MENU_CATEGORY_ARTICLES})</a></li>
+                                   	<elseif condition="{$SECTION} == 'adminDevBlog'" />
+					<li><a href="/admin/devblog/editCategorie/{menu_categories.MENU_CATEGORY_ID}"><img src="/templates/img/modify.png" /></a>   <a href="/admin/devblog/deleteCategorie/{menu_categories.MENU_CATEGORY_ID}"><img src="/templates/img/delete.png" /></a><a href="/devblog/categorie/{menu_categories.MENU_CATEGORY_ID}-{menu_categories.MENU_CATEGORY_NAME|niceurl}">{menu_categories.MENU_CATEGORY_NAME} ({menu_categories.MENU_CATEGORY_ARTICLES})</a></li>
+					</if>
+				<blockelse />
+					<li>{LANG_MENU_CATEGORIES_NOTFOUND}</li>
+				</block>
+                                <if condition="{$SECTION} == 'adminBlog'">
+					<li><a href="/admin/blog/newCategorie/">{LANG_ADMIN_CAT_NEW}</a></li>
+                                <elseif condition="{$SECTION} == 'adminDevBlog'" />
+                                        <li><a href="/admin/devblog/newCategorie/">{LANG_ADMIN_CAT_NEW}</a></li>
+				</if>
+				</ul>
+			</nav>
+			</if>
+
+			<nav>
+				<h1>{LANG_MENU_LINKS}</h1>
+				<ul>
+					<li><a href="http://www.moddb.com/mods/bisounours-party">Page ModDB</a></li>
+					<li><a href="http://www.geek-gaming.fr/site/">Geek-Gaming</a></li>
+				</ul>
+			</nav>
+                    <nav>
+				<h1>{LANG_MENU_USER}</h1>
+				<ul>
+                                    <if condition="{$ISCONNECTED} == 1">
+                                        <li>{LANG_MENU_CONNECTEDAS} <a href="http://www.bisounoursparty.com/forum/profile.php?id={USER_ID}">{USER_NICK}</a></li>
+                                        <li><a href="http://www.bisounoursparty.com/forum/login.php?action=out&id={USER_ID}&csrf_token={USER_OUTTOKEN}">{LANG_MENU_DISCONNECT}</a></li>
+                                        <if cond="{$USER_CLOUDLINKED} == 0">
+                                            <li><a href="http://www.bisounoursparty.com/link/">{LANG_MENU_LINKSTEAMACCOUNT}</a></li>
+                                        </if>
+                                        <if cond="{$USER_ADMIN} == 1">
+                                            <li><a href="http://www.bisounoursparty.com/admin/">{LANG_MENU_ADMIN}</a></li>
+                                            <li><a href="http://www.bisounoursparty.com/NebuleuseBoard/">Nebuleuse Board</a></li>
+                                        </if>
+                                    <else />
+                                        <p>{LANG_MENU_NOTCONNECTED}</p>
+                                        <li><a href="http://www.bisounoursparty.com/forum/login.php">{LANG_MENU_CONNECT}</a></li>
+                                    </if>
+				</ul>
+			</nav>
+		</nav>
+		<div id="main">

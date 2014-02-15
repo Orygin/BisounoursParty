@@ -1,0 +1,6 @@
+"LightmappedGeneric"
+{
+	"$basetexture" 	"bisoutexture/zonerape/bisou_rape_computer_wall"
+	"$surfaceprop" 	"metal"
+	"$selfillum" "1"
+}

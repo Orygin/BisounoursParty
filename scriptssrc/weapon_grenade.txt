@@ -1,0 +1,57 @@
+WeaponData // Grenade
+{
+	"printname"			"#BP_Grenade"
+	"viewmodel"			"models/weapons/v_grenade.mdl"
+	"playermodel"		"models/weapons/w_grenade.mdl"
+	"anim_prefix"		"Grenade"
+	"bucket"			"4"
+	"bucket_position"		"1"
+	"clip_size"			"-1"
+	"clip2_size"		"-1"
+	"default_clip"		"1"
+	"default_clip2"		"-1"
+	"primary_ammo"		"grenade"
+	"secondary_ammo"		"None"
+	"weight"			"0"
+	"item_flags"		"18"	// ITEM_FLAG_NOAUTORELOAD | ITEM_FLAG_EXHAUSTIBLE
+	"damage"			"200"
+
+	SoundData
+	{
+		"special1"		"Weapon_Grenade.Throw"
+		"double_shot"	"Weapon_Grenade.Throw"
+		"single_shot"	"Weapon_Grenade.Throw"
+	}
+
+	TextureData
+	{
+		"weapon"
+		{
+			"font"	"WeaponIcons"
+			"character"	"k"
+		}
+		"weapon_s"
+		{	
+			"font"	"WeaponIconsSelected"
+			"character"	"k"
+		}
+		"ammo"
+		{
+			"font"	"WeaponIcons"
+			"character"	"v"
+		}
+		"crosshair"
+		{
+			"font"	"Crosshairs"
+			"character"	"B"
+		}
+		"autoaim"
+		{
+			"file"	"sprites/crosshairs"
+			"x"		"48"
+			"y"		"72"
+			"width"	"24"
+			"height"	"24"
+		}
+	}
+}

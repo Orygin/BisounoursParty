@@ -1,0 +1,20 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "Models/Weapons/v_slam/led1"
+	"$bumpmap" "models/weapons/Normal"
+	"$model" 1
+
+	"$selfillum" "1"
+	"$phong" "1"
+	"$phongexponent" "10"
+	"$phongboost" .5
+	"$phongfresnelranges" "[1 .2 .01]"
+
+	"Proxies"
+	{
+		"PlayerTeam"
+		{
+			"resultVar"		"$frame"
+		}
+	}
+}

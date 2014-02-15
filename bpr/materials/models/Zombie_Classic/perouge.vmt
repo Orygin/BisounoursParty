@@ -1,0 +1,11 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "models/Zombie_Classic/perouge"
+	"$bumpmap" "models/weapons/Normal"
+	"$nodecal" 1
+	"$model" 1
+
+	"$phong" "1"
+	"$halflambert" 1
+	"$lightwarptexture" "lightwarp2"
+}

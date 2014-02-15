@@ -1,0 +1,11 @@
+soundscapes_manifest
+{
+	"file"		"scripts/soundscapes_bisou.txt"
+	"file"		"scripts/soundscapes_castle.txt"
+	"file"		"scripts/soundscapes_rusty_spoons.txt"
+	"file"		"scripts/soundscapes_painkiller.txt"
+	"file"		"scripts/soundscapes_rock.txt"
+	"file"		"scripts/soundscapes_moony.txt"
+	"file"		"scripts/soundscapes_munist.txt"
+	"file"		"scripts/soundscapes_sacred.txt"
+}

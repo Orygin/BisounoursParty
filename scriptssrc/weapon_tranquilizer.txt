@@ -1,0 +1,68 @@
+WeaponData // Flower-Launcher
+{
+	"printname"			"#BP_tranquilizer"
+	"viewmodel"			"models/weapons/v_sniper.mdl"
+	"playermodel"		"models/weapons/w_sniper.mdl"
+	"anim_prefix"		"bow"
+	"bucket"			"3"
+	"bucket_position"		"2"
+	"clip_size"			"1"
+	"default_clip"		"6"
+	"primary_ammo"		"Flechette"
+	"secondary_ammo"		"None"
+	"weight"			"0"
+	"item_flags"		"0"
+	"damage"			"10"
+	"BuiltRightHanded"	"1"
+	"AllowFlipping"		"0"
+
+	SoundData
+	{
+		"single_shot"	"Weapon_Tranquilizer.Single"
+	}
+
+	TextureData
+	{
+		"weapon"
+		{
+			"font"	"WeaponIcons"
+			"character"	"b"
+		}
+		"weapon_s"
+		{	
+			"font"	"WeaponIconsSelected"
+			"character"	"b"
+		}
+		"ammo"
+		{
+			"font"	"WeaponIcons"
+			"character"	"Q"
+		}
+		"crosshair"
+		{
+			"font"	"Crosshairs"
+			"character"	"B"
+		}		
+		"autoaim"
+		{
+			"file"	"sprites/crosshairs"
+			"x"		"0"
+			"y"		"96"
+			"width"	"24"
+			"height"	"24"
+		}
+		"zoom"
+		{
+			"font"	"Crosshairs"
+			"character"	"Q"
+		}		
+		"zoom_autoaim"
+		{
+			"file"	"sprites/crosshairs"
+			"x"		"24"
+			"y"		"112"
+			"width"	"104"
+			"height"	"16"
+		}
+	}
+}

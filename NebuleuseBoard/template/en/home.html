@@ -1,0 +1,16 @@
+<div class="TextContainer">
+	<p>Welcome to the Bear Net administration panel.</p>
+	<p>
+		Number of players : {{stats.playerNumber}}<br/>
+		Players online : {{stats.playersOnline}}<br/>
+		Total play time : {{toDateTime(stats.totalPlayTime)}}<br/>
+		Kill count : {{stats.killCount}}<br/>
+		Game count : {{stats.gameCount}}<br/><br/>
+
+		Bong Smoked : {{stats.bongSmoked}}<br/>
+	</p>
+	<p>
+		<span ng-show="settings.channel == 'dev'">You are currently on the dev branch. <a href="#" ng-click="switchChannel()">Switch to release</a>.</span>
+		<span ng-show="settings.channel != 'dev'">You are currently on the release branch. <a href="#" ng-click="switchChannel()">Switch to dev</a>.</span>
+	</p>
+</div>

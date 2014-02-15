@@ -1,0 +1,8 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "Models/Weapons/w_fleur/tex_w_fleur"
+	"$bumpmap" "models/weapons/Normal"
+
+	"$phong" "1"
+	"$lightwarptexture" "lightwarp2"
+}

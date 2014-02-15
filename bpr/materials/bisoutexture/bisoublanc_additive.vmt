@@ -1,0 +1,7 @@
+"UnlitGeneric"
+{
+	"$basetexture" "Lights/White002"
+	"$additive" 1
+	"%keywords" "bisou"
+	"$surfaceprop" "nuage"
+}

@@ -1,0 +1,50 @@
+<include tpl="header.html" />
+			<article>
+			<article>
+				{LANG_INDEX_INTRODUCTION}
+				<if condition="{$USER_LANG} == 'fr'">
+					<object id="Trailer" style="display:none; margin-right:auto; margin-left:auto;" width="480" height="387"><param name="movie" value="http://www.wegame.com/static/flash/player.swf?xmlrequest=http://www.wegame.com/player/video/Trailer_Bisounours_Party_2"></param><param name="flashVars" value="xmlrequest=http://www.wegame.com/player/video/Trailer_Bisounours_Party_2&embedPlayer=true"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.wegame.com/static/flash/player.swf?xmlrequest=http://www.wegame.com/player/video/Trailer_Bisounours_Party_2&embedPlayer=true" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="480" height="387"></embed></object>
+				<else />
+					<object id="Trailer" style="display:none; margin-right:auto; margin-left:auto;" width="480" height="387"><param name="movie" value="http://www.wegame.com/static/flash/player.swf?xmlrequest=http://www.wegame.com/player/video/Trailer_Bisounours_Party_english_version"></param><param name="flashVars" value="xmlrequest=http://www.wegame.com/player/video/Trailer_Bisounours_Party_english_version&embedPlayer=true"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.wegame.com/static/flash/player.swf?xmlrequest=http://www.wegame.com/player/video/Trailer_Bisounours_Party_english_version&embedPlayer=true" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="480" height="387"></embed></object>
+				</if>
+			</article>
+			</article>
+			<article>
+				<header>
+					<h2>{LANG_INDEX_PAGE_MAIN}</h2>
+				</header>
+        <article>
+          <a href="{BASE_URL}/blog/"><img src="{BASE_URL}/templates/img/{USER_LANG}/news.png" /></a><a href="{BASE_URL}/devblog/"><img src="{BASE_URL}/templates/img/{USER_LANG}/dev.png" /></a>
+          <a href="{BASE_URL}/downloads/"><img src="{BASE_URL}/templates/img/{USER_LANG}/dl.png" /></a><a href="{BASE_URL}/forum/"><img src="{BASE_URL}/templates/img/{USER_LANG}/forum.png" /></a>
+          <a href="{BASE_URL}/medias/"><img src="{BASE_URL}/templates/img/{USER_LANG}/medias.png" /></a>
+          <img src="{BASE_URL}/templates/img/{USER_LANG}/stats.png" />
+          <table border="0" style="margin-left:auto;margin-right:auto;">
+            <tr>
+              <td>{LANG_STAT_TOTALTIME}</td>
+              <td>        {STAT_TOTALPLAYED_H}h{STAT_TOTALPLAYED_M}m{STAT_TOTALPLAYED_S}s</td>
+            </tr>
+            <tr>
+              <td>{LANG_STAT_N_KILL}</td>
+              <td>        {STAT_KILLCOUNT}</td>
+            </tr>
+            <tr>
+              <td>{LANG_STAT_N_PLAYER}</td>
+              <td>        {STAT_PLAYERCOUNT}</td>
+            </tr>
+            <tr>
+              <td>{LANG_STAT_N_GAME}</td>
+              <td>        {STAT_GAMECOUNT}</td>
+            </tr>
+            <tr>
+              <td>{LANG_STAT_ONLINE}</td>
+              <td>        {STAT_ONLINE}</td>
+            </tr>
+            <tr>
+              <td>{LANG_STAT_BONGCOUNT}</td>
+              <td>        {STAT_BONGCOUNT}</td>
+            </tr>
+          </table>
+          <img src="{BASE_URL}/templates/img/ban.png" />
+				</article>
+			</article>
+<include tpl="footer.html" />

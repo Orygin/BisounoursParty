@@ -1,0 +1,6 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "models/props_bisou/nounours_paille"
+	"$nodecal" 	"1"
+	"$model" 	"1"
+}

@@ -1,0 +1,9 @@
+"UnLitGeneric"
+{
+	"$baseTexture" "models\props_bisou/plant/feuilles"
+	"$bumpmap" "models/weapons/Normal"
+	"$model" 1
+	"$nocull" 1
+	"$translucent" 1
+	"$alphatest" 1
+}

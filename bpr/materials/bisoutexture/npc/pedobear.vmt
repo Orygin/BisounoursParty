@@ -1,0 +1,7 @@
+"UnlitGeneric"
+{
+	"$basetexture" "bisoutexture/npc/pedobear"
+	"%keywords" "bisou"
+	"$surfaceprop" "glass"
+	"$nodecal" 1
+}

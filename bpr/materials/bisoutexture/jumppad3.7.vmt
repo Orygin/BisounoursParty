@@ -1,0 +1,7 @@
+"UnlitGeneric"
+{
+	"$basetexture" "Tools/toolsblack"
+	"$surfaceprop" "jumppad3.7"
+	"$additive" 1
+	"$nodecal" 1
+}

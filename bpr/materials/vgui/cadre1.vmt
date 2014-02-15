@@ -1,0 +1,7 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "vgui/cadre1_avatar"
+	"$no_fullbright" 1
+	"$ignorez" 1
+	"$translucent" 1
+}

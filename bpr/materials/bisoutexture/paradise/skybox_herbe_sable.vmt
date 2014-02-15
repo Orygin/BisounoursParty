@@ -1,0 +1,13 @@
+"WorldVertexTransition"
+{
+	"$basetexture" "bisoutexture/paradise/herbe"
+	"$basetexture2" "bisoutexture/paradise/sable"
+	"$blendmodulatetexture" "bisoutexture/paradise/sable_blendmodulate"
+	"%detailtype" "spoons_skybox_palmier1"
+
+	"$surfaceprop" "grass"
+	"$surfaceprop2" "sand"
+
+	"%tooltexture" "bisoutexture/blend_tool"
+	"%keywords" "bisou"
+}

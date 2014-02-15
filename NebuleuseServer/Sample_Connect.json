@@ -1,0 +1,42 @@
+{
+	"Status":"1",
+	"Player":
+	{
+		"UserID":16,
+		"Rank":1,
+		"SessionID":"",
+		"MOTD":"Welcome",
+		"Achivements":
+		{
+			"Achivement":
+			{
+				"Name":"Smoke weed erryday",
+				"Limit":250,
+				"Current":1
+			}
+		}
+	}
+}
+{
+	"gameVersion":5065,
+	"version_major":1,
+	"version_minor":0,
+	"version_patch":2,
+	"subMessage":"Beta testing :)",
+	"rank":3,
+	"steamid64":"76561197988951608",
+	"sessionid":313907254,
+	"achivements":
+	[
+		{
+			"name":"killPedobear",
+			"progress":1,
+			"max":1
+		},
+		{
+			"name":"highSpeed",
+			"progress":1,
+			"max":1
+		}
+	]
+}

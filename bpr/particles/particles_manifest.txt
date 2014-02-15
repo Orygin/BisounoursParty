@@ -1,0 +1,14 @@
+particles_manifest
+{
+	"file"		"particles/error.pcf"
+	"file"		"!particles/ball.pcf"
+	"file"		"!particles/effects.pcf"
+	"file"		"particles/blood_impact.pcf"
+	"file"		"particles/water_impact.pcf"
+	"file"		"particles/fire_01.pcf"
+	"file"		"particles/burning_fx.pcf"
+	"file"		"particles/rocket_fx.pcf"
+	"file"		"particles/weapons_fx.pcf"
+	"file"		"particles/rain_with_collision.pcf"
+	"file"		"particles/candytot_fx.pcf"
+}

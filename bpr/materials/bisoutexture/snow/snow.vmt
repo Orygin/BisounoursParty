@@ -1,0 +1,7 @@
+"LightmappedGeneric"
+{
+	"$basetexture" 		"bisoutexture/snow/snow"
+	"$lightwarptexture" "bisoutexture/snow/lightwarp"
+	"$surfaceprop" 		"snow"
+	"%keywords" 		"bisou"
+}

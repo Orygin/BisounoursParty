@@ -1,0 +1,475 @@
+"dom_tribes.global"
+{
+	"dsp"	"1"
+
+	"playlooping"
+	{
+		"volume"	"0.5"
+		"wave"		"ambient/wind/wasteland_wind.wav"
+		"pitch"		"110"
+	}
+
+	"playrandom"
+	{
+		"time"		"40, 55"
+		"volume"	"0.5"
+		"pitch"		"100"
+
+		"rndwave"
+		{
+			"wave"	"ambient/eagle.wav"
+			"wave"	"ambient/levels/coast/antlion_hill_ambient1.wav"
+			"wave"	"ambient/levels/coast/antlion_hill_ambient2.wav"
+			"wave"	"ambient/levels/coast/antlion_hill_ambient4.wav"
+		}
+	}
+
+	//OASIS
+
+	"playrandom"
+	{
+		"time"		"5, 15"
+		"volume"	"0.5"
+		"pitch"		"100"
+
+		"attenuation"	"0.5"
+		"position"	"0"
+
+		"rndwave"
+		{
+			"wave"	"ambient/levels/canals/shore1.wav"
+			"wave"	"ambient/levels/canals/shore2.wav"
+			"wave"	"ambient/levels/canals/shore3.wav"
+			"wave"	"ambient/levels/canals/shore4.wav"
+		}
+	}
+	"playrandom"
+	{
+		"time"		"4, 10"
+		"volume"	"0.5"
+		"pitch"		"100"
+
+		"attenuation"	"0.6"
+		"position"	"0"
+
+		"rndwave"
+		{
+			"wave"	"ambient/bird01.wav"
+			"wave"	"ambient/bird02.wav"
+			"wave"	"ambient/bird03.wav"
+			"wave"	"ambient/bird04.wav"
+			"wave"	"ambient/bird05.wav"
+			"wave"	"ambient/bird06.wav"
+			"wave"	"ambient/bird07.wav"
+			"wave"	"ambient/bird08.wav"
+			"wave"	"ambient/bird09.wav"
+			"wave"	"ambient/bird10.wav"
+			"wave"	"ambient/bird11.wav"
+			"wave"	"ambient/bird12.wav"
+			"wave"	"ambient/bird13.wav"
+			"wave"	"ambient/bird14.wav"
+			"wave"	"ambient/bird15.wav"
+		}
+	}
+	"playlooping"
+	{
+		"volume"	".7"
+		"pitch"		"100"
+
+		"attenuation"	"0.5"
+		"position"	"0"
+
+		"wave"		"ambient/water_gently_lapping.wav"
+	}
+}
+
+"dm_lolwut.global"
+{
+	"dsp"	"1"
+
+	"playlooping"
+	{
+		"volume"	"0.5"
+		"wave"		"ambient/wind/wasteland_wind.wav"
+		"pitch"		"100"
+	}
+	"playrandom"
+	{
+		"time"		"10, 15"
+		"volume"	"1.0"
+		"pitch"		"100"
+
+		"rndwave"
+		{
+			"wave"	"ambient/creatures/seagull_idle1.wav"
+			"wave"	"ambient/creatures/seagull_idle2.wav"
+			"wave"	"ambient/creatures/seagull_idle3.wav"
+			"wave"	"ambient/levels/coast/coastbird1.wav"
+			"wave"	"ambient/levels/coast/coastbird2.wav"
+			"wave"	"ambient/levels/coast/coastbird3.wav"
+			"wave"	"ambient/levels/coast/coastbird4.wav"
+			"wave"	"ambient/levels/coast/coastbird5.wav"
+			"wave"	"ambient/levels/coast/coastbird6.wav"
+			"wave"	"ambient/levels/coast/coastbird7.wav"
+			"wave"	"ambient/levels/coast/seagulls_ambient1.wav"
+			"wave"	"ambient/levels/coast/seagulls_ambient2.wav"
+			"wave"	"ambient/levels/coast/seagulls_ambient3.wav"
+			"wave"	"ambient/levels/coast/seagulls_ambient4.wav"
+			"wave"	"ambient/levels/coast/seagulls_ambient5.wav"
+		}
+	}
+
+	"playrandom"
+	{
+		"time"		"5, 10"
+		"volume"	"1.0"
+		"pitch"		"100"
+
+		"rndwave"
+		{
+			"wave"	"ambient/water/distant_wave1.wav"
+			"wave"	"ambient/water/distant_wave2.wav"
+			"wave"	"ambient/water/distant_wave3.wav"
+		}
+	}
+}
+
+"dm_hangar.global"
+{
+	"dsp"	"1"
+
+	"playlooping"
+	{
+		"volume"	"0.1"
+		"wave"		"ambient/atmosphere/station_ambience_stereo_loop1.wav"
+		"pitch"		"100"
+	}
+
+	"playrandom"
+	{
+		"time"		"15, 30"
+		"volume"	"0.5"
+		"pitch"		"100"
+
+		"rndwave"
+		{
+			"wave"	"ambient/creatures/rats1.wav"
+			"wave"	"ambient/creatures/rats2.wav"
+			"wave"	"ambient/creatures/rats3.wav"
+		}
+	}
+
+	"playrandom"
+	{
+		"time"		"5, 20"
+		"volume"	"0.6"
+		"pitch"		"100"
+
+		"rndwave"
+		{
+			"wave"	"ambient/materials/wood_creak1.wav"
+			"wave"	"ambient/materials/wood_creak2.wav"
+			"wave"	"ambient/materials/wood_creak3.wav"
+			"wave"	"ambient/materials/wood_creak4.wav"
+			"wave"	"ambient/materials/wood_creak5.wav"
+			"wave"	"ambient/materials/wood_creak6.wav"
+		}
+	}
+}
+
+"dm_rapezone.global"
+{
+	"dsp"	"1"
+
+	"playlooping"
+	{
+		"volume"	"0.2"
+		"wave"		"ambient/atmosphere/ambience5.wav"
+		"pitch"		"100"
+	}
+
+	"playrandom"
+	{
+		"time"		"50, 70"
+		"volume"	"0.5"
+		"pitch"		"100"
+
+		"rndwave"
+		{
+			"wave"	"ambient/creatures/seagull_idle1.wav"
+			"wave"	"ambient/creatures/seagull_idle2.wav"
+			"wave"	"ambient/creatures/seagull_idle3.wav"
+			"wave"	"ambient/levels/coast/coastbird1.wav"
+			"wave"	"ambient/levels/coast/coastbird2.wav"
+			"wave"	"ambient/levels/coast/coastbird3.wav"
+			"wave"	"ambient/levels/coast/coastbird4.wav"
+			"wave"	"ambient/levels/coast/coastbird5.wav"
+			"wave"	"ambient/levels/coast/coastbird6.wav"
+			"wave"	"ambient/levels/coast/coastbird7.wav"
+			"wave"	"ambient/levels/coast/seagulls_ambient1.wav"
+			"wave"	"ambient/levels/coast/seagulls_ambient2.wav"
+			"wave"	"ambient/levels/coast/seagulls_ambient3.wav"
+			"wave"	"ambient/levels/coast/seagulls_ambient4.wav"
+			"wave"	"ambient/levels/coast/seagulls_ambient5.wav"
+		}
+	}
+
+	"playrandom"
+	{
+		"time"		"50, 59"
+		"volume"	"0.2"
+		"pitch"		"100"
+
+		"rndwave"
+		{
+			"wave"	"ambient/levels/streetwar/heli_distant1.wav"
+			"wave"	"ambient/machines/heli_pass1.wav"
+			"wave"	"ambient/machines/aircraft_distant_flyby1.wav"
+			"wave"	"ambient/machines/aircraft_distant_flyby3.wav"
+		}
+	}
+}
+
+"dom_selles.global"
+{
+	"dsp"	"1"
+
+	"playlooping"
+	{
+		"volume"	"0.3"
+		"wave"		"ambient/wind/wasteland_wind.wav"
+		"pitch"		"100"
+	}
+	"playrandom"
+	{
+		"time"		"10, 15"
+		"volume"	"1.0"
+		"pitch"		"100"
+
+		"rndwave"
+		{
+			"wave"	"ambient/bird01.wav"
+			"wave"	"ambient/bird02.wav"
+			"wave"	"ambient/bird03.wav"
+			"wave"	"ambient/bird04.wav"
+			"wave"	"ambient/bird05.wav"
+			"wave"	"ambient/bird06.wav"
+			"wave"	"ambient/bird07.wav"
+			"wave"	"ambient/bird08.wav"
+			"wave"	"ambient/bird09.wav"
+			"wave"	"ambient/bird10.wav"
+			"wave"	"ambient/bird11.wav"
+			"wave"	"ambient/bird12.wav"
+			"wave"	"ambient/bird13.wav"
+			"wave"	"ambient/bird14.wav"
+			"wave"	"ambient/bird15.wav"
+		}
+	}
+
+	"playrandom"
+	{
+		"time"		"5, 10"
+		"volume"	"0.8"
+		"pitch"		"100"
+
+		"rndwave"
+		{
+			"wave"	"ambient/water/distant_wave1.wav"
+			"wave"	"ambient/water/distant_wave2.wav"
+			"wave"	"ambient/water/distant_wave3.wav"
+		}
+	}
+}
+
+//Russia
+
+"forts_russia.indoors"
+{
+	"dsp"	"9"
+
+	"playlooping"
+	{
+		"volume"	"0.3"
+		"wave"		"ambient/atmosphere/cave_outdoor1.wav"
+		"pitch"		"100"
+	}
+
+	"playrandom"
+	{
+		"time"		"15, 30"
+		"volume"	"0.5"
+		"pitch"		"100"
+
+		"rndwave"
+		{
+			"wave"	"ambient/creatures/rats1.wav"
+			"wave"	"ambient/creatures/rats2.wav"
+			"wave"	"ambient/creatures/rats3.wav"
+		}
+	}
+
+	"playrandom"
+	{
+		"time"		"5, 20"
+		"volume"	"0.6"
+		"pitch"		"100"
+
+		"rndwave"
+		{
+			"wave"	"ambient/materials/wood_creak1.wav"
+			"wave"	"ambient/materials/wood_creak2.wav"
+			"wave"	"ambient/materials/wood_creak3.wav"
+			"wave"	"ambient/materials/wood_creak4.wav"
+			"wave"	"ambient/materials/wood_creak5.wav"
+			"wave"	"ambient/materials/wood_creak6.wav"
+		}
+	}
+}
+
+"forts_russia.outdoors"
+{
+	"dsp"	"1"
+
+	"playlooping"
+	{
+		"volume"	"0.3"
+		"wave"		"ambient/atmosphere/underground_hall_loop1.wav"
+		"pitch"		"100"
+	}
+
+	"playlooping"
+	{
+		"volume"	"0.1"
+		"wave"		"ambient/levels/canals/windmill_wind_loop1.wav"
+		"pitch"		"80"
+	}
+}
+
+"background"
+{
+	"dsp"	"1"
+
+	"playlooping"
+	{
+		"volume"	"0.1"
+		"wave"		"ambient/wind/wind1.wav"
+		"pitch"		"100"
+	}
+	"playrandom"
+	{
+		"time"		"10, 15"
+		"volume"	"0.5"
+		"pitch"		"100"
+
+		"rndwave"
+		{
+			"wave"	"ambient/bird01.wav"
+			"wave"	"ambient/bird02.wav"
+			"wave"	"ambient/bird03.wav"
+			"wave"	"ambient/bird04.wav"
+			"wave"	"ambient/bird05.wav"
+			"wave"	"ambient/bird06.wav"
+			"wave"	"ambient/bird07.wav"
+			"wave"	"ambient/bird08.wav"
+			"wave"	"ambient/bird09.wav"
+			"wave"	"ambient/bird10.wav"
+			"wave"	"ambient/bird11.wav"
+			"wave"	"ambient/bird12.wav"
+			"wave"	"ambient/bird13.wav"
+			"wave"	"ambient/bird14.wav"
+			"wave"	"ambient/bird15.wav"
+		}
+	}
+
+	"playrandom"
+	{
+		"time"		"15, 30"
+		"volume"	"0.7"
+		"pitch"		"100"
+
+		"rndwave"
+		{
+			"wave"	"ambient/cow1.wav"
+			"wave"	"ambient/cow2.wav"
+			"wave"	"ambient/cow3.wav"
+		}
+	}
+
+	"playrandom"
+	{
+		"time"		"30, 60"
+		"volume"	"0.8"
+		"pitch"		"100"
+
+		"rndwave"
+		{
+			"wave"	"ambient/coq1.wav"
+			"wave"	"ambient/coq1.wav"
+		}
+	}
+}
+
+
+
+
+//MAYANAYSE
+"push_mayanayse.regular"
+{
+	"dsp"	"25"
+
+	"playlooping"
+	{
+		"volume"	"0.3"
+		"wave"		"ambient/atmosphere/ambience_base.wav"
+		"pitch"		"80"
+	}
+
+	"playrandom"
+	{
+		"time"		"5, 15"
+		"volume"	"0.5"
+		"pitch"		"100"
+
+		"rndwave"
+		{
+			"wave"	"ambient/water/distant_drip1.wav"
+			"wave"	"ambient/water/distant_drip2.wav"
+			"wave"	"ambient/water/distant_drip3.wav"
+			"wave"	"ambient/water/distant_drip4.wav"
+		}
+	}
+}
+
+"push_mayanayse.flagroom"
+{
+	"dsp"	"24"
+
+	"playlooping"
+	{
+		"volume"	"0.4"
+		"wave"		"ambient/levels/citadel/citadel_drone_loop3.wav"
+		"pitch"		"100"
+	}
+	
+	"playlooping"
+	{
+		"volume"	"0.8"
+		"wave"		"ambient/water/drip_loop1.wav"
+		"pitch"		"100"
+	}
+
+	"playrandom"
+	{
+		"time"		"5, 15"
+		"volume"	"0.5"
+		"pitch"		"100"
+
+		"rndwave"
+		{
+			"wave"	"ambient/water/distant_drip1.wav"
+			"wave"	"ambient/water/distant_drip2.wav"
+			"wave"	"ambient/water/distant_drip3.wav"
+			"wave"	"ambient/water/distant_drip4.wav"
+		}
+	}
+}

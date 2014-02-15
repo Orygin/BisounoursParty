@@ -1,0 +1,59 @@
+WeaponData //Revolver
+{
+	"printname"			"#BP_Revolver"
+	"viewmodel"			"models/weapons/v_pistol.mdl"
+	"playermodel"		"models/weapons/w_pistol.mdl"
+	"anim_prefix"		"pistol"
+	"bucket"			"1"
+	"bucket_position"	"0"
+
+	"clip_size"			"1"
+	"default_clip"		"1"
+	"primary_ammo"		"SMG1"
+	"secondary_ammo"	"None"
+
+	"weight"		"4"
+	"item_flags"		"0"
+
+	"damage"		"21"
+
+	SoundData
+	{
+		"empty"				"Weapon_ALL.Empty"
+		"single_shot"		"Weapon_Revolver.Single"
+		"single_shot_npc"	"Weapon_Revolver.Single"
+		"special1"		"Weapon_Revolver.Draw"
+	}
+
+	TextureData
+	{
+		"weapon"
+		{
+			"font"		"WeaponIcons"
+			"character"	"d"
+		}
+		"weapon_s"
+		{	
+			"font"		"WeaponIconsSelected"
+			"character"	"d"
+		}
+		"ammo"
+		{
+			"font"		"WeaponIcons"
+			"character"	"p"
+		}
+		"crosshair"
+		{
+			"font"		"Crosshairs"
+			"character"	"B"
+		}
+		"autoaim"
+		{
+			"file"		"sprites/crosshairs"
+			"x"			"0"
+			"y"			"48"
+			"width"		"24"
+			"height"	"24"
+		}
+	}
+}

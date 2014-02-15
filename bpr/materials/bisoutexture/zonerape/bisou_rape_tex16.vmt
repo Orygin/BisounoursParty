@@ -1,0 +1,8 @@
+"UnlitGeneric"
+{
+	"$basetexture" "bisoutexture/zonerape/bisou_rape_tex16"
+	"$surfaceprop" "Glass"
+	"$additive" 1
+	"$nocull" 1
+	"$translucent" 1
+}

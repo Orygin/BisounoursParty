@@ -1,0 +1,9 @@
+"WorldVertexTransition"
+{
+	"$basetexture" "bisoutexture/mont_falaise"
+	"$basetexture2" "bisoutexture/mont_chantilly"
+	"%tooltexture" "bisoutexture/blend_tool"
+	"$surfaceprop" "rock"
+	"$surfaceprop2" "snow"
+	"%keywords" "bisou"
+}

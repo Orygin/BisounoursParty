@@ -1,0 +1,53 @@
+<div id="ContentTopButton1" ng-click="save()">
+	Save changes
+</div>
+<div id="ContentTopButton2" ng-click="goBack()">
+	Cancel changes
+</div>
+<span style="float:right; margin-top:15px;">
+	<div class="RightButton" ng-click="exportDatabase()">Export Database</div>
+	<div class="RightButton" ng-click="clearSessions()">Clear Sessions</div>
+</span>
+<form method="post" id="SettingForm" class="form-inline" name="SettingsForm">
+	<p>
+		<table id="SettingsTable">
+			<tr>
+				<th scope="row">Game Name</th>
+				<td ng-class="{'control-group error': SettingsForm.GameName.$error.required}">
+					<input type="text" name="GameName" id="GameName" class="input-xxlarge" required ng-model="settings.gameName" /><br/>
+					The name of the game.<span ng-show="SettingsForm.GameName.$error.required" class="help-inline">Required</span>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">Game Key</th>
+				<td ng-class="{'control-group error': SettingsForm.GameKey.$error.required}">
+					<input type="text" name="GameKey" id="GameKey" class="input-xxlarge" required ng-model="settings.gameKey" /><br/>
+					The key of the game. This should not change once the game has shipped.<span ng-show="SettingsForm.GameKey.$error.required" class="help-inline">Required</span>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">State</th>
+				<td><input type="radio" name="ServerState" value="Enabled" id="Enabled" checked="checked" /><label for="Enabled">Enabled</label>
+					<input type="radio" name="ServerState" value="Maintenance" id="Maintenance" /><label for="Maintenance">Maintenance</label>
+					<input type="radio" name="ServerState" value="Disabled" id="Disabled" /><label for="Disabled">Disabled</label><br/>
+					Set the current status of Nebuleuse. If you plan to make consequents changes to Nebuleuse, you should change put it under maintenance.
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">Session Timeout</th>
+				<td ng-class="{'control-group error': SettingsForm.SessionTimeOut.$invalid}">
+					<input type="number" value="1800" name="SessionTimeOut" id="SessionTimeOut" class="input-large" required ng-model="settings.sessionTimeout" maxlength="4" /><br/>
+					How much seconds between the last heat-beat and disconnection of clients.<span ng-show="SettingsForm.SessionTimeOut.$error.required" class="help-inline">Required</span><span ng-show="SettingsForm.SessionTimeOut.$error.number" class="help-inline">Numbers only</span>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">Updater version</th>
+				<td ng-class="{'control-group error': SettingsForm.updaterVersion.$invalid}">
+					<input type="number" value="8" name="updaterVersion" id="updaterVersion" class="input-large" required ng-model="settings.updaterVersion" maxlength="4" /><br/>
+					Version of the updater.<span ng-show="SettingsForm.updaterVersion.$error.required" class="help-inline">Required</span><span ng-show="SettingsForm.updaterVersion.$error.number" class="help-inline">Numbers only</span>
+				</td>
+			</tr>
+		</table>
+	</p>
+</form>
+<div class="ClearRight"> </div>

@@ -1,0 +1,7 @@
+"UnlitGeneric"
+{
+	"$basetexture" "bisoutexture/stolencolors/stolen_tex10"
+	"$surfaceprop" "Metal"
+	"$detail" "glace"
+	"$detailscale" 0.15
+}

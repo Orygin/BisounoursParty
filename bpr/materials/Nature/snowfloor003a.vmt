@@ -1,0 +1,7 @@
+"LightmappedGeneric"
+{
+	// Original shader: BaseTimesLightmap
+	"$basetexture" "Nature/snowfloor003a"
+	"$surfaceprop" "snow"
+	"$bumpmap"	"Nature/snowfloor003a_normal"
+}

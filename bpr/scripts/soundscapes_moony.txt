@@ -1,0 +1,127 @@
+
+"forts_moony.respawn"
+{
+	"dsp"	"9"
+
+	"playlooping"
+	{
+		"volume"	"0.4"
+		"wave"		"ambient/atmosphere/underground.wav"
+		"pitch"		"100"
+	}
+
+	"playlooping"
+	{
+		"volume"	"0.6"
+		"wave"		"ambient/levels/citadel/field_loop3.wav"
+		"pitch"		"100"
+	}
+}
+
+"forts_moony.tunnel"
+{
+	"dsp"	"9"
+
+	"playlooping"
+	{
+		"volume"	"0.5"
+		"wave"		"ambient/wind/wind_tunnel1.wav"
+		"pitch"		"100"
+	}
+
+	"playlooping"
+	{
+		"volume"	"0.3"
+		"wave"		"ambient/atmosphere/tunnel1.wav"
+		"pitch"		"100"
+	}
+}
+
+"forts_moony.outdoors"
+{
+	"dsp"	"0"
+
+	"playlooping"
+	{
+		"volume"	"0.5"
+		"wave"		"ambient/wind/wind_rooftop1.wav"
+		"pitch"		"100"
+	}
+
+	"playrandom"
+	{
+		"time"		"30, 50"
+		"volume"	"0.3"
+		"pitch"		"100"
+
+		"rndwave"
+		{
+			"wave"	"ambient/wind/wind_med1.wav"
+			"wave"	"ambient/wind/wind_med2.wav"
+		}
+	}
+}
+
+"forts_moony.grotte"
+{
+	"dsp"	"1"
+
+	"playlooping"
+	{
+		"volume"	"0.6"
+		"wave"		"ambient/atmosphere/cargo_hold2.wav"
+		"pitch"		"100"
+	}
+
+	"playrandom"
+	{
+		"time"		"10, 25"
+		"volume"	"0.5"
+		"pitch"		"100"
+
+		"rndwave"
+		{
+			"wave"	"ambient/atmosphere/hole_hit1.wav"
+			"wave"	"ambient/atmosphere/hole_hit2.wav"
+			"wave"	"ambient/atmosphere/hole_hit3.wav"
+			"wave"	"ambient/atmosphere/hole_hit5.wav"
+		}
+	}
+}
+
+"forts_moony.vent"
+{
+	"dsp"	"9"
+
+	"playlooping"
+	{
+		"volume"	"0.4"
+		"wave"		"ambient/machines/city_ventpump_loop1.wav"
+		"pitch"		"80"
+	}
+}
+
+"forts_moony.air.exchanger"
+{
+	"dsp"	"9"
+
+	"playlooping"
+	{
+		"volume"	"0.5"
+		"wave"		"ambient/atmosphere/noise2.wav"
+		"pitch"		"100"
+	}
+
+	"playrandom"
+	{
+		"time"		"5, 15"
+		"volume"	"0.5"
+		"pitch"		"100"
+
+		"rndwave"
+		{
+			"wave"	"ambient/machines/machine1_hit1.wav"
+			"wave"	"ambient/machines/machine1_hit2.wav"
+		}
+	}
+}

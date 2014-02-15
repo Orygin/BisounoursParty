@@ -1,0 +1,17 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "models/player/bleu/mort"
+	"$bumpmap" "models/player/normalmort"
+
+	"$phong" "1"
+	"$lightwarptexture" "lightwarp2"
+	"$halflambert" 1
+
+	"$phongexponent" "10"
+	"$phongboost" ".3"
+	"$phongfresnelranges"	"[.1 1 8]"
+
+	"$rimlight" "1"
+	"$rimlightexponent" "8"
+	"$rimlightboost" "10"
+}

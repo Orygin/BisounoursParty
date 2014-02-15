@@ -1,0 +1,21 @@
+<div class="modal-header">
+	<h1>New Update</h1>
+	</div>
+	<div class="modal-body">
+		<form id="updateForm" name="updateForm">
+			<div ng-class="{'control-group error': updateForm.version.$invalid}">
+				Version number<span ng-show="updateForm.version.$error.required" class="help-inline">Required</span><span ng-show="updateForm.version.$error.number" class="help-inline">Numbers only</span><br \>
+				<input class="field span7" type="number" placeholder="" id="version" name="version" ng-model="update.version" required>
+			</div>
+			<div ng-class="{'control-group error': updateForm.size.$invalid}">
+				Size<span ng-show="updateForm.size.$error.required" class="help-inline">Required</span><span ng-show="updateForm.size.$error.number" class="help-inline">Numbers only</span><br \>
+				<input class="field span7" type="number" placeholder="" id="size" name="size" ng-model="update.size" required>
+			</div>
+			Log<br \>
+			<textarea name="log" id="log" rows="9" class="field span7" ng-model="update.log"></textarea>
+		</form>
+	</div>
+	<div class="modal-footer">
+	<button ng-click="close('close')" class="btn btn-primary" >Close</button>
+	<button ng-click="close('save')" ng-class="{'disabled': (updateForm.size.$invalid || updateForm.version.$invalid) }" class="btn btn-primary" >Save</button>
+</div>

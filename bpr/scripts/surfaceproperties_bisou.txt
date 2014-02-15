@@ -1,0 +1,228 @@
+"ball" 
+{ 
+	"base" "grenade"
+	"friction" "1"
+	"density"	"400"
+	"elasticity" "6"
+	"damping" "0"
+
+
+
+	"audiohardnessfactor" "1.0"
+	"audioroughnessfactor" "0.4"
+
+	"stepleft"		"Grenade.StepLeft"
+	"stepright"		"Grenade.StepRight"
+	"bulletimpact"	"Grenade.ImpactHard"
+	"scraperough"	"Grenade.ScrapeRough"
+	"scrapesmooth"	"Grenade.ScrapeSmooth"
+	"impacthard"	"Grenade.ImpactHard"
+	"impactsoft"	"Grenade.ImpactSoft"
+	// "roll"		"Grenade.Roll"
+}
+"painepice"
+{
+	"base"		"dirt"
+	"density"	"500"
+	"thickness"	"0.25"
+
+	"audiohardnessfactor" "0.25"
+	"audioroughnessfactor" "0.25"
+
+	"stepleft"		"Cardboard.StepLeft"
+	"stepright"		"Cardboard.StepRight"
+	"bulletimpact"	"Cardboard.BulletImpact"
+	"scraperough"	"Cardboard.ScrapeRough"
+	"scrapesmooth"	"Cardboard.ScrapeSmooth"
+	"impacthard"	"Cardboard.ImpactHard"
+	"impactsoft"	"Cardboard.ImpactSoft"
+
+	"gamematerial"	"F"
+}
+
+"painepice_head"
+{
+	"base"			"painepice"
+
+	"impacthard"	"Flesh.ImpactSoft"
+	"impactsoft"	"Flesh_Bloody.ImpactHard"
+} 
+
+"pedobear"
+{
+ 	"base"   		"flesh"
+}
+
+"pedobear_head"
+{
+ 	"base"   		"pedobear"
+
+	"impacthard"	"Flesh.ImpactSoft"
+	"impactsoft"	"Flesh_Bloody.ImpactHard"
+}
+
+"zombieflesh_bisou"
+{
+ 	"base"   		"flesh"
+}
+
+"zombieflesh_bisou_head"
+{
+ 	"base"   		"zombieflesh_bisou"
+
+	"impacthard"	"Flesh_Bloody.ImpactHard"
+	"impactsoft"	"Flesh_Bloody.ImpactHard"
+}
+
+"carebear"
+{
+	"base"			"flesh"
+}
+
+"carebear_head"
+{
+	"base"			"carebear"
+	"impacthard"	"Flesh_Bloody.ImpactHard"
+	"impactsoft"	"Flesh_Bloody.ImpactHard"
+	"scraperough"	"Carpet.Scrape"
+	"scrapesmooth"	"Carpet.Scrape"
+}
+
+"nuage"
+{
+	"base"					"default"
+	"gamematerial"			"-"
+	"audiohardnessfactor" 	"0.0"
+	"audioroughnessfactor" 	"0.0"
+	"bulletimpact"			"Default.Null"
+} 
+
+"jumppad9"
+{
+	"base"					"nuage"
+	"jumpfactor" 			"9.0"
+} 
+"jumppad10"
+{
+	"base"					"nuage"
+	"jumpfactor" 			"10.0"
+} 
+"jumppad3.7"
+{
+	"base"					"nuage"
+	"jumpfactor" 			"3.7"
+} 
+
+"glace"
+{
+	"base"		"snow"
+	"friction"	"0.8"
+	"stepleft"	"Default.StepLeft"
+	"stepright"	"Default.StepRight"
+
+	"bulletimpact"	"Glass.BulletImpact"
+	"gamematerial"	"Y"
+}
+
+"glace_petit"
+{
+	"base"		"snow"
+	"friction"	"0.6"
+	"stepleft"	"Default.StepLeft"
+	"stepright"	"Default.StepRight"
+
+	"bulletimpact"	"Glass.BulletImpact"
+	"gamematerial"	"Y"
+}
+
+"glace_moyen"
+{
+	"base"		"snow"
+	"friction"	"0.3"
+	"stepleft"	"Default.StepLeft"
+	"stepright"	"Default.StepRight"
+
+	"bulletimpact"	"Glass.BulletImpact"
+	"gamematerial"	"Y"
+}
+
+"glace_uber"
+{
+	"base"		"snow"
+	"friction"	"0.1"
+	"stepleft"	"Default.StepLeft"
+	"stepright"	"Default.StepRight"
+
+	"bulletimpact"	"Glass.BulletImpact"
+	"gamematerial"	"Y"
+}
+
+"lego"
+{
+	"base"		"Plastic_Box"
+	"gamematerial"	"C"
+}
+
+"chocolat"
+{
+ 	"base"   		"plaster"
+
+	"gamematerial"	"P"
+}
+
+"bambou"
+{
+	"density"		"500"
+	"base"			"Wood"
+
+	"bulletimpact"	"Wood_Box.BulletImpact"
+	"impacthard"	"Wood_Plank.ImpactHard"
+	"impactsoft"	"Wood_Plank.ImpactSoft"
+	"break"			"Wood_Box.Break"
+}
+
+"or"
+{
+	"base"			"Metal"
+
+	"bulletimpact"	"Glass.BulletImpact"
+	"stepleft"		"Gravel.StepLeft"
+	"stepright"		"Gravel.StepRight"
+}
+
+"vehicule_wood"
+{
+	"base"			"Wood"
+
+	"scraperough"	"Default.Null"
+	"scrapesmooth"	"Default.Null"
+	"impacthard"	"Default.Null"
+	"impactsoft"	"Default.Null"
+	"audiohardnessfactor" "0.0"
+	"audioroughnessfactor" "0.0"
+}
+
+"vehicule_metal"
+{
+	"base"			"Metal"
+
+	"scraperough"	"Default.Null"
+	"scrapesmooth"	"Default.Null"
+	"impacthard"	"Default.Null"
+	"impactsoft"	"Default.Null"
+	"audiohardnessfactor" "0.0"
+	"audioroughnessfactor" "0.0"
+}
+
+"vehicule_caoutchouc"
+{
+	"base"			"Rubber"
+	"friction"		"0.9"
+
+	"scraperough"	"Default.Null"
+	"scrapesmooth"	"Default.Null"
+	"impacthard"	"Default.Null"
+	"impactsoft"	"Default.Null"
+	"audiohardnessfactor" "0.0"
+	"audioroughnessfactor" "0.0"
+}

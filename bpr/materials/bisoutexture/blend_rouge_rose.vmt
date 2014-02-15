@@ -1,0 +1,9 @@
+"WorldVertexTransition"
+{
+	"$basetexture" "bisoutexture/sable_rose"
+	"$basetexture2" "bisoutexture/sable_rouge"
+	"%tooltexture" "bisoutexture/blend_tool"
+	"$surfaceprop" "sand"
+	"$surfaceprop2" "sand"
+	"%keywords" "bisou"
+}

@@ -1,0 +1,5 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "Models/props_bisou/lit"
+	"$translucent" 1
+}

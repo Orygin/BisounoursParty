@@ -1,0 +1,5 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "bisoutexture/metal/bisoumetal003"
+	"$surfaceprop" "vehicule_metal"
+}

@@ -1,0 +1,13 @@
+"WorldVertexTransition"
+{
+	// Original shader: BaseTimesLightmap
+	"$basetexture" "Nature/snowfloor001a"
+	"$surfaceprop" "snow"
+	"$bumpmap"	"Nature/snowfloor001a_normal"
+
+	"$basetexture2" "Nature/snowfloor003a"
+	"$surfaceprop2" "snow"
+	"$bumpmap2"	"Nature/snowfloor003a_normal"
+
+	"%tooltexture" "nature/blendrockgrass004a_tooltexture"
+}

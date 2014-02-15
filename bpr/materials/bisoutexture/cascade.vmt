@@ -1,0 +1,16 @@
+"UnlitGeneric"
+{
+	"%keywords" "bisou"
+	"$basetexture" "bisoutexture/cascade"
+	"$additive" "1"
+	"$nocull" 1
+	"Proxies"
+	{
+		"TextureScroll"
+		{
+			"texturescrollvar" "$basetexturetransform"
+			"texturescrollrate" 2.5
+			"texturescrollangle" -90
+		}
+	}
+}

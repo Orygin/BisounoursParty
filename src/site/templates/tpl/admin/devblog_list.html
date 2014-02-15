@@ -1,0 +1,55 @@
+<include tpl="header.html" />
+                            <script language="javascript"> 
+function toggle() {
+                    var ele = document.getElementById("toggleText");
+                    if(ele.style.display == "block") {
+                            ele.style.display = "none";
+                    }
+                    else {
+                            ele.style.display = "block";
+                    }
+                  }
+function cleartextarea(id){
+if (clickedIt == false){
+id.value="";
+clickedIt=true;
+}
+} </script>
+			<article>
+				<header>
+					<h2><a href="http://www.bisounoursparty.com/admin/">{PAGE_TITLE}</a> > <a href="http://www.bisounoursparty.com/admin/devblog/">DevBlog</a> > {LANG_ADMIN_LIST}</h2>
+				</header>
+                                <article><ul>
+					<block name="articlelist">
+                                            <li><img src="/templates/img/{articlelist.ARTICLE_LANG}.png" />    <a href="/devblog/article/{articlelist.ARTICLE_ID}">{articlelist.ARTICLE_TITLE}</a>{LANG_ADMIN_BY}<a href="http://www.bisounoursparty.com/forum/profile.php?id={articlelist.ARTICLE_AUTHOR_ID}">{articlelist.ARTICLE_AUTHOR_NICK}</a>{LANG_ADMIN_IN}<a href="/admin/devblog/categorie/{articlelist.ARTICLE_CATEGORY}">{articlelist.ARTICLE_CATEGORY_NAME}</a>    <a href="/admin/devblog/editArticle/{articlelist.ARTICLE_ID}"><img src="/templates/img/modify.png" /></a>   <a href="/admin/devblog/deleteArticle/{articlelist.ARTICLE_ID}"><img src="/templates/img/delete.png" /></a></li>
+                                        </block></ul>
+				</article>
+                            	<footer>
+                                    <a href="javascript:toggle();">{LANG_ADMIN_ARTICLE_ADD}</a>
+				</footer>
+			</article>
+                        <article id="toggleText" style="display: none">
+                                    <header>
+                                            <h2>{LANG_ADMIN_ARTICLE_ADD}</h2>
+                                    </header>
+                                    <article>
+                                        <form action="/admin/devblog/addArticle/" method="post">
+                                            <p>{LANG_BLOG_USINGMD|markdown}</p>
+                                            <input type="text" name="title" id="title" size="60"/>
+                                            <textarea name="content" rows="16" cols="80" onFocus="this.value=''; this.onfocus=null;" >
+                                            </textarea>
+                                                   <select name="categorie" id="categorie">
+                                                       <block name="menu_categories">
+                                                       <option value="{menu_categories.MENU_CATEGORY_ID}">{menu_categories.MENU_CATEGORY_NAME}</option>
+                                                       </block>
+                                                   </select>
+                                                <input type="radio" name="lang" value="fr" id="fr" /> <label for="fr">Français</label>
+                                                <input type="radio" name="lang" value="en" id="en" /> <label for="en">English</label>
+                                        <input type="submit" value="{LANG_SEND}" />    
+                                        </form>
+                                    </article>
+                                    <footer>
+                                    </footer>
+                                
+                        </article>
+<include tpl="footer.html" />

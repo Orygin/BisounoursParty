@@ -1,0 +1,7 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "bisoutexture/sable"
+	"$surfaceprop" "sand"
+	"$bumpmap" "Nature/sandfloor009a_normal"
+	"%keywords" "bisou"
+}

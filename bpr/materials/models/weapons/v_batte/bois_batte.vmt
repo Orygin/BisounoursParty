@@ -1,0 +1,6 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "Models/Weapons/v_batte/bois_batte"
+	"$bumpmap" "models/weapons/Normal"
+	"$model" 1
+}

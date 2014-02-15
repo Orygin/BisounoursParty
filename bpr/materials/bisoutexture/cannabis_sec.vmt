@@ -1,0 +1,8 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "bisoutexture/cannabis_sec"
+	"%keywords" "bisou"
+	"$surfaceprop" "foliage"
+	"$translucent" 1
+	"$nocull" 1
+}

@@ -1,0 +1,13 @@
+"WorldVertexTransition"
+{
+	"$basetexture" "bisoutexture/cartoon_herbe01"
+	"$basetexture2" "bisoutexture/snow/snow"
+	"$blendmodulatetexture" "bisoutexture/paradise/herbe_blendmodulate"
+	"%detailtype" "spoons_coquelicots_champ"
+	"$lightwarptexture" "bisoutexture/snow/lightwarp"
+	"$surfaceprop" "grass"
+	"$surfaceprop2" "snow"
+
+	"%tooltexture" "bisoutexture/blend_tool"
+	"%keywords" "bisou"
+}

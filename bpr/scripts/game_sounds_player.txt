@@ -1,0 +1,469 @@
+// BP
+
+"Hit.Bullet"
+{
+	"channel"		"CHAN_STATIC"
+	"volume"		"1.0"
+	"soundlevel"	"SNDLVL_105dB"
+	"pitch"			"95,105"
+
+	"rndwave"
+	{
+		"wave"		"player/hit/hit_bullet1.wav"
+		"wave"		"player/hit/hit_bullet2.wav"
+		"wave"		"player/hit/hit_bullet3.wav"
+	}
+}
+"Hit.Claw"
+{
+	"channel"		"CHAN_STATIC"
+	"volume"		"1.0"
+	"soundlevel"	"SNDLVL_105dB"
+	"pitch"			"95,105"
+
+	"rndwave"
+	{
+		"wave"		"player/hit/hit_claw1.wav"
+		"wave"		"player/hit/hit_claw2.wav"
+		"wave"		"player/hit/hit_claw3.wav"
+	}
+}
+"Hit.Explo"
+{
+	"channel"		"CHAN_STATIC"
+	"volume"		"1.0"
+	"soundlevel"	"SNDLVL_105dB"
+	"pitch"			"95,105"
+
+	"rndwave"
+	{
+		"wave"		"player/hit/hit_explo1.wav"
+		"wave"		"player/hit/hit_explo2.wav"
+		"wave"		"player/hit/hit_explo3.wav"
+	}
+}
+"Hit.Poison"
+{
+	"channel"		"CHAN_STATIC"
+	"volume"		"1.0"
+	"soundlevel"	"SNDLVL_105dB"
+	"pitch"			"95,105"
+
+	"rndwave"
+	{
+		"wave"		"player/hit/hit_poison1.wav"
+		"wave"		"player/hit/hit_poison2.wav"
+	}
+}
+
+"Player.Land"
+{
+	"channel"	"CHAN_ITEM"
+	"volume"	"0.8"
+	"soundlevel"  "SNDLVL_75dB"
+	"pitch"	"PITCH_NORM"
+
+	"wave"	"player/land.wav"
+}
+
+"Player.HardLand"
+{
+	"channel"	"CHAN_ITEM"
+	"volume"	"0.8"
+	"soundlevel"  "SNDLVL_75dB"
+	"pitch"	"PITCH_NORM"
+	"rndwave"
+	{
+		"wave"	"player/pl_fallpain1.wav"
+		"wave"	"player/pl_fallpain3.wav"
+	}
+}
+"Player.FallDamage"
+{
+	"channel"		"CHAN_STATIC"
+	"volume"		"0.40"
+	"pitch"			"90,110"
+	"soundlevel"	"SNDLVL_75dB"
+
+	"rndwave"
+	{
+		"wave"		"physics/body/body_medium_break2.wav"
+		"wave"		"physics/body/body_medium_break3.wav"
+		"wave"		"physics/body/body_medium_break4.wav"
+	}
+}
+"Player.Jump"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.75"
+	"pitch"			"105,125"
+	"soundlevel"	"SNDLVL_90dB"
+
+	"rndwave"
+	{
+		"wave"		"voix/jump1.wav"
+		"wave"		"voix/jump2.wav"
+		"wave"		"voix/jump3.wav"
+		"wave"		"voix/jump4.wav"
+		"wave"		"voix/jump5.wav"
+		"wave"		"voix/jump6.wav"
+		"wave"		"voix/jump7.wav"
+		"wave"		"voix/jump8.wav"
+		"wave"		"voix/jump9.wav"
+
+		"wave"		"common/null.wav"
+		"wave"		"common/null.wav"
+		"wave"		"common/null.wav"
+		"wave"		"common/null.wav"
+		"wave"		"common/null.wav"
+		"wave"		"common/null.wav"
+	}
+}
+"NPC_Citizen.die"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"VOL_NORM"
+	"pitch"			"105,120"
+
+	"soundlevel"	"SNDLVL_100dB"
+
+	"rndwave"
+	{
+		"wave"	"voix/die1.wav"
+		"wave"	"voix/die2.wav"
+		"wave"	"voix/die3.wav"
+		"wave"	"voix/die4.wav"
+		"wave"	"voix/die5.wav"
+		"wave"	"voix/die6.wav"
+		"wave"	"voix/die7.wav"
+		"wave"	"voix/die8.wav"
+	}
+}
+"Player.VoidFall"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"VOL_NORM"
+	"pitch"			"110,120"
+
+	"soundlevel"	"SNDLVL_100dB"
+
+	"rndwave"
+	{
+		"wave"	"voix/falldeath1.wav"
+		"wave"	"voix/falldeath2.wav"
+		"wave"	"voix/falldeath3.wav"
+		"wave"	"voix/falldeath4.wav"
+		"wave"	"voix/falldeath5.wav"
+		"wave"	"voix/falldeath6.wav"
+	}
+}
+
+
+// BASE
+
+"HL2Player.SprintNoPower"
+{
+	"channel"	"CHAN_VOICE"
+	"volume"	"0.8"
+	"soundlevel"  "SNDLVL_60dB"
+
+	"wave"	"player/suit_denydevice.wav"
+}
+
+"HL2Player.SprintStart"
+{
+	"channel"	"CHAN_VOICE"
+	"volume"	"0.9"
+	"soundlevel"  "SNDLVL_60dB"
+
+	"wave"	"player/suit_sprint.wav"
+}
+
+"HL2Player.FlashLightOn"
+{
+	"channel"	"CHAN_WEAPON"
+	"volume"	"0.8"
+	"soundlevel"    "SNDLVL_75dB"
+	"pitch"	"PITCH_NORM"
+
+	"wave" "items/flashlight1.wav"
+}
+
+"HL2Player.FlashLightOff"
+{
+	"channel"	"CHAN_WEAPON"
+	"volume"	"0.8"
+	"soundlevel"  "SNDLVL_75dB"
+	"pitch"	"PITCH_NORM"
+
+	"wave" "items/flashlight1.wav"
+}
+
+"HL2Player.PickupWeapon"
+{
+	"channel"	"CHAN_WEAPON"
+	"volume"	"0.8"
+	"soundlevel"  "SNDLVL_75dB"
+	"pitch"	"PITCH_NORM"
+
+	"wave"	"pickup_weapon.wav"
+}
+
+"HL2Player.TrainUse"
+{
+	"channel"	"CHAN_ITEM"
+	"volume"	"0.8"
+	"soundlevel"  "SNDLVL_75dB"
+
+	"wave"	"plats/train_use1.wav"
+}
+
+"HL2Player.Use"
+{
+	"channel"	"CHAN_ITEM"
+	"volume"	"0.4"
+	"soundlevel"  "SNDLVL_75dB"
+
+	"wave"	"common/wpn_select.wav"
+}
+
+"HL2Player.UseNPC"
+{
+	"channel"	"CHAN_ITEM"
+	"volume"	"0.4"
+	"soundlevel"  "SNDLVL_75dB"
+
+	"wave"	"common/wpn_select.wav"
+}
+
+"HL2Player.UseDeny"
+{
+	"channel"	"CHAN_ITEM"
+	"volume"	"0.4"
+	"soundlevel"  "SNDLVL_75dB"
+
+	"wave"	"common/wpn_denyselect.wav"
+}
+
+"HL2Player.BurnPain"
+{
+	"channel"	"CHAN_VOICE"
+	"volume"	"0.5"
+	"soundlevel"  "SNDLVL_75dB"
+
+	"rndwave"
+	{
+			"wave"	"player/pl_burnpain1.wav"
+			"wave"	"player/pl_burnpain2.wav"
+			"wave"	"player/pl_burnpain3.wav"
+	}
+}
+
+
+// SHARED player sounds
+
+"Player.Death"
+{
+	"channel"	"CHAN_VOICE"
+	"volume"	"0.8"
+	"soundlevel"  "SNDLVL_75dB"
+
+	"rndwave"
+	{
+		"wave"	"player/pl_pain5.wav"
+		"wave"	"player/pl_pain6.wav"
+		"wave"	"player/pl_pain7.wav"
+	}
+}
+
+"Player.PlasmaDamage"
+{
+	"channel"	"CHAN_BODY"
+	"volume"	"0.5"
+	"soundlevel"  "SNDLVL_75dB"
+
+	"wave"	"player/general/flesh_burn.wav"
+}
+
+"Player.SonicDamage"
+{
+	"channel"	"CHAN_BODY"
+	"volume"	"0.7"
+	"soundlevel"  "SNDLVL_75dB"
+
+	"rndwave"
+	{
+		"wave"	"player/pl_pain5.wav"
+		"wave"	"player/pl_pain6.wav"
+		"wave"	"player/pl_pain7.wav"
+	}
+}
+
+"Player.DrownStart"
+{
+	"channel"	"CHAN_VOICE"
+	"volume"	"1.0"
+	"soundlevel"  "SNDLVL_75dB"
+	"pitch"		"90,110"
+
+	"wave"	"player/pl_drown1.wav"
+}
+
+"Player.Swim"
+{
+	"channel"	"CHAN_STATIC"
+	"volume"	"0.5"
+	"pitch"		"PITCH_NORM"
+	"soundlevel"	"SNDLVL_NORM"
+
+	"rndwave"
+	{
+		"wave"		"player/footsteps/wade5.wav"
+		"wave"		"player/footsteps/wade6.wav"
+		"wave"		"player/footsteps/wade7.wav"
+		"wave"		"player/footsteps/wade8.wav"
+	}
+}
+
+"Player.FallGib"
+{
+	"channel"	"CHAN_ITEM"
+	"volume"	"0.75"
+	"pitch"		"90,110"
+	"soundlevel"	"SNDLVL_NORM"
+
+	"rndwave"
+	{
+		"wave"		"physics/body/body_medium_break2.wav"
+	}
+}
+
+"Player.DrownContinue"
+{
+	"channel"	"CHAN_VOICE"
+	"volume"	"1.0"
+	"soundlevel"  "SNDLVL_75dB"
+	"pitch"		"90,110"
+
+	"rndwave"
+	{
+		"wave"	"player/pl_drown1.wav"
+		"wave"	"player/pl_drown2.wav"
+		"wave"	"player/pl_drown3.wav"
+	}
+}
+
+"Player.Wade"
+{
+	"channel"	"CHAN_BODY"
+	"volume"	"0.25"
+	"soundlevel"  "SNDLVL_75dB"
+
+	"rndwave"
+	{
+		"wave"	"player/footsteps/wade5.wav"
+		"wave"	"player/footsteps/wade6.wav"
+		"wave"	"player/footsteps/wade7.wav"
+		"wave"	"player/footsteps/wade8.wav"
+	}
+}
+
+"Player.AmbientUnderWater"
+{
+	"channel"	"CHAN_STATIC"
+	"volume"	"0.22"
+	"soundlevel"  "SNDLVL_75dB"
+
+	"wave"	"ambient/water/underwater.wav"
+}
+
+"Player.UseTrain"
+{
+	"channel"	"CHAN_ITEM"
+	"volume"	"0.8"
+	"soundlevel"  "SNDLVL_75dB"
+
+	"wave"	"plats/train_use1.wav"
+}
+
+"Player.UseDeny"
+{
+	"channel"	"CHAN_ITEM"
+	"volume"	"0.4"
+	"soundlevel"  "SNDLVL_75dB"
+
+	"wave"	"common/wpn_select.wav"
+}
+
+"Player.PickupWeapon"
+{
+	"channel"	"CHAN_WEAPON"
+	"volume"	"0.8"
+	"soundlevel"  "SNDLVL_75dB"
+	"pitch"	"PITCH_NORM"
+
+	"wave"	"pickup_weapon.wav"
+}
+
+
+"Geiger.BeepLow"
+{
+	"channel"	"CHAN_STATIC"
+	"soundlevel"	"SNDLVL_NONE"
+	"pitch"			"PITCH_NORM"
+
+	"rndwave"
+	{
+		"wave"	"player/geiger1.wav"
+		"wave"	"player/geiger2.wav"
+	}
+}
+
+"Geiger.BeepHigh"
+{
+	"channel"	"CHAN_STATIC"
+	"soundlevel"	"SNDLVL_NONE"
+	"pitch"			"PITCH_NORM"
+
+	"rndwave"
+	{
+		"wave"	"player/geiger2.wav"
+		"wave"	"player/geiger3.wav"
+	}
+}
+
+//HL2MP
+
+"NPC_MetroPolice.Die"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.500"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_80dB"
+
+	"rndwave"
+	{
+		"wave"	"npc/metropolice/die1.wav"
+		"wave"	"npc/metropolice/die2.wav"
+		"wave"	"npc/metropolice/die3.wav"
+		"wave"	"npc/metropolice/die4.wav"
+	}
+}
+
+"NPC_CombineS.Die"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.500"
+	"pitch"			"105,120"
+
+	"soundlevel"	"SNDLVL_80dB"
+
+	"rndwave"
+	{
+		"wave"	"voix/die1.wav"
+		"wave"	"voix/die2.wav"
+		"wave"	"voix/die3.wav"
+		"wave"	"voix/die4.wav"
+	}
+}

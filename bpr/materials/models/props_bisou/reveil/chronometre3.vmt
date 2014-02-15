@@ -1,0 +1,7 @@
+"UnlitGeneric"
+{
+	"$basetexture" 	"bisoutexture/paradise/chronometre3"
+	"$nolod" 		1
+	"$nodecal" 		1
+	"$model" 		1
+}

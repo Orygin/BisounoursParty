@@ -1,0 +1,1 @@
+You are not connected. Please [connect](http://www.bisounoursparty.com/forum/login.php) to comment this article.  

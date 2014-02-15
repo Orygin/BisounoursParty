@@ -1,0 +1,23 @@
+VertexLitGeneric
+{
+	"$basetexture"			"models/props/canette_pink"
+	"$phongexponenttexture" "models/props/canette_mask"
+	"$envmapmask" 			"models/props/canette_mask"
+	"$bumpmap" 				"models/props/canette_normal"
+	
+	"$halflambert" 1
+
+	"$phong" "1"
+	"$phongexponent" "5"
+	"$phongboost" ".8"
+	"$phongfresnelranges" "[.8 .2 1]"
+	
+	"$rimlight" "1"
+	"$rimlightexponent" ".9"
+	"$rimlightboost" "2"
+	"$rimmask" "1"
+	
+	"$envmap" "env_cubemap"
+	"$envmaptint" "[.08 .08 .08]"
+	"$normalmapalphaenvmapmask" "1"
+}

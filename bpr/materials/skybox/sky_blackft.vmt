@@ -1,0 +1,7 @@
+"UnlitGeneric"
+{
+	"$basetexture" "tools/toolsblack"
+	"$nofog" 1
+	"$ignorez" 1
+	"$nolod" 1
+}

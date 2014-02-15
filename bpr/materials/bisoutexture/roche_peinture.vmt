@@ -1,0 +1,9 @@
+"WorldVertexTransition"
+{
+	"$basetexture" "bisoutexture/rochebleue"
+	"$basetexture2" "bisoutexture/rochebleue_peinture"
+	"%tooltexture" "bisoutexture/blend_tool"
+	"%keywords" "bisou"
+	"$surfaceprop" "concrete"
+	"$surfaceprop2" "concrete"
+}

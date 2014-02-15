@@ -1,0 +1,7 @@
+"UnlitGeneric"
+{
+	"$basetexture" "Tools/toolsblack"
+	"$additive" 1
+	"$model" 1
+	"$nodecal" 1
+}

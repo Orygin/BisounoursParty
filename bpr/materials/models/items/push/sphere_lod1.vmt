@@ -1,0 +1,9 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models\items\push\sphere"
+
+	"$phong" "1"
+	"$phongexponent" "20"
+	"$phongboost" 2
+	"$phongfresnelranges" "[.01 2 4]"
+}

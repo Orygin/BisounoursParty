@@ -1,0 +1,10 @@
+"WorldVertexTransition"
+{
+	"$basetexture" "bisoutexture/bisouherbeverte"
+	"$basetexture2" "bisoutexture/bisourocheorange"
+	"%tooltexture" "bisoutexture/blend_tool"
+	"%keywords" "bisou"
+	"$surfaceprop" "dirt"
+	"$surfaceprop2" "dirt"
+	"%detailtype" "bisoudump"
+}

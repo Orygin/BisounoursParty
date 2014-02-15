@@ -1,0 +1,11 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "models/items/douille"
+	"$bumpmap" "models/weapons/Normal"
+	"$model" 	"1"
+
+	"$phong" "1"
+	"$phongexponent" "6"
+	"$phongboost" "4"
+	"$phongfresnelranges" "[0.3 0.7 1]"
+}

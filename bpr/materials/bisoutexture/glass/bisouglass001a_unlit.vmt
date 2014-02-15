@@ -1,0 +1,7 @@
+UnlitGeneric
+{
+	"$basetexture"	"bisoutexture/glass/bisouglass001"
+	"$selfillum" 1
+	"$surfaceprop" "glass"
+	"%keywords" "bisou"
+}

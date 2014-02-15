@@ -1,0 +1,5 @@
+"UnlitGeneric"
+{
+	"$basetexture" "models\items\push\sphere"
+	"$model" "1"
+}

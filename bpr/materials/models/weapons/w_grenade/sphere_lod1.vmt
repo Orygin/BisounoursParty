@@ -1,0 +1,9 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "Tools/toolsblack"
+
+	"$phong" "1"
+	"$phongexponent" "20"
+	"$phongboost" 2
+	"$phongfresnelranges" "[.01 2 4]"
+}

@@ -1,0 +1,17 @@
+"UnlitGeneric"
+{
+	"$basetexture" "effects/fade"
+	"$additive" 1
+	"$nocull" 1
+
+	"Proxies"
+	{
+		"Sine"
+		{
+			"resultVar"	"$alpha"
+			"sineperiod"	3
+			"sinemin"	.8
+			"sinemax"	.3
+		}
+	}
+}

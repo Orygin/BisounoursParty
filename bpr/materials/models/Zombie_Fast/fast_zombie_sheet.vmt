@@ -1,0 +1,13 @@
+"vertexlitGeneric"
+{
+	"$baseTexture" "models/Zombie_Fast/fast_zombie_sheet"
+	"$nodecal" 	"1"
+
+	"$model" 1
+
+	"$phong" "1"
+	"$halflambert" "1"
+	"$phongexponent" "13"
+	"$phongboost" .5
+	"$phongfresnelranges" "[1 .5 .2]"
+}

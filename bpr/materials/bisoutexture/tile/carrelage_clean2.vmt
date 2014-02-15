@@ -1,0 +1,7 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "bisoutexture/tile/carrelage_clean2"
+	"$surfaceprop" "tile"
+	"$bumpmap" "bisoutexture/tile/carrelage_clean_normal"
+	"%keywords" "bisou"
+}

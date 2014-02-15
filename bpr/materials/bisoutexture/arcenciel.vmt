@@ -1,0 +1,7 @@
+"LightmappedGeneric"
+{
+	//Ceci est un test ; vous savez que cette texture est la plus vieille texture de BP ?
+	"$basetexture" "bisoutexture/arcenciel"
+	"%keywords" "bisou"
+	"$surfaceprop" "nuage"
+}

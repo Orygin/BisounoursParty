@@ -1,0 +1,62 @@
+WeaponData //Flower
+{
+	"printname"			"#BP_Flower"
+	"viewmodel"			"models/weapons/v_flower.mdl"
+	"playermodel"		"models/weapons/w_fleur.mdl"
+	"anim_prefix"		"crowbar"
+	"bucket"			"0"
+	"bucket_position"		"2"
+	"clip_size"			"-1"
+	"primary_ammo"		"None"
+	"secondary_ammo"		"None"
+	"weight"			"2"
+	"item_flags"		"0"
+	"weight"			"0"
+
+	SoundData
+	{
+		"single_shot"	"Weapon_Flower.Single"
+		"melee_hit"		"Weapon_Flower.Melee_Hit"
+		"melee_hit_world"	"Weapon_Flower.Melee_HitWorld"
+	}
+
+	TextureData
+	{
+		"weapon"
+		{
+			"font"	"WeaponIcons"
+			"character"	"c"
+		}
+		"weapon_s"
+		{	
+			"font"	"WeaponIconsSelected"
+			"character"	"c"
+		}
+		"ammo"
+		{
+			"font"	"WeaponIcons"
+			"character"	"c"
+		}
+		"ammo2"
+		{
+			"file"	"sprites/640hud7"
+			"x"		"48"
+			"y"		"72"
+			"width"	"24"
+			"height"	"24"
+		}
+		"crosshair"
+		{
+			"font"	"Crosshairs"
+			"character"	"C"
+		}
+		"autoaim"
+		{
+			"file"	"sprites/crosshairs"
+			"x"		"0"
+			"y"		"48"
+			"width"	"24"
+			"height"	"24"
+		}
+	}
+}

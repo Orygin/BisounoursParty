@@ -1,0 +1,6 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "models/weapons/flechette/plume_rose"
+	"$translucent" 1
+	"$alphatest" 1
+}

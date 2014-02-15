@@ -1,0 +1,64 @@
+<div id="ContentTopButton1" ng-click="save()">
+	Save changes
+</div>
+<div id="ContentTopButton2" ng-click="goBack()">
+	Cancel changes
+</div>
+<div id="ContentTopButtonRight" ng-click="delete()" ng-show="Achievement.id != -1">
+	Delete achievement
+</div>
+<div class="Achievement">
+	<form>
+		<img class="AchievementIcon" ng-src="img/achievements/{{Achievement.name}}.png" alt="Achievement icon" onError="this.src='img/achievements/none.jpg';"/>
+		<div class="AchievementTitle">{{Achievement.fullName}}</div>
+		<div class="AchievementDescr">{{Achievement.fullDesc}}</div>
+		<div class="AchievementProgress">
+			<div class="TotalProgress" ng-show="Achievement.progressMax > 1"><div class="ProgressMade" style="width:{{ (Achievement.progress / Achievement.progressMax) *100 }}%;"> </div></div><div class="ProgressMax" ng-show="Achievement.progressMax > 1">{{Achievement.progressMax}}</div>
+		</div>
+	</form>
+</div>
+<div class="ClearRight"> </div>
+<form method="post" class="form-inline" name="AchForm">
+	<p>
+		<table id="SettingsTable">
+			<tr>
+				<th scope="row">Dev Name</th>
+				<td ng-class="{'control-group error': AchForm.AchievementDev.$invalid}">
+					<input type="text" name="AchievementDev" id="AchievementDev" class="input-xxlarge" required ng-model="Achievement.name"/><br/>
+					Dev Name of the achievement. <span ng-show="AchForm.AchievementDev.$error.required" class="help-inline">Required</span>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">Title</th>
+				<td ng-class="{'control-group error': AchForm.AchievementTitle.$invalid}">
+					<input type="text" name="AchievementTitle" id="AchievementTitle" class="input-xxlarge" required ng-model="Achievement.fullName"/><br/>
+					Name of the achievement. <span ng-show="AchForm.AchievementTitle.$error.required" class="help-inline">Required</span>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">Description</th>
+				<td ng-class="{'control-group error': AchForm.AchievementDescr.$invalid}">
+					<input type="text" ng-model="Achievement.fullDesc" name="AchievementDescr" id="AchievementDescr" class="input-xxlarge" required/><br/>
+					Description of the achievement<span ng-show="AchForm.AchievementDescr.$error.required" class="help-inline">Required</span>
+				</td>
+			</tr>
+			<tr id="MaxRow">
+				<th scope="row">Maximum</th>
+				<td ng-class="{'control-group error': AchForm.AchievementMax.$invalid}">
+					<input type="number" ng-model="Achievement.progressMax" name="AchievementMax" id="AchievementMax" size="4" maxlength="4" required/><br/>
+					Determines the goal to reach to unlock the achievement.<span ng-show="AchForm.AchievementMax.$error.required" class="help-inline">Required</span><span ng-show="AchForm.AchievementMax.$error.number" class="help-inline">Numbers only</span>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">Icon</th>
+				<td>
+					<input type="file" name="AchievementIcon" id="AchievementIconLocalServer" /><br/>
+					<input type="file" name="AchievementIcon" id="AchievementIconOnline" style="display:none;" />
+					Icon served for the website or client.
+				</td>
+			</tr>
+		</table>
+	</p>
+</form>
+<div class="ClearRight"> </div>
+<div class="ClearLeft"> </div>

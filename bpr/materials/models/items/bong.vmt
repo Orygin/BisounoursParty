@@ -1,0 +1,10 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" 					"models/items/bong"
+	"$bumpmap" 						"models/weapons/Normal"
+	"$lightwarptexture" 			"lightwarp2"
+
+	"$envmap" 						"env_cubemap"
+	"$envmaptint" 					"[.3 .5 .5]"
+	"$halflambert" 					1
+}

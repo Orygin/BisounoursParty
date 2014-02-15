@@ -1,0 +1,5 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "cable\rope"
+	"$bumpmap" "Models/Weapons/v_crossbow/string_normal"
+}

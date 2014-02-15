@@ -1,0 +1,30 @@
+"Refract"
+{
+	//KLEMS : texture provisoire choppey chez SMOD
+ 	"$model" 1
+ 	"$refractamount" "1"
+	"$scale" "[2 2]"
+	"$bumpframe" "0"
+	"$translucent" "1"
+	"$forcerefract" 1
+	"$nofog" "1"
+
+	"Refract_dx90"
+	{
+	 	"$normalmap" "effects/grenadeeffect_normal"
+		"$forcerefract" 1
+ 		"$bluramount" "0"
+	}
+
+	"Refract_dx80"
+	{
+	 	"$dudvmap" "effects/grenadeeffect_dudv"
+		"$forcerefract" 1
+	}
+
+	"UnlitGeneric_dx6"
+	{
+		"$basetexture" "effects/grenadeeffect"
+	}
+
+}

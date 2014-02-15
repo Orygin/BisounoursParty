@@ -1,0 +1,15 @@
+{
+	"mirrors":
+	[
+		{
+			"name": "Europe",
+			"address": "bisounoursparty.com",
+			"responding": true
+		},
+		{
+			"name": "DTC",
+			"address": "bisounoursparty.com",
+			"responding": false
+		}
+	]
+}

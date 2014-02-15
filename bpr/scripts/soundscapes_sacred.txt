@@ -1,0 +1,225 @@
+"dm_sacred.outdoors1"
+{
+	"dsp"	"0"
+
+	"playlooping"
+	{
+		"volume"	"0.8"
+		"wave"		"ambient/sacred/outdoor_rain.wav"
+		"pitch"		"100"
+	}
+
+	"playrandom"
+	{
+		"time"		"20, 40"
+		"volume"	"0.6"
+		"pitch"		"100"
+
+		"rndwave"
+		{
+			"wave"	"ambient/wind/wind_med1.wav"
+			"wave"	"ambient/wind/wind_med2.wav"
+		}
+	}
+}
+
+"dm_sacred.outdoors2"
+{
+	"dsp"	"0"
+
+	"playlooping"
+	{
+		"volume"	"0.8"
+		"wave"		"ambient/sacred/outdoor_rain.wav"
+		"pitch"		"100"
+	}
+
+	"playrandom"
+	{
+		"time"		"20, 40"
+		"volume"	"0.6"
+		"pitch"		"100"
+
+		"rndwave"
+		{
+			"wave"	"ambient/wind/wind_med1.wav"
+			"wave"	"ambient/wind/wind_med2.wav"
+		}
+	}
+
+	"playrandom"
+	{
+		"time"		"5, 15"
+		"volume"	"0.7"
+		"pitch"		"100"
+
+		"rndwave"
+		{
+			"wave"	"ambient/levels/canals/shore1.wav"
+			"wave"	"ambient/levels/canals/shore2.wav"
+			"wave"	"ambient/levels/canals/shore3.wav"
+			"wave"	"ambient/levels/canals/shore4.wav"
+		}
+	}
+}
+
+"dm_sacred.indoors"
+{
+	"dsp"	"1"
+
+	"playlooping"
+	{
+		"volume"	"0.3"
+		"wave"		"ambient/atmosphere/cave_outdoor1.wav"
+		"pitch"		"100"
+	}
+
+	"playlooping"
+	{
+		"volume"	".2"
+		"pitch"		"100"
+		"wave"		"ambient/sacred/water1.wav"
+	}
+
+	"playlooping"
+	{
+		"volume"	".2"
+		"pitch"		"100"
+		"wave"		"ambient/sacred/water2.wav"
+	}
+
+	"playrandom"
+	{
+		"time"		"15, 30"
+		"volume"	"0.5"
+		"pitch"		"100"
+
+		"rndwave"
+		{
+			"wave"	"ambient/creatures/rats1.wav"
+			"wave"	"ambient/creatures/rats2.wav"
+			"wave"	"ambient/creatures/rats3.wav"
+			"wave"	"ambient/creatures/rats4.wav"
+		}
+	}
+
+	"playrandom"
+	{
+		"time"		"5, 20"
+		"volume"	"0.6"
+		"pitch"		"100"
+
+		"rndwave"
+		{
+			"wave"	"ambient/materials/wood_creak1.wav"
+			"wave"	"ambient/materials/wood_creak2.wav"
+			"wave"	"ambient/materials/wood_creak3.wav"
+			"wave"	"ambient/materials/wood_creak4.wav"
+			"wave"	"ambient/materials/wood_creak5.wav"
+			"wave"	"ambient/materials/wood_creak6.wav"
+		}
+	}
+}
+
+"dm_sacred.indoors.cannabis"
+{
+	"dsp"	"0"
+
+	"playlooping"
+	{
+		"volume"	"0.3"
+		"wave"		"ambient/atmosphere/tunnel1.wav"
+		"pitch"		"100"
+	}
+
+	"playrandom"
+	{
+		"time"		"15, 30"
+		"volume"	"0.5"
+		"pitch"		"100"
+
+		"rndwave"
+		{
+			"wave"	"ambient/creatures/rats1.wav"
+			"wave"	"ambient/creatures/rats2.wav"
+			"wave"	"ambient/creatures/rats3.wav"
+			"wave"	"ambient/creatures/rats4.wav"
+		}
+	}
+
+	"playrandom"
+	{
+		"time"		"5, 20"
+		"volume"	"0.6"
+		"pitch"		"100"
+
+		"rndwave"
+		{
+			"wave"	"ambient/materials/wood_creak1.wav"
+			"wave"	"ambient/materials/wood_creak2.wav"
+			"wave"	"ambient/materials/wood_creak3.wav"
+			"wave"	"ambient/materials/wood_creak4.wav"
+			"wave"	"ambient/materials/wood_creak5.wav"
+			"wave"	"ambient/materials/wood_creak6.wav"
+		}
+	}
+
+	"playlooping"
+	{
+		"volume"	".1"
+		"pitch"		"100"
+		"wave"		"ambient/sacred/water2.wav"
+	}
+}
+
+"dm_sacred.indoors.serre"
+{
+	"dsp"	"1"
+
+	"playlooping"
+	{
+		"volume"	"0.4"
+		"wave"		"ambient/sacred/indoor_cricket.wav"
+		"pitch"		"100"
+	}
+
+	"playlooping"
+	{
+		"volume"	".2"
+		"pitch"		"100"
+		"wave"		"ambient/sacred/water1.wav"
+	}
+
+	"playlooping"
+	{
+		"volume"	".2"
+		"pitch"		"100"
+		"wave"		"ambient/sacred/water2.wav"
+	}
+
+	"playrandom"
+	{
+		"time"		"4, 10"
+		"volume"	"0.5"
+		"pitch"		"100"
+
+		"rndwave"
+		{
+			"wave"	"ambient/bird01.wav"
+			"wave"	"ambient/bird02.wav"
+			"wave"	"ambient/bird03.wav"
+			"wave"	"ambient/bird04.wav"
+			"wave"	"ambient/bird05.wav"
+			"wave"	"ambient/bird06.wav"
+			"wave"	"ambient/bird07.wav"
+			"wave"	"ambient/bird08.wav"
+			"wave"	"ambient/bird09.wav"
+			"wave"	"ambient/bird10.wav"
+			"wave"	"ambient/bird11.wav"
+			"wave"	"ambient/bird12.wav"
+			"wave"	"ambient/bird13.wav"
+			"wave"	"ambient/bird14.wav"
+			"wave"	"ambient/bird15.wav"
+		}
+	}
+}

@@ -1,0 +1,374 @@
+//french
+// Health Pickup < 20
+"Autovocal.CriticalHealthPickup"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.75"
+	"pitch"			"120,130"
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"			"player/autovocals/criticalhealthpickup_01.wav"
+		"wave"			"player/autovocals/criticalhealthpickup_02.wav"
+		"wave"			"player/autovocals/criticalhealthpickup_03.wav"
+	}
+}
+
+"Autovocal.BatPickup"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.75"
+	"pitch"			"120,130"
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"			"player/autovocals/batpickup_01.wav"
+		"wave"			"player/autovocals/batpickup_02.wav"
+	}
+}
+
+"Autovocal.PushBallPickup"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.75"
+	"pitch"			"120,130"
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"			"player/autovocals/takeflag_01.wav"
+	}
+}
+
+"Autovocal.HighSpeed"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.75"
+	"pitch"			"120,130"
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"		"player/autovocals/highspeed_01.wav"
+		"wave"		"player/autovocals/highspeed_02.wav"
+		"wave"		"player/autovocals/highspeed_03.wav"
+	}
+}
+
+// 5+ frags
+"Autovocal.Rampage"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.75"
+	"pitch"			"120,130"
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"		"player/autovocals/rampage_01.wav"
+		"wave"		"player/autovocals/rampage_02.wav"
+		"wave"		"player/autovocals/rampage_03.wav"
+		"wave"		"player/autovocals/rampage_04.wav"
+		"wave"		"player/autovocals/rampage_05.wav"
+		"wave"		"player/autovocals/rampage_06.wav"
+	}
+}
+
+// Pickup new weapon
+"Autovocal.NewWeapon"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.75"
+	"pitch"			"120,130"
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"		"player/autovocals/newweapon_01.wav"
+		"wave"		"player/autovocals/newweapon_02.wav"
+		"wave"		"player/autovocals/newweapon_03.wav"
+	}
+}
+
+"Autovocal.NewPlayer"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.75"
+	"pitch"			"120,130"
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"		"player/autovocals/newplayer_01.wav"
+		"wave"		"player/autovocals/newplayer_02.wav"
+	}
+}
+
+"Autovocal.BatFrag"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.75"
+	"pitch"			"120,130"
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"			"player/autovocals/batfrag_01.wav"
+		"wave"			"player/autovocals/batfrag_02.wav"
+		"wave"			"player/autovocals/batfrag_03.wav"
+	}
+}
+
+"Autovocal.PushFrag"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.75"
+	"pitch"			"120,130"
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"			"player/autovocals/pushfrag_01.wav"
+		"wave"			"player/autovocals/pushfrag_02.wav"
+		"wave"			"player/autovocals/pushfrag_03.wav"
+		"wave"			"player/autovocals/pushfrag_04.wav"
+		"wave"			"player/autovocals/pushfrag_05.wav"
+	}
+}
+
+// Armor Pickup > 150
+"Autovocal.ArmorPickup"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.75"
+	"pitch"			"120,130"
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"		"player/autovocals/armorpickup_01.wav"
+		"wave"		"player/autovocals/armorpickup_02.wav"
+		"wave"		"player/autovocals/armorpickup_03.wav"
+	}
+}
+
+// 15+ frags
+"Autovocal.Genocide"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.75"
+	"pitch"			"120,130"
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"		"player/autovocals/genocide_01.wav"
+		"wave"		"player/autovocals/genocide_02.wav"
+		"wave"		"player/autovocals/genocide_03.wav"
+		"wave"		"player/autovocals/genocide_04.wav"
+	}
+}
+
+"Autovocal.GrenadeHit"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.75"
+	"pitch"			"120,130"
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"		"player/autovocals/grenadehit_01.wav"
+		"wave"		"player/autovocals/grenadehit_02.wav"
+		"wave"		"player/autovocals/grenadehit_03.wav"
+	}
+}
+
+"Autovocal.RespawnAfterSuicide"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.75"
+	"pitch"			"120,130"
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"			"player/autovocals/respawnaftersuicide_01.wav"
+		"wave"			"player/autovocals/respawnaftersuicide_02.wav"
+		"wave"			"player/autovocals/respawnaftersuicide_03.wav"
+	}
+}
+
+"Autovocal.RespawnAfterChangeteam"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.75"
+	"pitch"			"120,130"
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"			"player/autovocals/respawnafterchangeteam_01.wav"
+		"wave"			"player/autovocals/respawnafterchangeteam_02.wav"
+	}
+}
+
+"Autovocal.RespawnAfterTKed"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.75"
+	"pitch"			"120,130"
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"			"player/autovocals/respawnaftertked_01.wav"
+		"wave"			"player/autovocals/respawnaftertked_02.wav"
+		"wave"			"player/autovocals/respawnaftertked_03.wav"
+	}
+}
+
+"Autovocal.TK"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.75"
+	"pitch"			"120,130"
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"			"player/autovocals/tk_01.wav"
+		"wave"			"player/autovocals/tk_02.wav"
+		"wave"			"player/autovocals/tk_03.wav"
+	}
+}
+
+"Autovocal.Healed"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.75"
+	"pitch"			"120,130"
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"			"player/autovocals/healed_01.wav"
+		"wave"			"player/autovocals/healed_02.wav"
+		"wave"			"player/autovocals/healed_03.wav"
+	}
+}
+
+"Autovocal.Geolocalisation"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.75"
+	"pitch"			"120,130"
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"			"player/autovocals/geolocalisation_01.wav"
+		"wave"			"player/autovocals/geolocalisation_02.wav"
+		"wave"			"player/autovocals/geolocalisation_03.wav"
+		"wave"			"player/autovocals/geolocalisation_04.wav"
+	}
+}
+
+"Autovocal.Taunt"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.75"
+	"pitch"			"120,130"
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"			"player/autovocals/taunt_01.wav"
+		"wave"			"player/autovocals/taunt_02.wav"
+		"wave"			"player/autovocals/taunt_03.wav"
+		"wave"			"player/autovocals/taunt_04.wav"
+		"wave"			"player/autovocals/taunt_05.wav"
+		"wave"			"player/autovocals/taunt_06.wav"
+	}
+}
+
+"Autovocal.MineFrag"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.75"
+	"pitch"			"120,130"
+	"soundlevel"	"SNDLVL_95dB"
+
+	"wave"			"player/autovocals/minefrag_01.wav"
+}
+
+"Autovocal.Takeflag"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.75"
+	"pitch"			"120,130"
+	"soundlevel"	"SNDLVL_95dB"
+
+	"wave"			"player/autovocals/takeflag_01.wav"
+}
+
+// AUTOVOCALS CONTEXTUELS
+
+"Autovocal.Coop.Frag.Epice"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.75"
+	"pitch"			"120,130"
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"			"player/autovocals/coop_epice_frag_01.wav"
+		"wave"			"player/autovocals/coop_epice_frag_02.wav"
+	}
+}
+
+"Autovocal.Coop.Frag.Pedobear"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.75"
+	"pitch"			"120,130"
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"			"player/autovocals/coop_pedobear_frag_01.wav"
+		"wave"			"player/autovocals/coop_pedobear_frag_02.wav"
+	}
+}
+
+"Autovocal.Coop.Frag.Zombie"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.75"
+	"pitch"			"120,130"
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"			"player/autovocals/coop_zombie_frag_01.wav"
+		"wave"			"player/autovocals/coop_zombie_frag_02.wav"
+	}
+}
+
+"Autovocal.Coop.Warn"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.75"
+	"pitch"			"120,130"
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"			"player/autovocals/coop_warn_wave_01.wav"
+		"wave"			"player/autovocals/coop_warn_wave_02.wav"
+		"wave"			"player/autovocals/coop_warn_wave_03.wav"
+	}
+}

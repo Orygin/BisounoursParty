@@ -1,0 +1,66 @@
+WeaponData // PhysGun
+{
+	"printname"			"#BP_Carebearstare"
+	"viewmodel"			"models/weapons/v_physcannon.mdl"
+	"playermodel"		"models/weapons/w_Physics.mdl"
+	"anim_prefix"		"gauss"
+	"bucket"			"0"
+	"bucket_position"		"0"
+	"clip_size"			"0"
+	"clip2_size"		"0"
+	"primary_ammo"		"None"
+	"secondary_ammo"		"None"
+	"default_clip"		"0"
+	"default_clip2"		"0"
+	"weight"			"1"
+	"autoswitchto"		"0"
+	"autoswitchfrom"		"0"
+	"item_flags"		"2"
+
+	SoundData
+	{
+		"single_shot"	"Weapon_PhysCannon.Launch"
+		"reload"		"Weapon_PhysCannon.Charge"
+		"empty"		"Weapon_PhysCannon.DryFire"
+		"special1"		"Weapon_PhysCannon.Pickup"
+		"special2"		"Weapon_PhysCannon.OpenClaws"
+		"melee_hit"		"Weapon_PhysCannon.CloseClaws"
+		"melee_miss"	"Weapon_PhysCannon.Drop"
+		"special3"		"Weapon_PhysCannon.TooHeavy"
+	}
+
+	TextureData
+	{
+		"weapon"
+		{
+			"font"	"WeaponIcons"
+			"character"	"m"
+		}
+		"weapon_s"
+		{	
+			"font"	"WeaponIconsSelected"
+			"character"	"m"
+		}
+		"ammo"
+		{
+			"file"	"sprites/a_icons1"
+			"x"		"0"
+			"y"		"0"
+			"width"	"32"
+			"height"	"32"
+		}
+		"crosshair"
+		{
+			"font"	"Crosshairs"
+			"character"	"E"
+		}
+		"autoaim"
+		{
+			"file"	"sprites/crosshairs"
+			"x"		"48"
+			"y"		"72"
+			"width"	"24"
+			"height"	"24"
+		}
+	}
+}

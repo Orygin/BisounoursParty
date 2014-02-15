@@ -1,0 +1,7 @@
+LightMappedGeneric
+{
+	"$basetexture" "VGUI\logos\Logo_BP"
+	"$translucent" "1"
+	"$decal" "1"
+	"$decalscale" "0.250"
+}

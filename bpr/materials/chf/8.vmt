@@ -1,0 +1,8 @@
+"LightmappedGeneric"
+{
+	"$baseTexture" "chf/8"
+	"$translucent" 1
+	"$decal" 1
+	"$decalscale" 0.7
+	"%keywords" "bisou"
+}

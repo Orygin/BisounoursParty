@@ -1,0 +1,107 @@
+<include tpl="header.html" />
+			<block name="articles">
+			<article>
+				<header>
+					<h2><a href="/{LANG_URL_BLOG}/{LANG_URL_ARTICLE}/{articles.ARTICLE_ID}-{articles.ARTICLE_TITLE|niceurl}">{articles.ARTICLE_TITLE}</a></h2>
+				</header>
+				<article>
+					<time>
+						<div class="news_day">{articles.ARTICLE_DATE_DAY}</div>
+						<div class="news_month">{articles.ARTICLE_DATE_MONTH}</div>
+						<div class="news_year">{articles.ARTICLE_DATE_YEAR}</div>
+						<div class="news_time">{articles.ARTICLE_DATE_HOUR}h{articles.ARTICLE_DATE_MINUTE}</div>
+					</time>
+					{articles.ARTICLE_CONTENT|markdown}
+				</article>
+				<footer>
+					{LANG_BLOG_ARTICLE_AUTHOR}<a href="http://www.bisounoursparty.com/forum/profile.php?id={articles.ARTICLE_AUTHOR_ID}" class="author">{articles.ARTICLE_AUTHOR_NICK}</a>{LANG_BLOG_ARTICLE_CATEGORY}<a href="/{LANG_URL_BLOG}/{LANG_URL_ARTICLE}/{articles.ARTICLE_CATEGORY_ID}-{articles.ARTICLE_CATEGORY_NAME|niceurl}">{articles.ARTICLE_CATEGORY_NAME}</a>
+				</footer>
+			</article>
+			<blockelse />
+			<p>{LANG_BLOG_NO_ARTICLES}</p>
+			</block>
+             <if condition="{$COMMENTS} == 0">
+	             <if cond="{$BLOG_NUMBERPAGES} != 1">
+        		    <p>
+			            <block name="pages">
+							<a href="/{LANG_URL_BLOG}/{LANG_URL_ARTICLE}/page-{pages.NUM}">{pages.NUM}</a>
+        	    		</block>
+    		        </p>
+	            </if>
+            </if>
+<if condition="{$COMMENTS} == 1">
+                            <script language="javascript"> 
+function toggle() {
+                    var ele = document.getElementById("toggleText");
+                    if(ele.style.display == "block") {
+                            ele.style.display = "none";
+                    }
+                    else {
+                            ele.style.display = "block";
+                    }
+                  }
+function cleartextarea(id){
+if (clickedIt == false){
+id.value="";
+clickedIt=true;
+}
+} </script>
+                        <article>
+				<header>
+					<h2><a href="/{LANG_URL_BLOG}/{LANG_URL_ARTICLE}/{articles.ARTICLE_ID}-{articles.ARTICLE_TITLE|niceurl}">{LANG_BLOG_COMMENTS}</a></h2>
+				</header>
+				<article>
+			<block name="comments">
+                            <a href="http://www.bisounoursparty.com/forum/profile.php?id={comments.COMMENT_AUTHOR_ID}">
+                            <if cond="{$comments.COMMENT_AUTHOR_GROUPID} == 1">
+					<h4 class="medium red awesome">{comments.COMMENT_AUTHOR_NICK}</h4>
+                            <elseif cond="{$comments.COMMENT_AUTHOR_GROUPID} == 5" />
+                                        <h4 class="medium red awesome">{comments.COMMENT_AUTHOR_NICK}</h4>
+                            <elseif cond="{$comments.COMMENT_AUTHOR_GROUPID} == 6" />
+                                        <h4 class="medium orange awesome">{comments.COMMENT_AUTHOR_NICK}</h4>
+                            <elseif cond="{$comments.COMMENT_AUTHOR_GROUPID} == 7" />
+                                        <h4 class="medium orange awesome">{comments.COMMENT_AUTHOR_NICK}</h4>
+                            <elseif cond="{$comments.COMMENT_AUTHOR_GROUPID} == 8" />
+                                        <h4 class="medium green awesome">{comments.COMMENT_AUTHOR_NICK}</h4>
+                            <else />
+                                        <h4 class="medium blue awesome">{comments.COMMENT_AUTHOR_NICK}</h4>
+                            </if>
+                                </a>
+                            <if cond="{$USER_CAN_MODERATE} == 1">
+                                <a href="/{LANG_URL_BLOG}/DelComment/{comments.COMMENT_ID}-{articles.ARTICLE_ID}"><img src="/templates/img/delete.png" /></a>
+                            <elseif cond="{$USER_ID} == {$comments.COMMENT_AUTHOR_ID}" />
+                                <a href="/{LANG_URL_BLOG}/DelComment/{comments.COMMENT_ID}-{articles.ARTICLE_ID}"><img src="/templates/img/delete.png" /></a>
+                            </if>
+                                        <blockquote style="padding: 8px;">{comments.COMMENT_CONTENT|markdown}</blockquote>
+			<blockelse />
+                            <p>{LANG_BLOG_NO_COMMENT}</p>
+			</block>
+				</article>
+				<footer>
+                                    <a href="javascript:toggle();">{LANG_BLOG_COMMENT_ADD}</a><!--<a href="/{LANG_URL_MEMBER}/{comments.COMMENT_AUTHOR_ID}-{comments.COMMENT_AUTHOR_NICK|niceurl}" class="author">{comments.COMMENT_AUTHOR_NICK}</a>{LANG_BLOG_COMMENT_CATEGORY}<a href="/{LANG_URL_DEVBLOG}/{LANG_URL_ARTICLE}/{comments.ARTICLE_ID}-{comments.ARTICLE_TITLE|niceurl}">{comments.ARTICLE_TITLE}</a>-->
+				</footer>
+                        </article>
+                        
+                            <article id="toggleText" style="display: none">
+                                    <header>
+                                            <h2>{LANG_BLOG_COMMENT_ADD}</h2>
+                                    </header>
+                                    <article>
+                                        <if condition="{$ISCONNECTED} == 1">
+                                            <form action="/{LANG_URL_BLOG}/AddComment/{articles.ARTICLE_ID}-{articles.ARTICLE_TITLE|niceurl}" method="post">
+                                                <p>{LANG_BLOG_USINGMD|markdown}</p>
+                                                <textarea name="content" rows="8" cols="80" onFocus="this.value=''; this.onfocus=null;" >
+                                                </textarea>
+                                            <input type="submit" value="{LANG_SEND}" />    
+                                            </form>
+                                        <else />
+                                            <p>{LANG_BLOG_NEEDTOCONNECT|markdown} abc</p>
+                                        </if>
+                                    </article>
+                                    <footer>
+                                    </footer>
+                                
+                            </article>
+                        
+                        </if>
+<include tpl="footer.html" />

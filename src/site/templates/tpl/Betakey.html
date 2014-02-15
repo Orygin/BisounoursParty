@@ -1,0 +1,18 @@
+<include tpl="header.html" />
+			<article>
+				<header>
+					<h2>{PAGE_TITLE}</h2>
+				</header>
+				<article>
+                    <if condition="{$ADDED} == 1">
+                        {SUCESS}
+                    <else />
+                    <form method="post" action="BetaKey.php">
+                        <label for="userid">{USERID}</label> : <input type="text" name="userid" id="userid" />
+                        <label for="Key">{KEY}</label> : <input type="text" name="key" id="key" />
+                        <input type="submit" value="{LANG_SEND}" />
+                    </form>
+                    </if>
+				</article>
+			</article>
+<include tpl="footer.html" />

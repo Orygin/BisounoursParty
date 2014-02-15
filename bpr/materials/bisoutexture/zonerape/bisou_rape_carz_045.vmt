@@ -1,0 +1,14 @@
+"UnlitGeneric"
+{
+	"$basetexture" "bisoutexture/zonerape/bisou_rape_carz"
+	"$translucent" 1
+	"Proxies"
+	{
+		"TextureScroll"
+		{
+			"texturescrollvar" "$basetexturetransform"
+			"texturescrollrate" 0.45
+			"texturescrollangle" 180
+		}
+	}
+}

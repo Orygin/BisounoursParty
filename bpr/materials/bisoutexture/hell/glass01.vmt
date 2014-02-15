@@ -1,0 +1,5 @@
+"Unlitgeneric"
+{
+	"$basetexture" "bisoutexture/hell/glass01"
+	"$surfaceprop" "glass"
+}

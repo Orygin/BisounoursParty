@@ -1,0 +1,124 @@
+"Gameplay.Domscore"
+{
+	"channel"		"CHAN_AUTO"
+	"volume"		"1.00"
+	"pitch"			"100"
+	"soundlevel"	"SNDLVL_80dB"
+
+	"wave"			"gameplay/domscore.wav"
+}
+"Gameplay.Push.Pickup"
+{
+	"channel"		"CHAN_STATIC"
+	"volume"		"1.00"
+	"pitch"			"100"
+	"soundlevel"	"SNDLVL_80dB"
+
+	"wave"			"#@gameplay/domscore.wav"
+}
+"Gameplay.Forts.Freeze"
+{
+	"channel"		"CHAN_STATIC"
+	"volume"		"1.00"
+	"pitch"			"100"
+	"soundlevel"	"SNDLVL_80dB"
+
+	"wave"	"pop.wav"
+}
+"Gameplay.Forts.UnFreeze"
+{
+	"channel"		"CHAN_STATIC"
+	"volume"		"1.00"
+	"pitch"			"100"
+	"soundlevel"	"SNDLVL_80dB"
+
+	"wave"	"respawn.wav"
+}
+"Gameplay.Domambient"
+{
+	"channel"		"CHAN_STATIC"
+	"volume"		"1.00"
+	"pitch"			"100"
+	"soundlevel"	"SNDLVL_80dB"
+
+	"wave"			"gameplay/domambient.wav"
+}
+
+"Gameplay.Endgame.Win"
+{
+	"channel"	"CHAN_AUTO"
+	"volume"	"1"
+	"soundlevel"	"SNDLVL_140dB"
+	"pitch"		"PITCH_NORM"
+
+	"wave"			"#@gameplay/endgame_win.wav"
+}
+
+"Gameplay.Endgame.Fail"
+{
+	"channel"	"CHAN_AUTO"
+	"volume"	"1"
+	"soundlevel"	"SNDLVL_140dB"
+	"pitch"		"PITCH_NORM"
+
+	"wave"			"#@gameplay/endgame_fail.wav"
+}
+
+"Gameplay.Endgame.Draw"
+{
+	"channel"	"CHAN_AUTO"
+	"volume"	"1"
+	"soundlevel"	"SNDLVL_140dB"
+	"pitch"		"PITCH_NORM"
+
+	"wave"			"#@gameplay/endgame_fail.wav"
+}
+
+"Gameplay.Score.Friend"
+{
+	"channel"	"CHAN_AUTO"
+	"volume"	"1"
+	"soundlevel"	"SNDLVL_140dB"
+	"pitch"		"PITCH_NORM"
+
+	"wave"			"#@gameplay/score_friend.wav"
+}
+"Gameplay.Push.BallRespawn"
+{
+	"channel"	"CHAN_AUTO"
+	"volume"	"1"
+	"soundlevel"	"SNDLVL_140dB"
+	"pitch"		"PITCH_NORM"
+
+	"wave"			"#@gameplay/stoledata.wav"
+}
+
+"Gameplay.Score.Ennemy"
+{
+	"channel"	"CHAN_AUTO"
+	"volume"	"1"
+	"soundlevel"	"SNDLVL_140dB"
+	"pitch"		"PITCH_NORM"
+
+	"wave"			"#@gameplay/score_ennemy.wav"
+}
+
+"Gameplay.Forts.Stoledata"
+{
+	"channel"	"CHAN_AUTO"
+	"volume"		"1.00"
+	"pitch"			"100"
+	"soundlevel"	"SNDLVL_70dB"
+
+	"wave"			"#@gameplay/stoledata.wav"
+}
+
+"Gameplay.Forts.Lostdata"
+{
+	"channel"	"CHAN_AUTO"
+	"volume"		"1.00"
+	"pitch"			"100"
+	"soundlevel"	"SNDLVL_70dB"
+
+	"wave"			"#@gameplay/lostdata.wav"
+}

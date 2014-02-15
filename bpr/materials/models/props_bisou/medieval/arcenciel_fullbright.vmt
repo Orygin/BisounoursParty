@@ -1,0 +1,6 @@
+"unlitgeneric"
+{
+	$model 1 	"$basetexture" "bisoutexture/arcenciel"
+	"%keywords" "bisou"
+	"$surfaceprop" "nuage"
+}

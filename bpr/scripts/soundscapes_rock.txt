@@ -1,0 +1,86 @@
+
+"forts_rock.respawn"
+{
+	"dsp"	"9"
+
+	"playlooping"
+	{
+		"volume"	"0.3"
+		"wave"		"ambient/atmosphere/cave_outdoor1.wav"
+		"pitch"		"100"
+	}
+
+	"playrandom"
+	{
+		"time"		"10, 25"
+		"volume"	"0.5"
+		"pitch"		"100"
+
+		"rndwave"
+		{
+			"wave"	"ambient/creatures/rats1.wav"
+			"wave"	"ambient/creatures/rats2.wav"
+			"wave"	"ambient/creatures/rats3.wav"
+			"wave"	"ambient/creatures/rats4.wav"
+			"wave"	"ambient/ratpath01.wav"
+			"wave"	"ambient/ratpath02.wav"
+			"wave"	"ambient/ratpath03.wav"
+		}
+	}
+}
+
+"forts_rock.tunnel"
+{
+	"dsp"	"9"
+
+	"playlooping"
+	{
+		"volume"	"0.3"
+		"wave"		"ambient/levels/canals/tunnel_wind_loop1.wav"
+		"pitch"		"100"
+	}
+
+	"playrandom"
+	{
+		"time"		"5, 20"
+		"volume"	"0.5"
+		"pitch"		"100"
+
+		"rndwave"
+		{
+			"wave"	"ambient/materials/wood_creak1.wav"
+			"wave"	"ambient/materials/wood_creak2.wav"
+			"wave"	"ambient/materials/wood_creak3.wav"
+			"wave"	"ambient/materials/wood_creak4.wav"
+			"wave"	"ambient/materials/wood_creak5.wav"
+			"wave"	"ambient/materials/wood_creak6.wav"
+		}
+	}
+}
+
+"forts_rock.outdoors"
+{
+	"dsp"	"1"
+
+	"playlooping"
+	{
+		"volume"	"0.5"
+		"wave"		"ambient/wind/wasteland_wind.wav"
+		"pitch"		"110"
+	}
+
+	"playrandom"
+	{
+		"time"		"40, 55"
+		"volume"	"0.5"
+		"pitch"		"100"
+
+		"rndwave"
+		{
+			"wave"	"ambient/eagle.wav"
+			"wave"	"ambient/levels/coast/antlion_hill_ambient1.wav"
+			"wave"	"ambient/levels/coast/antlion_hill_ambient2.wav"
+			"wave"	"ambient/levels/coast/antlion_hill_ambient4.wav"
+		}
+	}
+}

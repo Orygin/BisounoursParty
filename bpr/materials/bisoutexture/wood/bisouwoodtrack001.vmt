@@ -1,0 +1,7 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "bisoutexture/Wood/bisouwoodtrack001"
+	"$surfaceprop" "wood"
+	"%keywords" "bisou"
+	"$translucent" 1
+}

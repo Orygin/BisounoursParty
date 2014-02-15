@@ -1,0 +1,6 @@
+"UnlitGeneric"
+{
+	"$basetexture" "Tools/toolsblack"
+	"$surfaceprop" "nuage"
+	"$additive" 1
+}

@@ -1,0 +1,59 @@
+WeaponData // UZI
+{
+	"printname"			"#BP_Uzi"
+	"viewmodel"			"models/weapons/v_uzi.mdl"
+	"playermodel"		"models/weapons/w_uzi.mdl"
+	"anim_prefix"		"smg2"
+	"bucket"			"2"
+	"bucket_position"		"0"
+	"clip_size"			"30"
+	"default_clip"		"30"
+	"primary_ammo"		"SMG1"
+	"secondary_ammo"		"None"
+	"weight"			"0"
+	"item_flags"		"0"
+	"damage"			"6"
+	"BuiltRightHanded"	"1"
+	"AllowFlipping"		"1"
+	
+	SoundData
+	{
+		"empty"		"Weapon_ALL.Empty"
+		"reload_npc"	"Weapon_Uzi.World_Reload"
+		"reload"	"Weapon_Uzi.World_Reload"
+		"single_shot"	"Weapon_Uzi.Single"
+		"single_shot_npc"	"Weapon_Uzi.Single"
+	}
+	
+	TextureData
+	{
+		"weapon"
+		{
+			"font"		"WeaponIcons"
+			"character"	"a"
+		}
+		"weapon_s"
+		{	
+			"font"		"WeaponIconsSelected"
+			"character"	"a"
+		}
+		"ammo"
+		{
+			"font"		"WeaponIcons"
+			"character"	"p"
+		}
+		"crosshair"
+		{
+			"font"		"Crosshairs"
+			"character"	"C"
+		}
+		"autoaim"
+		{
+			"file"		"sprites/crosshairs"
+			"x"			"0"
+			"y"			"48"
+			"width"		"24"
+			"height"	"24"
+		}
+	}
+}

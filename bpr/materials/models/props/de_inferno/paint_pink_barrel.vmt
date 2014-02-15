@@ -1,0 +1,5 @@
+VertexLitGeneric
+{
+	"$basetexture"	"models\props\de_inferno\paint_pink_barrel"
+	"$selfillum" 1
+}

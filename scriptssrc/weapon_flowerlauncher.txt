@@ -1,0 +1,68 @@
+WeaponData // Flower-Launcher
+{
+	"printname"			"#BP_Flowerlauncher"
+	"viewmodel"			"models/weapons/v_crossbow.mdl"
+	"playermodel"		"models/weapons/w_crossbow.mdl"
+	"anim_prefix"		"bow"
+	"bucket"			"3"
+	"bucket_position"		"0"
+	"clip_size"			"1"
+	"default_clip"		"6"
+	"primary_ammo"		"XBowBolt"
+	"secondary_ammo"		"None"
+	"weight"			"0"
+	"item_flags"		"0"
+	"damage"			"130"
+	"BuiltRightHanded"	"1"
+	"AllowFlipping"		"0"
+
+	SoundData
+	{
+		"single_shot"	"Weapon_Crossbow.Single"
+	}
+
+	TextureData
+	{
+		"weapon"
+		{
+			"font"	"WeaponIcons"
+			"character"	"g"
+		}
+		"weapon_s"
+		{	
+			"font"	"WeaponIconsSelected"
+			"character"	"g"
+		}
+		"ammo"
+		{
+			"font"	"WeaponIcons"
+			"character"	"w"
+		}
+		"crosshair"
+		{
+			"font"	"Crosshairs"
+			"character"	"B"
+		}		
+		"autoaim"
+		{
+			"file"	"sprites/crosshairs"
+			"x"		"0"
+			"y"		"96"
+			"width"	"24"
+			"height"	"24"
+		}
+		"zoom"
+		{
+			"font"	"Crosshairs"
+			"character"	"Q"
+		}		
+		"zoom_autoaim"
+		{
+			"file"	"sprites/crosshairs"
+			"x"		"24"
+			"y"		"112"
+			"width"	"104"
+			"height"	"16"
+		}
+	}
+}

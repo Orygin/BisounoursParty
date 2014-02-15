@@ -1,0 +1,56 @@
+<p>
+	<table class="table table-condensed">
+		<thead>
+			<th></th>
+			<th ng-click="predicate='name';reverse=!reverse;">Name</th>
+			<th ng-click="predicate='timePlayed';reverse=!reverse;">Time Played</th>
+			<th ng-click="predicate='id';reverse=!reverse;">ID</th>
+			<th ng-click="predicate='rank';reverse=!reverse;">Rank</th>
+			<th ng-click="predicate='steamId';reverse=!reverse;">Steam ID</th>
+		</thead>
+		<tbody>
+			<tr ng-repeat="player in players | orderBy:predicate:reverse | filter:search" ng-class="{'info': player.rank==3,'error': player.rank==0,'warning': player.rank==2}" style="height:41px">
+				<td>
+					<i class="icon-remove" ng-click="deletePlayer(player)" style="cursor:pointer" title="Delete"></i>
+				</td>
+				<td>
+					<img ng-src="{{player.avatar}}"/>
+					<a ng-href="http://steamcommunity.com/profiles/{{player.steamId}}/">{{player.name}}</a>
+				</td>
+				<td>
+					{{toDateTime(player.timePlayed)}}
+				</td>
+				<td>
+					{{player.id}}
+				</td>
+				<td>
+					<i class="icon-arrow-up" ng-click="setPlayerRank(player,1)" style="cursor:pointer" ></i> 
+					{{player.rank}} 
+					<i class="icon-arrow-down" ng-click="setPlayerRank(player,-1)" style="cursor:pointer" ></i>
+				</td>
+				<td>
+					{{player.steamId}}
+				</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>
+					<input type="text" ng-model="search.name" placeholder="Filter by : Name">
+				</td>
+				<td>
+					<input type="text" ng-model="search.timePlayed" placeholder="Filter by : Time played">
+				</td>
+				<td>
+					<input type="text" ng-model="search.id" placeholder="Filter by : ID">
+				</td>
+				<td>
+					<input type="text" ng-model="search.rank" placeholder="Filter by : Rank">
+				</td>
+				<td>
+					<input type="text" ng-model="search.steamId" placeholder="Filter by : Steam ID">
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<pagination boundary-links="true" num-pages="pages" current-page="currentPage" max-size="12" class="pagination-small"></pagination>
+</p>

@@ -1,0 +1,8 @@
+for SRC in *
+do
+    DST=`dirname "${SRC}"`/`basename "${SRC}" | tr '[A-Z]' '[a-z]'`
+    if [ "${SRC}" != "${DST}" ]
+    then
+        git mv "${SRC}" "tmp" && git mv "tmp" "${DST}" && echo "${DST}"
+    fi
+done

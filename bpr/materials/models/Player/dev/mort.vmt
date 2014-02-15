@@ -1,0 +1,10 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" 		"models/player/dev/mort"
+	"$envmapmask"		"models/player/dev/mort_alpha"
+
+	"$envmap" 			"lightwarp_cs1"
+	"$envmaptint" 		"[1 1 1]"
+	"$halflambert" 		1
+	"$nodecal" 			1
+}

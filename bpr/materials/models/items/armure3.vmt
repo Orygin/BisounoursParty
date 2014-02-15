@@ -1,0 +1,7 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/items/armure3"
+	"$bumpmap" "models/weapons/Normal"
+	"$model" 1
+	"$nodecal" 	"1"
+}

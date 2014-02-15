@@ -1,0 +1,7 @@
+"UnlitGeneric"
+{
+	"$basetexture" "vgui/logo"
+	"$no_fullbright" 1
+	"$ignorez" 1
+	"$translucent" 1
+}

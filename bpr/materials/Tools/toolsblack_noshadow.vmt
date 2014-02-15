@@ -1,0 +1,6 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "Tools/toolsblack"
+	"%compileBPTexture" "1"
+	"$surfaceprop" "nuage"
+}

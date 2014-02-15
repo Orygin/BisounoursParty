@@ -1,0 +1,11 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "Models/Weapons/base/crossbow5"
+	"$bumpmap" "models/weapons/Normal"
+	"$model" 1
+
+	"$phong" "1"
+	"$phongexponent" "10"
+	"$phongboost" 1
+	"$phongfresnelranges" "[1 .2 .01]"
+}

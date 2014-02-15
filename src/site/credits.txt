@@ -1,0 +1,75 @@
+Bisounours Party is made by Daft-Robot :
+Current team of Daft Robot :
+	• Louis Geuten			aka "Orygin"
+	• Freddy Clement		aka "DiFFtY"  
+With great help of :
+	• Clément Baticle		aka "Klems"
+	• Justin Martin			aka "Cafeine"
+Beta-Test :
+	• Thibaut Lenoir		aka "Orion"
+	
+Most of the work in the 5 Release was also done by those :
+    • Anthony Barreau       aka "Xandar"
+    • Clément Baticle       aka "Klems"
+    • Thomas Hauchecorne    aka "jiminy-billy-bob"
+    • Maxime Lebled         aka "MaxOfS2D"
+    • Léo Peltier           aka "Asi"
+    • Julien Rosembly       aka "Dudu"
+
+Daft-Robot also was originally :
+    • Merwan Achibet        aka "Merwan"
+    • Jérémy Barbe          aka "Capitaine Mousse"
+    • Romain Barrilliot     aka "Skacky"
+    • Pierre-Yves Dutreuilh aka "Grigor"
+    • Geoffrey Rosin        aka "Kirumi"
+
+Code                  : Asi
+Communication         : Asi ; Xandar
+Fonts                 : Grigor ; Klems ; Xandar
+Game-Design           : Klems
+Level-Design          : Asi ; jiminy-billy-bob ; Kirumi ; Klems ; Skacky
+Modeling              : Dudu ; jiminy-billy-bob ; Klems ; Merwan
+Sounding              : Klems ; Max of S2D
+Shipping/Packaging    : Asi
+Texturing             : jiminy-billy-bob ; Kirumi ; Klems ; Merwan ; Skacky ; Xandar
+Voice Acting          : Max of S2D
+Website               : Asi ; Xandar
+
+Beta-Test :
+    • Armand Bour           aka "Tydax"
+    • Sébastien Bukwald     aka "Korgahn"
+    • Lionel Chaves         aka "Killer Mapper"
+    • Freddy Clement        aka "DiFFtY"
+    • Louis Geuten          aka "Orygin"
+
+Translations :
+    • Dennis De Braekeler   aka "St0osh"
+    • Elijah Evanoff        aka "Raneman"
+
+We've stolen these guys :
+    • Corky from Dailymotion (zombie sounds)      (http://tinyurl.com/3gwk55)
+    • EditLife               (bisou.fgd)          (http://www.editlife.net/)
+    • Evillair               (eCel textures)      (http://www.evillair.net/)
+    • People Can Fly         (pedobear sounds)    (http://www.peoplecanfly.com/)
+    • Sourceforts            (forts concept)      (http://www.sourcefortsmod.com/)
+    • Team17                 (GUI sounds)         (http://www.team17.com/)
+    • They Hunger            (zombie sounds)      (http://manke.planethalflife.gamespy.com/)
+    • Those Characters From Cleveland
+
+In-game songs :
+    • Check each file's tags for credits
+    • Original soundtrack by Alexandre Guilloux and Maxime Lebled (MaxOfS2D)
+	• Additional musical cues by Ivor Slaney
+
+Special Thanks :
+    • J@nek              (http://www.hl2dmpro.com/)
+    • Joystick           (http://www.joystick.fr/)
+    • La Binoclarde
+    • Le Site du Zéro    (http://www.siteduzero.com/)
+    • Mallis             (http://www.lagrosseradio.com/)
+    • Mapping-Area       (http://www.mapping-area.com/)
+    • Nofrag             (http://www.nofrag.com/)
+    • NykO18             (http://www.logout.fr/)
+    • Toba
+    • Underfoule         (http://underfoule.net/)
+    • Valve              (http://www.valvesoftware.com/)

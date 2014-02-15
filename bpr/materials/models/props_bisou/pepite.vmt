@@ -1,0 +1,6 @@
+"UnLitGeneric"
+{
+	"$basetexture" "models/props_bisou/pepite"
+	"$model" 1
+	"$selfillum" 1
+}

@@ -1,0 +1,8 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "bisoutexture/tableau"
+	"$surfaceprop" "concrete"
+	"$nodecal" 1
+	"$nolod" 1
+	"%keywords" "bisou"
+}

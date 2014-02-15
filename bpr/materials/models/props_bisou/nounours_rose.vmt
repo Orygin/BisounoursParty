@@ -1,0 +1,6 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "models/items/nounours_rose"
+	"$nodecal" 	"1"
+	"$model" 	"1"
+}

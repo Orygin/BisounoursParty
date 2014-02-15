@@ -1,0 +1,7 @@
+"LightmappedGeneric"
+{
+	"$baseTexture" "bisoutexture/NoirCS"
+	"$translucent" 1
+	"$nocull" 1
+	"%keywords" "bisou"
+}
